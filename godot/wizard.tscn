@@ -38,7 +38,6 @@ albedo_texture = ExtResource("7_nxdvt")
 [node name="Wizard" type="Node3D"]
 
 [node name="wiz0" parent="." instance=ExtResource("1_dvcwp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
 
 [node name="Human" parent="wiz0/Human_rig/Skeleton3D" index="0"]
 surface_material_override/0 = SubResource("StandardMaterial3D_usxym")

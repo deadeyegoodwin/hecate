@@ -43,7 +43,7 @@ rotation_edit_mode = 2
 mesh = SubResource("PlaneMesh_ljlht")
 
 [node name="Wizard" parent="Arena" instance=ExtResource("2_8406i")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 5)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 4.5)
 
 [node name="OpponentWizard" parent="Arena" instance=ExtResource("2_8406i")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
