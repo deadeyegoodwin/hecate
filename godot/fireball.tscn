@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://d31jksi4nxkgx"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_umsuj"]
+albedo_color = Color(0.87451, 0.376471, 0.168627, 1)
+metallic = 0.63
+metallic_specular = 0.32
+
+[sub_resource type="SphereMesh" id="SphereMesh_gk41j"]
+material = SubResource("StandardMaterial3D_umsuj")
+radius = 0.1
+height = 0.2
+
+[node name="Fireball" type="MeshInstance3D"]
+mesh = SubResource("SphereMesh_gk41j")

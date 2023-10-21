@@ -1,10 +1,28 @@
 class_name Arena extends MeshInstance3D
 
-var arena_size : Vector3
+# Wizards
+var wiz : Wizard = null
+var opp : Wizard = null
+
+var initial_arena_size : Vector3
 
 func initialize(n : String, sz : Vector3) -> void:
 	name = n
-	arena_size = sz
+	initial_arena_size = sz
 
-func _ready():
-	mesh.size = Vector2(arena_size.x, arena_size.z)
+func _ready() -> void:
+	mesh.size = Vector2(initial_arena_size.x, initial_arena_size.z)
+
+	wiz = Wizard.new("wiz", Vector3(0, 0, initial_arena_size.z / 2.0 - 0.5), Vector3(0, 180.0, 0))
+	add_child(wiz)
+	opp = Wizard.new("opp", Vector3(0, 0, 0.5 - initial_arena_size.z / 2))
+	add_child(opp)
+
+func _process(delta : float) -> void:
+	# Fireball!
+	if Input.is_action_pressed("wizard_fireball"):
+		var fireball = wiz.create_fireball()
+		add_child(fireball)
+
+	# Allow wizards and other arena contents to advance time
+	wiz.step(delta)

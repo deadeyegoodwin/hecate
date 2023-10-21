@@ -1,28 +1,22 @@
 extends Node
 
+# Camera
 @onready var camera := $CameraPivot
-
 # Meters per second that the camera moves
 var camera_move_speed : int = 20
-
 # Mouse sensitivity for camera turning
 var camera_turn_sensitivity : float = 0.01
-
-# The arena
-const arena_scene = preload("res://arena.tscn")
-var arena : Arena = null
-var arena_size := Vector3(5.0, 3.0, 10.0)
-
-# Wizards
-var wiz : Wizard = null
-var opp : Wizard = null
-
 # The x, y, z rotations of the camera. These are kept separate from the
 # camera and used to update the camera basis whenever there is a change.
 # See https://docs.godotengine.org/en/stable/tutorials/3d/using_transforms.html#setting-information.
 var camera_rot_x : float = 0.0
 var camera_rot_y : float = 0.0
 var camera_rot_z : float = 0.0
+
+# Arena
+const arena_scene = preload("res://arena.tscn")
+var arena : Arena = null
+var arena_size := Vector3(5.0, 3.0, 10.0)
 
 func _init() -> void:
 	arena = arena_scene.instantiate()
@@ -32,11 +26,6 @@ func _init() -> void:
 func _ready() -> void:
 	camera.position = Vector3(
 		4, 3, 0.95 * max(arena_size.x, arena_size.z))
-
-	wiz = Wizard.new("wiz", Vector3(0, 0, arena_size.z / 2.0 - 0.5), Vector3(0, 180.0, 0))
-	arena.add_child(wiz)
-	opp = Wizard.new("opp", Vector3(0, 0, 0.5 - arena_size.z / 2))
-	arena.add_child(opp)
 
 # Handle mouse inputs to control direction of camera
 func _unhandled_input(event : InputEvent) -> void:
