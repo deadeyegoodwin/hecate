@@ -1,0 +1,13 @@
+[gd_scene load_steps=4 format=3 uid="uid://c2jk5s3m70xeo"]
+
+[ext_resource type="Script" path="res://arena.gd" id="1_mx7we"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mtsms"]
+albedo_color = Color(0.2, 0.160784, 0.0313726, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_u585i"]
+material = SubResource("StandardMaterial3D_mtsms")
+
+[node name="Arena" type="MeshInstance3D"]
+mesh = SubResource("PlaneMesh_u585i")
+script = ExtResource("1_mx7we")

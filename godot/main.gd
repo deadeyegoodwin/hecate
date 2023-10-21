@@ -9,9 +9,13 @@ var camera_move_speed : int = 20
 var camera_turn_sensitivity : float = 0.01
 
 # The arena
-@onready var arena := $Arena
-@onready var opponent := $Arena/OpponentWizard
-@onready var wizard := $Arena/Wizard
+const arena_scene = preload("res://arena.tscn")
+var arena : Arena = null
+var arena_size := Vector3(5.0, 3.0, 10.0)
+
+# Wizards
+var wiz : Wizard = null
+var opp : Wizard = null
 
 # The x, y, z rotations of the camera. These are kept separate from the
 # camera and used to update the camera basis whenever there is a change.
@@ -21,11 +25,18 @@ var camera_rot_y : float = 0.0
 var camera_rot_z : float = 0.0
 
 func _init() -> void:
-	pass
+	arena = arena_scene.instantiate()
+	arena.initialize("arena", arena_size)
+	add_child(arena)
 
 func _ready() -> void:
 	camera.position = Vector3(
-		4, 3, 0.95 * max(arena.mesh.size.x, arena.mesh.size.y))
+		4, 3, 0.95 * max(arena_size.x, arena_size.z))
+
+	wiz = Wizard.new("wiz", Vector3(0, 0, arena_size.z / 2.0 - 0.5), Vector3(0, 180.0, 0))
+	arena.add_child(wiz)
+	opp = Wizard.new("opp", Vector3(0, 0, 0.5 - arena_size.z / 2))
+	arena.add_child(opp)
 
 # Handle mouse inputs to control direction of camera
 func _unhandled_input(event : InputEvent) -> void:

@@ -1,0 +1,63 @@
+[gd_scene load_steps=17 format=3 uid="uid://bxswudl1alp7l"]
+
+[ext_resource type="PackedScene" uid="uid://behur4eua3v1t" path="res://mesh/wiz0.blend" id="1_dvcwp"]
+[ext_resource type="Texture2D" uid="uid://2nmvtn71yer6" path="res://mesh/textures/eyebrow001.png" id="2_r6kyu"]
+[ext_resource type="Texture2D" uid="uid://ggye5j57icm8" path="res://mesh/textures/braid01_diffuse.png" id="2_v4a3i"]
+[ext_resource type="Texture2D" uid="uid://cdwixen4chdt2" path="res://mesh/textures/middleage_lightskinned_female_diffuse.png" id="2_vkafk"]
+[ext_resource type="Texture2D" uid="uid://cg3dvutiqkdp4" path="res://mesh/textures/eyelashes01.png" id="5_710bi"]
+[ext_resource type="Texture2D" uid="uid://7cf4sacd3vhv" path="res://mesh/textures/female_casualsuit01_diffuse.png" id="6_304qq"]
+[ext_resource type="Texture2D" uid="uid://ds08kvoq4ylvu" path="res://mesh/textures/shoes03_diffuse.png" id="7_nxdvt"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_usxym"]
+albedo_texture = ExtResource("2_vkafk")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lhg6q"]
+albedo_texture = ExtResource("2_vkafk")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2owet"]
+albedo_texture = ExtResource("2_vkafk")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4qldb"]
+albedo_texture = ExtResource("2_vkafk")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_oeuug"]
+albedo_texture = ExtResource("2_v4a3i")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gi5pl"]
+albedo_texture = ExtResource("2_r6kyu")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dadu3"]
+albedo_texture = ExtResource("5_710bi")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w78hl"]
+albedo_texture = ExtResource("6_304qq")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8vq4v"]
+albedo_texture = ExtResource("7_nxdvt")
+
+[node name="Wizard0" type="Node3D"]
+
+[node name="wiz0" parent="." instance=ExtResource("1_dvcwp")]
+
+[node name="Human" parent="wiz0/Human_rig/Skeleton3D" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_usxym")
+surface_material_override/1 = SubResource("StandardMaterial3D_lhg6q")
+surface_material_override/2 = SubResource("StandardMaterial3D_2owet")
+surface_material_override/3 = SubResource("StandardMaterial3D_4qldb")
+
+[node name="Human_braid01" parent="wiz0/Human_rig/Skeleton3D" index="1"]
+surface_material_override/0 = SubResource("StandardMaterial3D_oeuug")
+
+[node name="Human_eyebrow001" parent="wiz0/Human_rig/Skeleton3D" index="2"]
+surface_material_override/0 = SubResource("StandardMaterial3D_gi5pl")
+
+[node name="Human_eyelashes01" parent="wiz0/Human_rig/Skeleton3D" index="3"]
+surface_material_override/0 = SubResource("StandardMaterial3D_dadu3")
+
+[node name="Human_female_casualsuit01" parent="wiz0/Human_rig/Skeleton3D" index="4"]
+surface_material_override/0 = SubResource("StandardMaterial3D_w78hl")
+
+[node name="Human_shoes03" parent="wiz0/Human_rig/Skeleton3D" index="6"]
+surface_material_override/0 = SubResource("StandardMaterial3D_8vq4v")
+
+[editable path="wiz0"]

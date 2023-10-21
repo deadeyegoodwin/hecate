@@ -1,7 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://cw8wthi1k8o7y"]
+[gd_scene load_steps=5 format=3 uid="uid://cw8wthi1k8o7y"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_omplj"]
-[ext_resource type="PackedScene" uid="uid://bxswudl1alp7l" path="res://wizard.tscn" id="2_8406i"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_g83ns"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -15,14 +14,6 @@ background_mode = 2
 sky = SubResource("Sky_1i0wx")
 tonemap_mode = 2
 glow_enabled = true
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_igpbp"]
-albedo_color = Color(0.352941, 0.317647, 0.0784314, 1)
-roughness = 0.77
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_ljlht"]
-material = SubResource("StandardMaterial3D_igpbp")
-size = Vector2(5, 10)
 
 [node name="Main" type="Node"]
 script = ExtResource("1_omplj")
@@ -38,12 +29,3 @@ shadow_enabled = true
 rotation_edit_mode = 2
 
 [node name="Camera" type="Camera3D" parent="CameraPivot"]
-
-[node name="Arena" type="MeshInstance3D" parent="."]
-mesh = SubResource("PlaneMesh_ljlht")
-
-[node name="Wizard" parent="Arena" instance=ExtResource("2_8406i")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 4.5)
-
-[node name="OpponentWizard" parent="Arena" instance=ExtResource("2_8406i")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
