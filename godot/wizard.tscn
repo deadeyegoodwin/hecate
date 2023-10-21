@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://b68tvdtx85lp5"]
+[gd_scene load_steps=3 format=3 uid="uid://b68tvdtx85lp5"]
 
 [ext_resource type="Script" path="res://wizard.gd" id="1_rfqy8"]
+[ext_resource type="PackedScene" uid="uid://bxswudl1alp7l" path="res://wizard0.tscn" id="2_lkpy3"]
 
 [node name="Wizard" type="Node3D"]
 script = ExtResource("1_rfqy8")
+
+[node name="Wizard0" parent="." instance=ExtResource("2_lkpy3")]

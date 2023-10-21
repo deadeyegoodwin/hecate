@@ -25,5 +25,7 @@ func _process(delta : float) -> void:
 	var input_dir := Input.get_vector(
 		"camera_move_left", "camera_move_right", "camera_move_forward", "camera_move_back")
 	var direction = (camera.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	camera.position += direction * camera_move_speed * delta
+	var new_position : Vector3 = camera.position + direction * camera_move_speed * delta
+	if new_position.length() > 2.0:
+		camera.position += direction * camera_move_speed * delta
 	camera.look_at(arena.position)

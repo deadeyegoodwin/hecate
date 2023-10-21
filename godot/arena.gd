@@ -1,6 +1,7 @@
 class_name Arena extends MeshInstance3D
 
 # Wizards
+const wizard_scene = preload("res://wizard.tscn")
 var wiz : Wizard = null
 var opp : Wizard = null
 
@@ -13,16 +14,16 @@ func initialize(n : String, sz : Vector3) -> void:
 func _ready() -> void:
 	mesh.size = Vector2(initial_arena_size.x, initial_arena_size.z)
 
-	wiz = Wizard.new("wiz", Vector3(0, 0, initial_arena_size.z / 2.0 - 0.5), Vector3(0, 180.0, 0))
+	wiz = wizard_scene.instantiate()
+	wiz.initialize("wiz", Vector3(0, 0, initial_arena_size.z / 2.0 - 0.5), Vector3(0, 180.0, 0))
 	add_child(wiz)
-	opp = Wizard.new("opp", Vector3(0, 0, 0.5 - initial_arena_size.z / 2))
+	opp = wizard_scene.instantiate()
+	opp.initialize("opp", Vector3(0, 0, 0.5 - initial_arena_size.z / 2))
 	add_child(opp)
 
 func _process(delta : float) -> void:
 	# Fireball!
-	if Input.is_action_pressed("wizard_fireball"):
+	if Input.is_action_just_pressed("wizard_fireball"):
 		var fireball = wiz.create_fireball()
 		add_child(fireball)
 
-	# Allow wizards and other arena contents to advance time
-	wiz.step(delta)
