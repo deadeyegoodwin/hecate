@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://d31jksi4nxkgx"]
 
 [ext_resource type="Script" path="res://fireball.gd" id="1_ce4v3"]
-[ext_resource type="Script" path="res://trajectory.gd" id="2_nr062"]
+[ext_resource type="Script" path="res://fixed_trajectory.gd" id="2_nr062"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_umsuj"]
 albedo_color = Color(0.87451, 0.376471, 0.168627, 1)
@@ -17,5 +17,5 @@ height = 0.2
 mesh = SubResource("SphereMesh_gk41j")
 script = ExtResource("1_ce4v3")
 
-[node name="Trajectory" type="Node" parent="."]
+[node name="FixedTrajectory" type="Node" parent="."]
 script = ExtResource("2_nr062")

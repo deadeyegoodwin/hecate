@@ -1,7 +1,7 @@
 # A fireball
 class_name Fireball extends MeshInstance3D
 
-@onready var trajectory := $Trajectory
+@onready var trajectory := $FixedTrajectory
 var initial_velocity : Vector3 = Vector3.ZERO
 var initial_acceleration : Vector3 = Vector3.ZERO
 var initial_surge : Vector3 = Vector3.ZERO  # surge is rate of acceleration change
