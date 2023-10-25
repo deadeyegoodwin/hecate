@@ -1,13 +1,55 @@
-[gd_scene load_steps=4 format=3 uid="uid://c2jk5s3m70xeo"]
+[gd_scene load_steps=8 format=3 uid="uid://bcn178fcq10q5"]
 
-[ext_resource type="Script" path="res://arena.gd" id="1_mx7we"]
+[ext_resource type="Script" path="res://arena.gd" id="1_s61gr"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mtsms"]
-albedo_color = Color(0.2, 0.160784, 0.0313726, 1)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lmltr"]
+albedo_color = Color(0.2, 0.101961, 0.00784314, 1)
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_u585i"]
-material = SubResource("StandardMaterial3D_mtsms")
+[sub_resource type="PlaneMesh" id="PlaneMesh_tle54"]
+material = SubResource("StandardMaterial3D_lmltr")
+size = Vector2(6, 10)
 
-[node name="Arena" type="MeshInstance3D"]
-mesh = SubResource("PlaneMesh_u585i")
-script = ExtResource("1_mx7we")
+[sub_resource type="PlaneMesh" id="PlaneMesh_oms1b"]
+material = SubResource("StandardMaterial3D_lmltr")
+size = Vector2(10, 6)
+orientation = 0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_acxeg"]
+material = SubResource("StandardMaterial3D_lmltr")
+flip_faces = true
+size = Vector2(10, 6)
+orientation = 0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_1eu6m"]
+material = SubResource("StandardMaterial3D_lmltr")
+flip_faces = true
+size = Vector2(6, 6)
+orientation = 2
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_7hi24"]
+material = SubResource("StandardMaterial3D_lmltr")
+size = Vector2(6, 6)
+orientation = 2
+
+[node name="Arena" type="Node3D"]
+script = ExtResource("1_s61gr")
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_tle54")
+
+[node name="LeftWall" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 3, 0)
+mesh = SubResource("PlaneMesh_oms1b")
+
+[node name="RightWall" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 3, 0)
+mesh = SubResource("PlaneMesh_acxeg")
+
+[node name="FrontWall" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 5)
+mesh = SubResource("PlaneMesh_1eu6m")
+skeleton = NodePath("../BackWall")
+
+[node name="BackWall" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -5)
+mesh = SubResource("PlaneMesh_7hi24")
