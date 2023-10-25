@@ -16,6 +16,8 @@ func _ready() -> void:
 
 	wiz = wizard_scene.instantiate()
 	wiz.initialize("wiz", Vector3(0, 0, initial_arena_size.z / 2.0 - 0.5), Vector3(0, 180.0, 0))
+	wiz.add_camera()
+
 	add_child(wiz)
 	opp = wizard_scene.instantiate()
 	opp.initialize("opp", Vector3(0, 0, 0.5 - initial_arena_size.z / 2))

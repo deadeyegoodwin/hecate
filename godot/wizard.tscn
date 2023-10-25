@@ -7,6 +7,3 @@
 script = ExtResource("1_rfqy8")
 
 [node name="Wizard0" parent="." instance=ExtResource("2_lkpy3")]
-
-[node name="Camera" type="Camera3D" parent="."]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0.000463009, 1.47145, 0.203028)
