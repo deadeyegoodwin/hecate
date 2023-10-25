@@ -1,6 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://bcn178fcq10q5"]
+[gd_scene load_steps=13 format=3 uid="uid://bcn178fcq10q5"]
 
 [ext_resource type="Script" path="res://arena.gd" id="1_s61gr"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_nhgpf"]
+size = Vector3(6, 1, 10)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lmltr"]
 albedo_color = Color(0.2, 0.101961, 0.00784314, 1)
@@ -9,10 +12,16 @@ albedo_color = Color(0.2, 0.101961, 0.00784314, 1)
 material = SubResource("StandardMaterial3D_lmltr")
 size = Vector2(6, 10)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_fuqx5"]
+size = Vector3(1, 6, 10)
+
 [sub_resource type="PlaneMesh" id="PlaneMesh_oms1b"]
 material = SubResource("StandardMaterial3D_lmltr")
 size = Vector2(10, 6)
 orientation = 0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_j7gqr"]
+size = Vector3(1, 6, 10)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_acxeg"]
 material = SubResource("StandardMaterial3D_lmltr")
@@ -20,11 +29,17 @@ flip_faces = true
 size = Vector2(10, 6)
 orientation = 0
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_e5o22"]
+size = Vector3(6, 6, 1)
+
 [sub_resource type="PlaneMesh" id="PlaneMesh_1eu6m"]
 material = SubResource("StandardMaterial3D_lmltr")
 flip_faces = true
 size = Vector2(6, 6)
 orientation = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_oddta"]
+size = Vector3(6, 6, 1)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_7hi24"]
 material = SubResource("StandardMaterial3D_lmltr")
@@ -34,22 +49,61 @@ orientation = 2
 [node name="Arena" type="Node3D"]
 script = ExtResource("1_s61gr")
 
-[node name="Floor" type="MeshInstance3D" parent="."]
+[node name="Floor" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_nhgpf")
+
+[node name="Mesh" type="MeshInstance3D" parent="Floor"]
 mesh = SubResource("PlaneMesh_tle54")
+skeleton = NodePath("../..")
 
-[node name="LeftWall" type="MeshInstance3D" parent="."]
+[node name="LeftWall" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 3, 0)
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="LeftWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0)
+shape = SubResource("BoxShape3D_fuqx5")
+
+[node name="Mesh" type="MeshInstance3D" parent="LeftWall"]
 mesh = SubResource("PlaneMesh_oms1b")
+skeleton = NodePath("../..")
 
-[node name="RightWall" type="MeshInstance3D" parent="."]
+[node name="RightWall" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 3, 0)
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RightWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0)
+shape = SubResource("BoxShape3D_j7gqr")
+
+[node name="Mesh" type="MeshInstance3D" parent="RightWall"]
 mesh = SubResource("PlaneMesh_acxeg")
+skeleton = NodePath("../..")
 
-[node name="FrontWall" type="MeshInstance3D" parent="."]
+[node name="FrontWall" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 5)
-mesh = SubResource("PlaneMesh_1eu6m")
-skeleton = NodePath("../BackWall")
+collision_mask = 0
 
-[node name="BackWall" type="MeshInstance3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FrontWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.5)
+shape = SubResource("BoxShape3D_e5o22")
+
+[node name="Mesh" type="MeshInstance3D" parent="FrontWall"]
+mesh = SubResource("PlaneMesh_1eu6m")
+skeleton = NodePath("../../BackWall/Mesh")
+
+[node name="BackWall" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -5)
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BackWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5)
+shape = SubResource("BoxShape3D_oddta")
+
+[node name="Mesh" type="MeshInstance3D" parent="BackWall"]
 mesh = SubResource("PlaneMesh_7hi24")
+skeleton = NodePath("../..")

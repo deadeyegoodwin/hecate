@@ -1,5 +1,5 @@
 # A fireball
-class_name Fireball extends MeshInstance3D
+class_name Fireball extends CharacterBody3D
 
 @onready var trajectory := $FixedTrajectory
 var initial_velocity : Vector3 = Vector3.ZERO
@@ -18,4 +18,6 @@ func _ready() -> void:
 
 func _process(delta : float) -> void:
 	trajectory.step(delta)
-	position = trajectory.position()
+	var collision := move_and_collide(trajectory.position() - position)
+	if collision != null:
+		queue_free()
