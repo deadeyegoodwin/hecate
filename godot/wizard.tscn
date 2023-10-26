@@ -7,7 +7,7 @@
 height = 1.6
 radius = 0.2
 
-[node name="Wizard" type="CharacterBody3D"]
+[node name="HecateWizard" type="CharacterBody3D"]
 collision_mask = 3
 script = ExtResource("1_rfqy8")
 

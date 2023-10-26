@@ -46,7 +46,7 @@ material = SubResource("StandardMaterial3D_lmltr")
 size = Vector2(6, 6)
 orientation = 2
 
-[node name="Arena" type="Node3D"]
+[node name="HecateArena" type="Node3D"]
 script = ExtResource("1_s61gr")
 
 [node name="Floor" type="StaticBody3D" parent="."]

@@ -16,7 +16,7 @@ material = SubResource("StandardMaterial3D_umsuj")
 radius = 0.1
 height = 0.2
 
-[node name="Fireball" type="CharacterBody3D"]
+[node name="HecateFireball" type="CharacterBody3D"]
 collision_layer = 2
 script = ExtResource("1_ce4v3")
 
@@ -26,5 +26,5 @@ shape = SubResource("SphereShape3D_3rbak")
 [node name="Mesh" type="MeshInstance3D" parent="."]
 mesh = SubResource("SphereMesh_gk41j")
 
-[node name="FixedTrajectory" type="Node" parent="."]
+[node name="HecateFixedTrajectory" type="Node" parent="."]
 script = ExtResource("2_nr062")

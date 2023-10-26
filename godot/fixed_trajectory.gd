@@ -1,6 +1,6 @@
 # Compute a trajectory given position, velocity, acceleration and surge.
 # Surge is the rate of acceleration change.
-class_name FixedTrajectory extends Node
+class_name HecateFixedTrajectory extends Node
 
 # Initial values, needed for step updates.
 var initial_position := Vector3.ZERO

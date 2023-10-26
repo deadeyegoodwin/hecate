@@ -5,7 +5,8 @@ extends Node
 # Meters per second that the camera moves
 var camera_move_speed : int = 20
 
-@onready var arena : Arena = $Arena
+# The arena
+@onready var arena : HecateArena = $Arena
 
 func _ready() -> void:
 	$CameraPivot/Camera.current = false

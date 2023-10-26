@@ -1,22 +1,12 @@
-class_name Wizard extends CharacterBody3D
+class_name HecateWizard extends CharacterBody3D
 
-# For now always use wizard0 scene for the wizard representation
-const fireball_scene = preload("res://fireball.tscn")
+# The parent of node that contains this wizard, will also act as the container
+# for other nodes created by the parent.
+var container : Node3D = null
 
-func initialize(n : String, pos : Vector3, rot_degrees : Vector3 = Vector3.ZERO) -> void:
+# Initialize the wizard at a starting position and rotation.
+func initialize(c : Node3D, n : String, pos : Vector3, rot_degrees : Vector3 = Vector3.ZERO) -> void:
+	container = c
 	name = n
 	position = pos
 	rotation_degrees = rot_degrees
-
-# Add a first-person camera to the wizard.
-func add_camera() -> void:
-	var camera := Camera3D.new()
-	camera.position = Vector3(0, 1.47, 0.2)
-	camera.rotation_degrees = rotation_degrees
-	camera.make_current()
-	add_child(camera)
-
-func create_fireball() -> Node3D:
-	var fireball = fireball_scene.instantiate()
-	fireball.initialize(position + Vector3(-0.1, 1, -0.5), Vector3(0, 0, 0), Vector3(-1, 0, -1), Vector3(0.73, 0, 0))
-	return fireball
