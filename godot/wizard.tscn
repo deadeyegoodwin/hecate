@@ -1,9 +1,18 @@
-[gd_scene load_steps=3 format=3 uid="uid://b68tvdtx85lp5"]
+[gd_scene load_steps=4 format=3 uid="uid://b68tvdtx85lp5"]
 
 [ext_resource type="Script" path="res://wizard.gd" id="1_rfqy8"]
 [ext_resource type="PackedScene" uid="uid://bxswudl1alp7l" path="res://wizard0.tscn" id="2_lkpy3"]
 
-[node name="Wizard" type="Node3D"]
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_rc5am"]
+height = 1.6
+radius = 0.2
+
+[node name="Wizard" type="CharacterBody3D"]
+collision_mask = 3
 script = ExtResource("1_rfqy8")
 
-[node name="Wizard0" parent="." instance=ExtResource("2_lkpy3")]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+shape = SubResource("CylinderShape3D_rc5am")
+
+[node name="Mesh" parent="." instance=ExtResource("2_lkpy3")]

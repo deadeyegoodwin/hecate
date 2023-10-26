@@ -20,4 +20,5 @@ func _process(delta : float) -> void:
 	trajectory.step(delta)
 	var collision := move_and_collide(trajectory.position() - position)
 	if collision != null:
+		print("hit ", collision.get_collider().name)
 		queue_free()
