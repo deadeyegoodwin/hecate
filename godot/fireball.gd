@@ -1,7 +1,7 @@
 # A fireball
 class_name HecateFireball extends CharacterBody3D
 
-@onready var trajectory := $HecateFixedTrajectory
+@onready var trajectory := $FixedTrajectory
 var initial_velocity : Vector3 = Vector3.ZERO
 var initial_acceleration : Vector3 = Vector3.ZERO
 var initial_surge : Vector3 = Vector3.ZERO  # surge is rate of acceleration change
@@ -20,5 +20,11 @@ func _process(delta : float) -> void:
 	trajectory.step(delta)
 	var collision := move_and_collide(trajectory.position() - position)
 	if collision != null:
-		print("hit ", collision.get_collider().name)
+		# If the object collided with has a collision handler function, then
+		# invoke it.
+		var collider = collision.get_collider()
+		if collider.has_method("handle_collision"):
+			collider.handle_collision(self)
+
+		# Perform any collision actions required for this fireball itself.
 		queue_free()

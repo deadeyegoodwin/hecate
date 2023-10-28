@@ -21,9 +21,11 @@ func size() -> Vector3:
 
 func _ready() -> void:
 	player = player_scene.instantiate()
-	player.initialize(self, "player", Vector3(0, 0, arena_size.z / 2.0 - 0.5), Vector3(0, 180.0, 0))
+	var player_stats = { HecateStatistics.Kind.HEALTH : 100.0 }
+	player.initialize(self, player_stats, "player", Vector3(0, 0, arena_size.z / 2.0 - 0.5), Vector3(0, 180.0, 0))
 	call_deferred("add_child", player)
 
 	opponent = wizard_scene.instantiate()
-	opponent.initialize(self, "opponent", Vector3(0, 0, 0.5 - arena_size.z / 2))
+	var opponent_stats = { HecateStatistics.Kind.HEALTH : 100.0 }
+	opponent.initialize(self, opponent_stats, "opponent", Vector3(0, 0, 0.5 - arena_size.z / 2))
 	call_deferred("add_child", opponent)

@@ -26,5 +26,5 @@ shape = SubResource("SphereShape3D_3rbak")
 [node name="Mesh" type="MeshInstance3D" parent="."]
 mesh = SubResource("SphereMesh_gk41j")
 
-[node name="HecateFixedTrajectory" type="Node" parent="."]
+[node name="FixedTrajectory" type="Node" parent="."]
 script = ExtResource("2_nr062")
