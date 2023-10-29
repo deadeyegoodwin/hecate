@@ -1,6 +1,6 @@
 class_name HecatePlayer extends CharacterBody3D
 
-const fireball_scene = preload("res://fireball.tscn")
+const projectile_scene = preload("res://projectile.tscn")
 
 # Statistics for the player.
 var statistics : HecateStatistics = null
@@ -25,16 +25,16 @@ func initialize(c : Node3D, stats : Dictionary,
 	camera.make_current()
 	call_deferred("add_child", camera)
 
-# Create and return a fireball.
-func _create_fireball() -> Node3D:
-	var fireball = fireball_scene.instantiate()
-	fireball.initialize(position + Vector3(-0.1, 1, -0.5), Vector3(0, 0, 0), Vector3(-1, 0, -1), Vector3(0.73, 0, 0))
-	return fireball
+# Create and return a projectile.
+func _create_projectile() -> Node3D:
+	var projectile = projectile_scene.instantiate()
+	projectile.initialize(position + Vector3(-0.1, 1, -0.5), Vector3(0, 0, 0), Vector3(-1, 0, -1), Vector3(0.73, 0, 0))
+	return projectile
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta : float) -> void:
-	if Input.is_action_just_pressed("player_fireball"):
-		container.call_deferred("add_child", _create_fireball())
+	if Input.is_action_just_pressed("player_projectile"):
+		container.call_deferred("add_child", _create_projectile())
 
 # Handle a 'collider' colliding with this player.
 func handle_collision(collider : Node) -> void:

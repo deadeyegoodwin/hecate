@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://d31jksi4nxkgx"]
 
-[ext_resource type="Script" path="res://fireball.gd" id="1_ce4v3"]
-[ext_resource type="Script" path="res://fixed_trajectory.gd" id="2_nr062"]
+[ext_resource type="Script" path="res://projectile.gd" id="1_r18cd"]
+[ext_resource type="Script" path="res://fixed_trajectory.gd" id="2_kcwwa"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_3rbak"]
 radius = 0.1
@@ -16,9 +16,9 @@ material = SubResource("StandardMaterial3D_umsuj")
 radius = 0.1
 height = 0.2
 
-[node name="HecateFireball" type="CharacterBody3D"]
+[node name="HecateProjectile" type="CharacterBody3D"]
 collision_layer = 2
-script = ExtResource("1_ce4v3")
+script = ExtResource("1_r18cd")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_3rbak")
@@ -27,4 +27,4 @@ shape = SubResource("SphereShape3D_3rbak")
 mesh = SubResource("SphereMesh_gk41j")
 
 [node name="FixedTrajectory" type="Node" parent="."]
-script = ExtResource("2_nr062")
+script = ExtResource("2_kcwwa")

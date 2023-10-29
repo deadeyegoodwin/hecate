@@ -1,5 +1,5 @@
-# A fireball
-class_name HecateFireball extends CharacterBody3D
+# A projectile
+class_name HecateProjectile extends CharacterBody3D
 
 @onready var trajectory := $FixedTrajectory
 var initial_velocity : Vector3 = Vector3.ZERO
@@ -26,5 +26,5 @@ func _process(delta : float) -> void:
 		if collider.has_method("handle_collision"):
 			collider.handle_collision(self)
 
-		# Perform any collision actions required for this fireball itself.
+		# Perform any collision actions required for this projectile itself.
 		queue_free()
