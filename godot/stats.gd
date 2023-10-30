@@ -1,5 +1,5 @@
 # Manage statistics
-class_name HecateStatistics extends Node
+class_name HecateStatistics extends Object
 
 # Enumeration for common statistics.
 enum Kind { HEALTH }

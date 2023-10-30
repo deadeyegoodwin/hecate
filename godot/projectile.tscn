@@ -1,7 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://d31jksi4nxkgx"]
+[gd_scene load_steps=5 format=3 uid="uid://d31jksi4nxkgx"]
 
 [ext_resource type="Script" path="res://projectile.gd" id="1_r18cd"]
-[ext_resource type="Script" path="res://fixed_trajectory.gd" id="2_kcwwa"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_3rbak"]
 radius = 0.1
@@ -25,6 +24,3 @@ shape = SubResource("SphereShape3D_3rbak")
 
 [node name="Mesh" type="MeshInstance3D" parent="."]
 mesh = SubResource("SphereMesh_gk41j")
-
-[node name="FixedTrajectory" type="Node" parent="."]
-script = ExtResource("2_kcwwa")

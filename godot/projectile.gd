@@ -1,20 +1,12 @@
 # A projectile
 class_name HecateProjectile extends CharacterBody3D
 
-@onready var trajectory := $FixedTrajectory
-var initial_velocity : Vector3 = Vector3.ZERO
-var initial_acceleration : Vector3 = Vector3.ZERO
-var initial_surge : Vector3 = Vector3.ZERO  # surge is rate of acceleration change
+var trajectory : HecateFixedTrajectory = null
 
 func initialize(pos : Vector3, vel : Vector3 = Vector3.ZERO,
 				acc : Vector3 = Vector3.ZERO, surge : Vector3 = Vector3.ZERO) -> void:
 	position = pos
-	initial_velocity = vel
-	initial_acceleration = acc
-	initial_surge = surge
-
-func _ready() -> void:
-	trajectory.initialize(position, initial_velocity, initial_acceleration, initial_surge)
+	trajectory = HecateFixedTrajectory.new(position, vel, acc, surge)
 
 func _process(delta : float) -> void:
 	trajectory.step(delta)

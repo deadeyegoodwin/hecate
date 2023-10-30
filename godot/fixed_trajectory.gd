@@ -1,6 +1,6 @@
 # Compute a trajectory given position, velocity, acceleration and surge.
 # Surge is the rate of acceleration change.
-class_name HecateFixedTrajectory extends Node
+class_name HecateFixedTrajectory extends Object
 
 # Initial values, needed for step updates.
 var initial_position := Vector3.ZERO
@@ -25,8 +25,8 @@ var position_z : float
 #var acceleration_z : float
 
 # Initialize the trajectory...
-func initialize(pos : Vector3, vel : Vector3 = Vector3.ZERO,
-				acc : Vector3 = Vector3.ZERO, sur : Vector3 = Vector3.ZERO) -> void:
+func _init(pos : Vector3, vel : Vector3 = Vector3.ZERO,
+		   acc : Vector3 = Vector3.ZERO, sur : Vector3 = Vector3.ZERO) -> void:
 	initial_position = pos
 	initial_velocity = vel
 	initial_acceleration = acc
