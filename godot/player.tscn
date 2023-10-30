@@ -11,6 +11,9 @@ radius = 0.2
 collision_mask = 3
 script = ExtResource("1_7r1dp")
 
+[node name="FirstPersonCamera" type="Camera3D" parent="."]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 1.46865, 0.215069)
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 shape = SubResource("CylinderShape3D_rc5am")

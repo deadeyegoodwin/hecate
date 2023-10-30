@@ -1,40 +1,46 @@
 class_name HecatePlayer extends CharacterBody3D
 
+# Projectile properties
 const projectile_scene = preload("res://projectile.tscn")
+const projectile_velocity : float = 2.0
+const projectile_acceleration : float = 5.0
+
+# First person camera.
+@onready var camera = $FirstPersonCamera
 
 # Statistics for the player.
 var statistics : HecateStatistics = null
 
-# The parent of node that contains this player, will also act as the container
+# The arena that contains this player, will also act as the container
 # for other nodes created by the parent.
-var container : Node3D = null
+var arena : HecateArena = null
 
 # Initialize the player at a starting position and rotation.
-func initialize(c : Node3D, stats : Dictionary,
+func initialize(a : HecateArena, stats : Dictionary,
 				n : String, pos : Vector3, rot_degrees : Vector3 = Vector3.ZERO) -> void:
-	container = c
+	arena = a
 	name = n
 	position = pos
 	rotation_degrees = rot_degrees
 	statistics = HecateStatistics.new(stats)
 
-	# Add a first-person camera.
-	var camera := Camera3D.new()
-	camera.position = Vector3(0, 1.47, 0.2)
-	camera.rotation_degrees = rotation_degrees
+func _ready() -> void:
 	camera.make_current()
-	call_deferred("add_child", camera)
+
+# Handle inputs...
+func _unhandled_input(event : InputEvent) -> void:
+	# Right mouse button used to first projectile...
+	if ((event is InputEventMouseButton) and
+		(event.button_index == MOUSE_BUTTON_LEFT) and event.pressed):
+		var dir : Vector3 = camera.project_ray_normal(event.position)
+		arena.call_deferred("add_child", _create_projectile(dir * projectile_velocity, dir * projectile_acceleration))
+		get_viewport().set_input_as_handled()
 
 # Create and return a projectile.
-func _create_projectile() -> Node3D:
+func _create_projectile(vel : Vector3, acc : Vector3 = Vector3.ZERO, surge : Vector3 = Vector3.ZERO) -> Node3D:
 	var projectile = projectile_scene.instantiate()
-	projectile.initialize(position + Vector3(-0.1, 1, -0.5), Vector3(0, 0, 0), Vector3(-1, 0, -1), Vector3(0.73, 0, 0))
+	projectile.initialize(position + Vector3(-0.1, 1, -0.5), vel, acc, surge)
 	return projectile
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta : float) -> void:
-	if Input.is_action_just_pressed("player_projectile"):
-		container.call_deferred("add_child", _create_projectile())
 
 # Handle a 'collider' colliding with this player.
 func handle_collision(collider : Node) -> void:

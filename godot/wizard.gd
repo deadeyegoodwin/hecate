@@ -3,14 +3,14 @@ class_name HecateWizard extends CharacterBody3D
 # Statistics for the wizard.
 var statistics : HecateStatistics = null
 
-# The parent of node that contains this wizard, will also act as the container
-# for other nodes created by the parent.
-var container : Node3D = null
+# The arena that contains this wizard, will also act as the container
+# for other nodes created by the wizard.
+var arena : HecateArena = null
 
 # Initialize the wizard at a starting position and rotation.
-func initialize(c : Node3D, stats : Dictionary,
+func initialize(a : HecateArena, stats : Dictionary,
 				n : String, pos : Vector3, rot_degrees : Vector3 = Vector3.ZERO) -> void:
-	container = c
+	arena = a
 	name = n
 	position = pos
 	rotation_degrees = rot_degrees
