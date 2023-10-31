@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://c5y1ek367w7l"]
 
-[ext_resource type="Script" path="res://player.gd" id="1_7r1dp"]
+[ext_resource type="Script" path="res://player.gd" id="1_eeaah"]
 [ext_resource type="PackedScene" uid="uid://bxswudl1alp7l" path="res://wizard0.tscn" id="2_ugiho"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_rc5am"]
@@ -9,7 +9,7 @@ radius = 0.2
 
 [node name="HecatePlayer" type="CharacterBody3D"]
 collision_mask = 3
-script = ExtResource("1_7r1dp")
+script = ExtResource("1_eeaah")
 
 [node name="FirstPersonCamera" type="Camera3D" parent="."]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 1.46865, 0.215069)

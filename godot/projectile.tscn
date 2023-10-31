@@ -24,3 +24,10 @@ shape = SubResource("SphereShape3D_3rbak")
 
 [node name="Mesh" type="MeshInstance3D" parent="."]
 mesh = SubResource("SphereMesh_gk41j")
+
+[node name="Path3D" type="Path3D" parent="."]
+
+[node name="PathFollow3D" type="PathFollow3D" parent="Path3D"]
+rotation_mode = 0
+loop = false
+tilt_enabled = false

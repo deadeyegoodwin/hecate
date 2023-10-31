@@ -46,14 +46,21 @@ func _ready() -> void:
 func _unhandled_input(event : InputEvent) -> void:
 	# If spell hand is activated, and there is not an in-flight spell being
 	# handled, then enter spell mode.
-	if Input.is_action_just_pressed("player_spell_left"):
+	var spell_left : bool = Input.is_action_just_pressed("player_spell_left")
+	var spell_right : bool = Input.is_action_just_pressed("player_spell_right")
+	var idle_left : bool = Input.is_action_just_pressed("player_idle_left")
+	var idle_right : bool = Input.is_action_just_pressed("player_idle_right")
+	if spell_left or spell_right or idle_left or idle_right:
 		get_viewport().set_input_as_handled()
 		if mode == Mode.IDLE:
-			mode = Mode.SPELL_LEFT
-	elif Input.is_action_just_pressed("player_spell_right"):
-		get_viewport().set_input_as_handled()
-		if mode == Mode.IDLE:
-			mode = Mode.SPELL_RIGHT
+			if spell_left:
+				mode = Mode.SPELL_LEFT
+			elif spell_right:
+				mode = Mode.SPELL_RIGHT
+		elif idle_left and (mode == Mode.SPELL_LEFT):
+			mode = Mode.IDLE
+		elif idle_right and (mode == Mode.SPELL_RIGHT):
+			mode = Mode.IDLE
 
 	# If in SPELL mode then right mouse button used to select the projectile
 	# target position. Here we just record the mouse position, which we will
@@ -64,12 +71,6 @@ func _unhandled_input(event : InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			target_mouse_position = event.position
 			mode = Mode.TARGET_LEFT if mode == Mode.SPELL_LEFT else Mode.TARGET_RIGHT
-
-# Create and return a projectile.
-func _create_projectile(pos : Vector3, vel : Vector3, acc : Vector3 = Vector3.ZERO, surge : Vector3 = Vector3.ZERO) -> Node3D:
-	var projectile = projectile_scene.instantiate()
-	projectile.initialize(pos, vel, acc, surge)
-	return projectile
 
 # Called at a fixed interval (default 60Hz)
 func _physics_process(_delta : float) -> void:
@@ -94,11 +95,18 @@ func _process(_delta : float) -> void:
 	if target_position != Vector3.ZERO:
 		assert((mode == Mode.TARGET_LEFT) or (mode == Mode.TARGET_RIGHT))
 		var cast_relative_position := left_hand_relative_position if mode == Mode.TARGET_LEFT else right_hand_relative_position
-		var dir : Vector3 = (target_position - (position + cast_relative_position)).normalized()
+		var cast_position := position + cast_relative_position
 		arena.call_deferred("add_child", _create_projectile(
-			position + cast_relative_position, dir * projectile_velocity, dir * projectile_acceleration))
+			cast_position, target_position, projectile_velocity, projectile_acceleration))
 		target_position = Vector3.ZERO
-		mode = Mode.IDLE
+		mode = Mode.SPELL_LEFT if mode == Mode.TARGET_LEFT else Mode.SPELL_RIGHT
+
+# Create and return a projectile.
+func _create_projectile(start_pos : Vector3, end_pos : Vector3,
+						vel : float, acc : float = 0.0, surge : float = 0.0) -> Node3D:
+	var projectile = projectile_scene.instantiate()
+	projectile.initialize(start_pos, end_pos, vel, acc, surge)
+	return projectile
 
 # Handle a 'collider' colliding with this player.
 func handle_collision(collider : Node) -> void:
