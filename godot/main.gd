@@ -1,3 +1,6 @@
+# Copyright (c) 2023, David Goodwin. All rights reserved.
+
+# Top-level node.
 extends Node
 
 # Camera

@@ -1,4 +1,6 @@
-# Manage statistics
+# Copyright (c) 2023, David Goodwin. All rights reserved.
+
+# Manage a general set of statistics.
 class_name HecateStatistics extends Object
 
 # Enumeration for common statistics.

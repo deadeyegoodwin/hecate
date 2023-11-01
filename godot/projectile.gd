@@ -1,4 +1,6 @@
-# A projectile
+# Copyright (c) 2023, David Goodwin. All rights reserved.
+
+# A projectile.
 class_name HecateProjectile extends CharacterBody3D
 
 @onready var path := $Path3D

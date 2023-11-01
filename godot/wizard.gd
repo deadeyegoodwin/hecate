@@ -1,3 +1,6 @@
+# Copyright (c) 2023, David Goodwin. All rights reserved.
+
+# An opponent wizard.
 class_name HecateWizard extends CharacterBody3D
 
 # Statistics for the wizard.

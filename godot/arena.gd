@@ -1,3 +1,6 @@
+# Copyright (c) 2023, David Goodwin. All rights reserved.
+
+# An arena containing player and opponents.
 class_name HecateArena extends Node3D
 
 # The overall size of the arena. A const export would be useful here but

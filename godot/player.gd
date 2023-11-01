@@ -1,3 +1,6 @@
+# Copyright (c) 2023, David Goodwin. All rights reserved.
+
+# The player controlled character within an arena.
 class_name HecatePlayer extends CharacterBody3D
 
 # Projectile properties
