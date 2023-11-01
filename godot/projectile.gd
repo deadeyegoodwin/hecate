@@ -16,26 +16,24 @@ var initial_velocity : float = 0.0
 var initial_acceleration : float = 0.0
 var initial_surge : float = 0.0  # surge is rate of acceleration change
 
-# The curve describing the path of the projectile.
-var curve : Curve3D = null
+# The trajectory describing the path of the projectile.
+var trajectory : HecateTrajectory = null
 # The total time that the projectile has been progressing along the curve.
 var curve_delta : float = 0.0
 
-# Initialize the projectile
-func initialize(powner : Owner, start_pos : Vector3, end_pos : Vector3,
+# Initialize the projectile that will follow a trajectory.
+func initialize(powner : Owner, traj : HecateTrajectory,
 				vel : float, acc : float = 0.0, surge : float = 0.0) -> void:
-	position = start_pos
 	projectile_owner = powner
-	initial_position = start_pos
+	trajectory = traj
+	position = trajectory.start_position()
+	initial_position = position
 	initial_velocity = vel
 	initial_acceleration = acc
 	initial_surge = surge
-	curve = Curve3D.new()
-	curve.add_point(Vector3.ZERO)
-	curve.add_point(end_pos - start_pos)
 
 func _ready() -> void:
-	path.curve = curve
+	path.curve = trajectory.curve()
 
 	# Set the layer and mask of the projectile based on the owner.
 	set_collision_mask_value(1, true)  # "wall"

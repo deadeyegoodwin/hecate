@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://5oqot2gxfu25"]
+
+[ext_resource type="Script" path="res://trajectory.gd" id="1_ww38a"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8f2fg"]
+shading_mode = 0
+albedo_color = Color(0.742868, 1, 0.999085, 1)
+
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_r733l"]
+resource_local_to_scene = true
+
+[node name="HecateTrajectory" type="MeshInstance3D"]
+material_override = SubResource("StandardMaterial3D_8f2fg")
+mesh = SubResource("ImmediateMesh_r733l")
+script = ExtResource("1_ww38a")
