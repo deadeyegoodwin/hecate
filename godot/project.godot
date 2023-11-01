@@ -66,4 +66,7 @@ player_idle_right={
 [layer_names]
 
 3d_physics/layer_1="walls"
-3d_physics/layer_2="projectiles"
+3d_physics/layer_9="player"
+3d_physics/layer_10="player projectile"
+3d_physics/layer_17="opponent"
+3d_physics/layer_18="opponent projectile"

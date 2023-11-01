@@ -84,6 +84,9 @@ func _physics_process(_delta : float) -> void:
 		var end = origin + camera.project_ray_normal(target_mouse_position) * arena.size().length()
 		var query = PhysicsRayQueryParameters3D.create(origin, end)
 		query.collide_with_areas = false
+		query.collision_mask = (
+			(1 << 0) | # layer "walls"
+			(1 << 16)) # layer "opponent"
 		var result := space_state.intersect_ray(query)
 		target_mouse_position = Vector2.ZERO
 		if result.has("position"):
@@ -105,7 +108,7 @@ func _process(_delta : float) -> void:
 func _create_projectile(start_pos : Vector3, end_pos : Vector3,
 						vel : float, acc : float = 0.0, surge : float = 0.0) -> Node3D:
 	var projectile = projectile_scene.instantiate()
-	projectile.initialize(start_pos, end_pos, vel, acc, surge)
+	projectile.initialize(HecateProjectile.Owner.PLAYER, start_pos, end_pos, vel, acc, surge)
 	return projectile
 
 # Handle a 'collider' colliding with this player.

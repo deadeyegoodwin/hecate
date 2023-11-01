@@ -16,7 +16,7 @@ radius = 0.1
 height = 0.2
 
 [node name="HecateProjectile" type="CharacterBody3D"]
-collision_layer = 2
+collision_layer = 0
 script = ExtResource("1_r18cd")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

@@ -4,6 +4,10 @@ class_name HecateProjectile extends CharacterBody3D
 @onready var path := $Path3D
 @onready var pathfollow := $Path3D/PathFollow3D
 
+# What entity owns/launched this projectile.
+enum Owner { NONE, PLAYER, OPPONENT }
+var projectile_owner : Owner = Owner.NONE
+
 # Velocity, acceleration and surge of the projectile.
 var initial_position := Vector3.ZERO
 var initial_velocity : float = 0.0
@@ -16,9 +20,10 @@ var curve : Curve3D = null
 var curve_delta : float = 0.0
 
 # Initialize the projectile
-func initialize(start_pos : Vector3, end_pos : Vector3,
+func initialize(powner : Owner, start_pos : Vector3, end_pos : Vector3,
 				vel : float, acc : float = 0.0, surge : float = 0.0) -> void:
 	position = start_pos
+	projectile_owner = powner
 	initial_position = start_pos
 	initial_velocity = vel
 	initial_acceleration = acc
@@ -29,6 +34,15 @@ func initialize(start_pos : Vector3, end_pos : Vector3,
 
 func _ready() -> void:
 	path.curve = curve
+
+	# Set the layer and mask of the projectile based on the owner.
+	set_collision_mask_value(1, true)  # "wall"
+	if projectile_owner == Owner.PLAYER:
+		set_collision_layer_value(10, true)  # layer "player projectile"
+		set_collision_mask_value(17, true)   # layer "opponent"
+	elif projectile_owner == Owner.OPPONENT:
+		set_collision_layer_value(18, true)  # layer "opponent projectile"
+		set_collision_mask_value(9, true)    # layer "player"
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta : float) -> void:
@@ -58,4 +72,12 @@ func _process(delta : float) -> void:
 			collider.handle_collision(self)
 
 		# Perform any collision actions required for this projectile itself.
+		queue_free()
+
+	# FIXME If the projectile reaches the end of the path without colliding
+	# (as can happen if the original target is no longer there), we must explicitly
+	# delete the projectile. What we should instead do is create the original
+	# curve/trajectory to contain one additional point beyond the target that
+	# will cause the projectile to continue "out of scene" (likely hitting a wall).
+	if pathfollow.progress_ratio >= 1.0:
 		queue_free()
