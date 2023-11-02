@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://c5y1ek367w7l"]
+[gd_scene load_steps=5 format=3 uid="uid://c5y1ek367w7l"]
 
-[ext_resource type="Script" path="res://player.gd" id="1_eeaah"]
+[ext_resource type="Script" path="res://player.gd" id="1_pfm37"]
 [ext_resource type="PackedScene" uid="uid://bxswudl1alp7l" path="res://wizard0.tscn" id="2_ugiho"]
+[ext_resource type="PackedScene" uid="uid://b2u6t7e8q1h7a" path="res://cast.tscn" id="3_rds0l"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_rc5am"]
 height = 1.6
@@ -10,7 +11,7 @@ radius = 0.2
 [node name="HecatePlayer" type="CharacterBody3D"]
 collision_layer = 256
 collision_mask = 196609
-script = ExtResource("1_eeaah")
+script = ExtResource("1_pfm37")
 
 [node name="FirstPersonCamera" type="Camera3D" parent="."]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 1.46865, 0.215069)
@@ -20,3 +21,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 shape = SubResource("CylinderShape3D_rc5am")
 
 [node name="Mesh" parent="." instance=ExtResource("2_ugiho")]
+
+[node name="LeftCast" parent="." instance=ExtResource("3_rds0l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.44, 0.92, 1)
+
+[node name="RightCast" parent="." instance=ExtResource("3_rds0l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.44, 0.92, 1)
