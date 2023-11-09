@@ -99,9 +99,11 @@ func _target_to_cast() -> void:
 	assert(target_position == Vector3.ZERO)
 	assert(trajectory != null)
 	assert(projectile == null)
-	# Create a projectile, but do not launch it...
+	# Create a projectile, but do not launch it. The projectile follows the
+	# trajectory curve.
+	var curve_transform : Transform3D = get_parent().transform.inverse() * transform
 	projectile = projectile_scene.instantiate()
-	projectile.initialize(HecateProjectile.Owner.PLAYER, trajectory)
+	projectile.initialize(HecateProjectile.Owner.PLAYER, trajectory.curve(), curve_transform)
 	arena.call_deferred("add_child", projectile)
 	trajectory.queue_free()
 	trajectory = null
@@ -232,12 +234,12 @@ func _process(_delta : float) -> void:
 		assert(trajectory == null)
 		trajectory = trajectory_scene.instantiate()
 
-		# The target position is in arena-space, so we must translate the
-		# cast position into that space as well so that both trajectory
-		# start and end position are in arena-space.
-		var trajectory_transform : Transform3D = get_parent().transform.inverse() * transform
-		trajectory.initialize(trajectory_transform.origin, target_position)
-		arena.call_deferred("add_child", trajectory)
+		# The target position is in arena-space; translate that position
+		# so that is relative to 'self'.
+		var target_position_transform : Transform3D = Transform3D(Basis.IDENTITY, target_position)
+		var target_transform : Transform3D = transform.inverse() * get_parent().transform * target_position_transform
+		trajectory.initialize(target_transform.origin)
+		call_deferred("add_child", trajectory)
 		target_position = Vector3.ZERO
 
 # Handle a 'collider' colliding with this player.

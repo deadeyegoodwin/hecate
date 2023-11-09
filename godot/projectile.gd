@@ -21,14 +21,17 @@ var _launched : bool = false
 
 # The curve describing the path of the projectile.
 var _curve : Curve3D = null
+# The transform that maps from curve position to projectile position.
+var _curve_transform : Transform3D
 # The total time that the projectile has been progressing along the curve.
 var _curve_delta : float = 0.0
 
-# Initialize the projectile that will follow a trajectory.
-func initialize(powner : Owner, trajectory : HecateTrajectory) -> void:
+# Initialize the projectile that will follow a curve.
+func initialize(powner : Owner, curve : Curve3D, curve_transform : Transform3D) -> void:
 	_owner = powner
-	_curve = trajectory.curve()
-	position = trajectory.start_position()
+	_curve = curve
+	_curve_transform = curve_transform
+	position = (_curve_transform * Transform3D(Basis.IDENTITY, _curve.get_point_position(0))).origin
 	_initial_position = position
 
 # Launch the projectile.
@@ -41,6 +44,7 @@ func launch(vel : float, acc : float = 0.0, surge : float = 0.0) -> void:
 
 func _ready() -> void:
 	_path.curve = _curve
+	_pathfollow.progress = 0
 
 	# Set the layer and mask of the projectile based on the owner.
 	set_collision_mask_value(1, true)  # "wall"
@@ -67,11 +71,14 @@ func _process(delta : float) -> void:
 		assert(progress >= _pathfollow.progress)
 		_pathfollow.progress = progress
 
+		var new_position : Vector3 = (
+			_curve_transform * Transform3D(Basis.IDENTITY, _pathfollow.position)).origin
+
 		# FIXME Currently we are moving directly from last curve position to
 		# new curve position, but with high velocity and/or parts of the curve
 		# with high curvature, this movement does not necessarily follow the curve.
 		# Instead should advance along the curve segments to reach the new position.
-		var collision := move_and_collide(_initial_position + _pathfollow.position - position)
+		var collision := move_and_collide(new_position - position)
 		if collision != null:
 			# If the object collided with has a collision handler function, then
 			# invoke it.

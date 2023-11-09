@@ -1,15 +1,41 @@
-[gd_scene load_steps=4 format=3 uid="uid://5oqot2gxfu25"]
+[gd_scene load_steps=5 format=3 uid="uid://5oqot2gxfu25"]
 
 [ext_resource type="Script" path="res://trajectory.gd" id="1_ww38a"]
+[ext_resource type="Shader" path="res://trajectory.gdshader" id="2_v4ywr"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8f2fg"]
-shading_mode = 0
-albedo_color = Color(0.742868, 1, 0.999085, 1)
-
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_r733l"]
+[sub_resource type="Curve3D" id="Curve3D_edad6"]
 resource_local_to_scene = true
 
-[node name="HecateTrajectory" type="MeshInstance3D"]
-material_override = SubResource("StandardMaterial3D_8f2fg")
-mesh = SubResource("ImmediateMesh_r733l")
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2lhxc"]
+render_priority = 0
+shader = ExtResource("2_v4ywr")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/point_size = 1.0
+shader_parameter/roughness = 1.0
+shader_parameter/metallic_texture_channel = null
+shader_parameter/specular = 0.5
+shader_parameter/metallic = 0.0
+shader_parameter/uv1_scale = Vector3(1, 1, 1)
+shader_parameter/uv1_offset = Vector3(0, 0, 0)
+shader_parameter/uv2_scale = Vector3(1, 1, 1)
+shader_parameter/uv2_offset = Vector3(0, 0, 0)
+
+[node name="HecateTrajectory" type="Node3D"]
 script = ExtResource("1_ww38a")
+
+[node name="Path3D" type="Path3D" parent="."]
+curve = SubResource("Curve3D_edad6")
+
+[node name="CSGPolygon3D" type="CSGPolygon3D" parent="."]
+polygon = PackedVector2Array(-0.06, 0.025, -0.025, 0.06, 0.025, 0.06, 0.06, 0.025, 0.06, -0.06, 0.025, -0.06, -0.025, -0.06, -0.06, -0.025)
+mode = 2
+path_node = NodePath("../Path3D")
+path_interval_type = 1
+path_interval = 1.0
+path_simplify_angle = 0.0
+path_rotation = 2
+path_local = true
+path_continuous_u = true
+path_u_distance = 1.0
+path_joined = false
+material = SubResource("ShaderMaterial_2lhxc")
