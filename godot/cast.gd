@@ -18,6 +18,7 @@
 #
 class_name HecateCast extends Node3D
 
+const glyph_scene = preload("res://glyph.tscn")
 const projectile_scene = preload("res://projectile.tscn")
 const trajectory_scene = preload("res://trajectory.tscn")
 
@@ -37,6 +38,9 @@ var state : State = State.IDLE
 
 # Is this cast responding to mouse events?
 var mouse_focus : bool = false
+
+# When in SELECT state, the HecateGlyth used to select a spell.
+var glyph : HecateGlyph = null
 
 # When in TARGET state the following are used to record the target position
 # in viewport-space and model-space.
@@ -58,20 +62,26 @@ func _idle_to_select() -> void:
 	assert(not mouse_focus)
 	assert(target_mouse_position == Vector2.ZERO)
 	assert(target_position == Vector3.ZERO)
+	assert(glyph == null)
 	assert(trajectory == null)
 	assert(projectile == null)
 	mouse_focus = true
 	visible = true
+	glyph = glyph_scene.instantiate()
+	call_deferred("add_child", glyph)
 	state = State.SELECT
 
 # Transition state from SELECT to IDLE.
 func _select_to_idle() -> void:
 	assert(target_mouse_position == Vector2.ZERO)
 	assert(target_position == Vector3.ZERO)
+	assert(glyph != null)
 	assert(trajectory == null)
 	assert(projectile == null)
 	mouse_focus = false
 	visible = false
+	glyph.queue_free()
+	glyph = null
 	state = State.IDLE
 
 # Transition from SELECT to TARGET.
@@ -79,15 +89,20 @@ func _select_to_target() -> void:
 	assert(mouse_focus)
 	assert(target_mouse_position == Vector2.ZERO)
 	assert(target_position == Vector3.ZERO)
+	assert((glyph != null) and glyph.is_complete())
 	assert(trajectory == null)
 	assert(projectile == null)
 	state = State.TARGET
 
 # Transition state from TARGET to SELECT.
 func _target_to_select() -> void:
+	assert((glyph != null) and glyph.is_complete())
 	assert(projectile == null)
 	target_mouse_position = Vector2.ZERO
 	target_position = Vector3.ZERO
+	glyph.queue_free()
+	glyph = glyph_scene.instantiate()
+	call_deferred("add_child", glyph)
 	if trajectory != null:
 		trajectory.queue_free()
 		trajectory = null
@@ -97,6 +112,7 @@ func _target_to_select() -> void:
 func _target_to_cast() -> void:
 	assert(target_mouse_position == Vector2.ZERO)
 	assert(target_position == Vector3.ZERO)
+	assert((glyph != null) and glyph.is_complete())
 	assert(trajectory != null)
 	assert(projectile == null)
 	# Create a projectile, but do not launch it. The projectile follows the
@@ -105,6 +121,8 @@ func _target_to_cast() -> void:
 	projectile = projectile_scene.instantiate()
 	projectile.initialize(HecateProjectile.Owner.PLAYER, trajectory.curve(), curve_transform)
 	arena.call_deferred("add_child", projectile)
+	glyph.queue_free()
+	glyph = null
 	trajectory.queue_free()
 	trajectory = null
 	state = State.CAST
@@ -113,10 +131,13 @@ func _target_to_cast() -> void:
 func _cast_to_select() -> void:
 	assert(target_mouse_position == Vector2.ZERO)
 	assert(target_position == Vector3.ZERO)
+	assert(glyph == null)
 	assert(trajectory == null)
 	assert(projectile != null)
 	projectile.launch(projectile_velocity, projectile_acceleration)
 	projectile = null
+	glyph = glyph_scene.instantiate()
+	call_deferred("add_child", glyph)
 	visible = false
 	state = State.SELECT
 
@@ -160,7 +181,12 @@ func next() -> Array[bool]:
 				mouse_focus = true
 				r = false
 			else:
-				_select_to_target()
+				# Can only transition if 'glyph' is complete.
+				assert(glyph != null)
+				if glyph.is_complete():
+					_select_to_target()
+				else:
+					r = false
 		State.TARGET:
 			if not mouse_focus:
 				mouse_focus = true
@@ -184,15 +210,27 @@ func _unhandled_input(event : InputEvent) -> void:
 	if not mouse_focus:
 		return
 
-	# Mouse button pressed...
-	if (event is InputEventMouseButton) and event.pressed:
-		# SELECT: FIXME does nothing for now...
-		if state == State.SELECT:
+	# SELECT: Left mouse captures mouse input which is sent to the glyph.
+	if state == State.SELECT:
+		if ((event is InputEventMouseButton) and
+			(event.button_index == MOUSE_BUTTON_LEFT)):
+			if event.is_pressed():
+				assert(Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE)
+				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+				glyph.start_stroke()
+			else:
+				assert(Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED)
+				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+				glyph.end_stroke()
 			get_viewport().set_input_as_handled()
-			pass
-		# TARGET: Left mouse selects the target for the cast if none yet
-		# selected. FIXME left/right mouse modify trajectory
-		elif state == State.TARGET:
+		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+			if event is InputEventMouseMotion:
+				glyph.handle_mouse_motion(event)
+				get_viewport().set_input_as_handled()
+	# TARGET: Left mouse selects the target for the cast if none yet
+	# selected. FIXME left/right mouse modify trajectory
+	elif state == State.TARGET:
+		if (event is InputEventMouseButton) and event.pressed:
 			if event.button_index == MOUSE_BUTTON_LEFT:
 				get_viewport().set_input_as_handled()
 				if ((trajectory == null) and

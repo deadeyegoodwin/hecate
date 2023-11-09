@@ -1,0 +1,46 @@
+[gd_scene load_steps=7 format=3 uid="uid://caqw58b1o572k"]
+
+[ext_resource type="Script" path="res://glyph.gd" id="1_7sipd"]
+[ext_resource type="Shader" path="res://shaders/noise.gdshader" id="2_kffw3"]
+
+[sub_resource type="Curve3D" id="Curve3D_7o23e"]
+resource_local_to_scene = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_r4wer"]
+frequency = 0.0178
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ijjja"]
+noise = SubResource("FastNoiseLite_r4wer")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4djo8"]
+render_priority = 0
+shader = ExtResource("2_kffw3")
+shader_parameter/drift_size = 0.01
+shader_parameter/noise_motion = 0.01
+shader_parameter/primary_alpha_rate = 0.05
+shader_parameter/secondary_alpha_rate = 0.12
+shader_parameter/primary_color = Color(0, 0.368627, 1, 0.862745)
+shader_parameter/secondary_color = Color(0.227451, 0.490196, 1, 0.862745)
+shader_parameter/noise = SubResource("NoiseTexture2D_ijjja")
+
+[node name="HecateGlyph" type="Node3D"]
+script = ExtResource("1_7sipd")
+
+[node name="Path3D" type="Path3D" parent="."]
+curve = SubResource("Curve3D_7o23e")
+
+[node name="Mesh" type="CSGPolygon3D" parent="."]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0)
+polygon = PackedVector2Array(-0.06, 0.025, -0.025, 0.06, 0.025, 0.06, 0.06, 0.025, 0.06, -0.025, 0.025, -0.06, -0.025, -0.06, -0.06, -0.025)
+mode = 2
+path_node = NodePath("../Path3D")
+path_interval_type = 1
+path_interval = 1.0
+path_simplify_angle = 0.0
+path_rotation = 2
+path_local = true
+path_continuous_u = true
+path_u_distance = 1.0
+path_joined = false
+smooth_faces = true
+material = SubResource("ShaderMaterial_4djo8")
