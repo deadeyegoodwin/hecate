@@ -4,32 +4,32 @@
 class_name HecatePlayer extends CharacterBody3D
 
 # First person camera.
-@onready var camera := $FirstPersonCamera
+@onready var _camera := $FirstPersonCamera
 
 # Things that the player can use to cast.
-@onready var left_cast : HecateCast = $LeftCast
-@onready var right_cast : HecateCast = $RightCast
+@onready var _left_cast : HecateCast = $LeftCast
+@onready var _right_cast : HecateCast = $RightCast
 
 # The arena that contains this player, will also act as the container
 # for other nodes created by the parent.
-var arena : HecateArena = null
+var _arena : HecateArena = null
 
 # Statistics for the player.
-var statistics : HecateStatistics = null
+var _statistics : HecateStatistics = null
 
 # Initialize the player at a starting position and rotation.
 func initialize(a : HecateArena, stats : Dictionary,
 				n : String, pos : Vector3, rot_degrees : Vector3 = Vector3.ZERO) -> void:
-	arena = a
+	_arena = a
 	name = n
 	position = pos
 	rotation_degrees = rot_degrees
-	statistics = HecateStatistics.new(stats)
+	_statistics = HecateStatistics.new(stats)
 
 func _ready() -> void:
-	camera.make_current()
-	left_cast.initialize(arena, camera)
-	right_cast.initialize(arena, camera)
+	_camera.make_current()
+	_left_cast.initialize(_arena, _camera)
+	_right_cast.initialize(_arena, _camera)
 
 # Handle inputs...
 func _unhandled_input(_event : InputEvent) -> void:
@@ -47,28 +47,28 @@ func _unhandled_input(_event : InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 	elif spell_left_prev:
 		get_viewport().set_input_as_handled()
-		var r := left_cast.prev()
+		var r := _left_cast.prev()
 		left_focus = r[1]
 	elif spell_left_next:
 		get_viewport().set_input_as_handled()
-		var r := left_cast.next()
+		var r := _left_cast.next()
 		left_focus = r[1]
 	if left_focus:
-		right_cast.release_mouse_focus()
+		_right_cast.release_mouse_focus()
 
 	var right_focus := false
 	if spell_right_prev and spell_right_next:
 		get_viewport().set_input_as_handled()
 	elif spell_right_prev:
 		get_viewport().set_input_as_handled()
-		var r := right_cast.prev()
+		var r := _right_cast.prev()
 		right_focus = r[1]
 	elif spell_right_next:
 		get_viewport().set_input_as_handled()
-		var r := right_cast.next()
+		var r := _right_cast.next()
 		right_focus = r[1]
 	if right_focus:
-		left_cast.release_mouse_focus()
+		_left_cast.release_mouse_focus()
 
 # Handle a 'collider' colliding with this player.
 func handle_collision(collider : Node) -> void:

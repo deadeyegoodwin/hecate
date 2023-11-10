@@ -8,27 +8,27 @@ class_name HecateArena extends Node3D
 # size of the arena is determined by the size of the meshes that make up
 # the arena and so this value must be changed whenever the arena meshes are
 # changed.
-const arena_size := Vector3(5.0, 4.0, 10.0)
+const _arena_size := Vector3(5.0, 4.0, 10.0)
 
 # Player
-const player_scene = preload("res://player.tscn")
-var player : HecatePlayer = null
+const _player_scene = preload("res://player.tscn")
+var _player : HecatePlayer = null
 
 # Opponent
-const wizard_scene = preload("res://wizard.tscn")
-var opponent : HecateWizard = null
+const _wizard_scene = preload("res://wizard.tscn")
+var _opponent : HecateWizard = null
 
 # Get the bounding-box size of the arena.
 func size() -> Vector3:
-	return arena_size
+	return _arena_size
 
 func _ready() -> void:
-	player = player_scene.instantiate()
+	_player = _player_scene.instantiate()
 	var player_stats = { HecateStatistics.Kind.HEALTH : 100.0 }
-	player.initialize(self, player_stats, "player", Vector3(0, 0, arena_size.z / 2.0 - 0.5), Vector3(0, 180.0, 0))
-	call_deferred("add_child", player)
+	_player.initialize(self, player_stats, "player", Vector3(0, 0, _arena_size.z / 2.0 - 0.5), Vector3(0, 180.0, 0))
+	call_deferred("add_child", _player)
 
-	opponent = wizard_scene.instantiate()
+	_opponent = _wizard_scene.instantiate()
 	var opponent_stats = { HecateStatistics.Kind.HEALTH : 100.0 }
-	opponent.initialize(self, opponent_stats, "opponent", Vector3(0, 0, 0.5 - arena_size.z / 2))
-	call_deferred("add_child", opponent)
+	_opponent.initialize(self, opponent_stats, "opponent", Vector3(0, 0, 0.5 - _arena_size.z / 2))
+	call_deferred("add_child", _opponent)

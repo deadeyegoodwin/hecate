@@ -7,16 +7,16 @@ class_name HecateStatistics extends Object
 enum Kind { HEALTH }
 
 # Dictionary of statistics
-var stats := {}
+var _stats := {}
 
 # Create the statistics from a dictionary.
 func _init(d : Dictionary) -> void:
-	stats = d.duplicate()
+	_stats = d.duplicate()
 
 # Set statistic 'k' to value 'v'.
 func set_stat(k, v) -> void:
-	stats[k] = v
+	_stats[k] = v
 
 # Return the value for statistic 'k', or null if no such statistic.
 func get_stat(k):
-	return stats.get(k, null)
+	return _stats.get(k, null)
