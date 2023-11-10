@@ -41,6 +41,7 @@ var _mouse_focus : bool = false
 
 # When in SELECT state, the HecateGlyth used to select a spell.
 var _glyph : HecateGlyph = null
+var _glyph_start_mouse_position : Vector2 = Vector2.ZERO
 
 # When in TARGET state the following are used to record the target position
 # in viewport-space and model-space.
@@ -57,18 +58,44 @@ func initialize(a : HecateArena, c: Camera3D) -> void:
 	_camera = c
 	visible = false
 
+# Create and return the glyph associated with this cast.
+func _glyph_new() -> HecateGlyph:
+	assert(_glyph == null)
+	_glyph = _glyph_scene.instantiate()
+	_glyph.initialize(get_parent().glyph_transform(), get_parent().glyph_size())
+	return _glyph
+
+# Free the glyph associated with this cast, if any.
+func _glyph_free() -> void:
+	if _glyph != null:
+		_glyph.queue_free()
+		_glyph = null
+
+# Create and return the trajectory associated with this cast.
+func _trajectory_new(pos : Vector3) -> HecateTrajectory:
+	assert(_trajectory == null)
+	_trajectory = _trajectory_scene.instantiate()
+	_trajectory.initialize(pos)
+	return _trajectory
+
+# Free the trajectory associated with this cast, if any.
+func _trajectory_free() -> void:
+	if _trajectory != null:
+		_trajectory.queue_free()
+		_trajectory = null
+
 # Transition state from IDLE to SELECT.
 func _idle_to_select() -> void:
 	assert(not _mouse_focus)
 	assert(_target_mouse_position == Vector2.ZERO)
 	assert(_target_position == Vector3.ZERO)
+	assert(_glyph_start_mouse_position == Vector2.ZERO)
 	assert(_glyph == null)
 	assert(_trajectory == null)
 	assert(_projectile == null)
 	_mouse_focus = true
 	visible = true
-	_glyph = _glyph_scene.instantiate()
-	call_deferred("add_child", _glyph)
+	_arena.call_deferred("add_child", _glyph_new())
 	_state = State.SELECT
 
 # Transition state from SELECT to IDLE.
@@ -80,8 +107,8 @@ func _select_to_idle() -> void:
 	assert(_projectile == null)
 	_mouse_focus = false
 	visible = false
-	_glyph.queue_free()
-	_glyph = null
+	_glyph_start_mouse_position = Vector2.ZERO
+	_glyph_free()
 	_state = State.IDLE
 
 # Transition from SELECT to TARGET.
@@ -89,6 +116,7 @@ func _select_to_target() -> void:
 	assert(_mouse_focus)
 	assert(_target_mouse_position == Vector2.ZERO)
 	assert(_target_position == Vector3.ZERO)
+	assert(_glyph_start_mouse_position == Vector2.ZERO)
 	assert((_glyph != null) and _glyph.is_complete())
 	assert(_trajectory == null)
 	assert(_projectile == null)
@@ -96,49 +124,45 @@ func _select_to_target() -> void:
 
 # Transition state from TARGET to SELECT.
 func _target_to_select() -> void:
+	assert(_glyph_start_mouse_position == Vector2.ZERO)
 	assert((_glyph != null) and _glyph.is_complete())
 	assert(_projectile == null)
 	_target_mouse_position = Vector2.ZERO
 	_target_position = Vector3.ZERO
-	_glyph.queue_free()
-	_glyph = _glyph_scene.instantiate()
-	call_deferred("add_child", _glyph)
-	if _trajectory != null:
-		_trajectory.queue_free()
-		_trajectory = null
+	_trajectory_free()
+	_glyph_free()
+	_arena.call_deferred("add_child", _glyph_new())
 	_state = State.SELECT
 
 # Transition from TARGET to CAST.
 func _target_to_cast() -> void:
 	assert(_target_mouse_position == Vector2.ZERO)
 	assert(_target_position == Vector3.ZERO)
+	assert(_glyph_start_mouse_position == Vector2.ZERO)
 	assert((_glyph != null) and _glyph.is_complete())
 	assert(_trajectory != null)
 	assert(_projectile == null)
 	# Create a projectile, but do not launch it. The projectile follows the
-	# trajectory curve.
+	# trajectory curve in arena-space.
 	var curve_transform : Transform3D = get_parent().transform.inverse() * transform
 	_projectile = _projectile_scene.instantiate()
 	_projectile.initialize(HecateProjectile.Owner.PLAYER, _trajectory.curve(), curve_transform)
 	_arena.call_deferred("add_child", _projectile)
-	_glyph.queue_free()
-	_glyph = null
-	_trajectory.queue_free()
-	_trajectory = null
+	_glyph_free()
+	_trajectory_free()
 	_state = State.CAST
 
 # Cast spell and transition to SELECT
 func _cast_to_select() -> void:
 	assert(_target_mouse_position == Vector2.ZERO)
 	assert(_target_position == Vector3.ZERO)
+	assert(_glyph_start_mouse_position == Vector2.ZERO)
 	assert(_glyph == null)
 	assert(_trajectory == null)
 	assert(_projectile != null)
 	_projectile.launch(_projectile_velocity, _projectile_acceleration)
 	_projectile = null
-	_glyph = _glyph_scene.instantiate()
-	call_deferred("add_child", _glyph)
-	visible = false
+	_arena.call_deferred("add_child", _glyph_new())
 	_state = State.SELECT
 
 # Release the mouse focus from this cast. This cast can only regain mouse
@@ -214,17 +238,24 @@ func _unhandled_input(event : InputEvent) -> void:
 	if _state == State.SELECT:
 		if ((event is InputEventMouseButton) and
 			(event.button_index == MOUSE_BUTTON_LEFT)):
+			get_viewport().set_input_as_handled()
 			if event.is_pressed():
 				assert(Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE)
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-				_glyph.start_stroke()
+				# When left mouse button is pressed, grab the mouse position to
+				# use as the start of the glyph stroke.
+				_glyph_start_mouse_position = event.position
 			else:
+				# When left mouse button is released, end the glyph stroke (if
+				# it was started)...
 				assert(Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED)
 				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-				_glyph.end_stroke()
-			get_viewport().set_input_as_handled()
+				if _glyph_start_mouse_position == Vector2.ZERO:
+					_glyph.end_stroke()
+				else:
+					_glyph_start_mouse_position = Vector2.ZERO
 		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-			if event is InputEventMouseMotion:
+			if (event is InputEventMouseMotion) and _glyph.is_active_stroke():
 				_glyph.handle_mouse_motion(event)
 				get_viewport().set_input_as_handled()
 	# TARGET: Left mouse selects the target for the cast if none yet
@@ -243,6 +274,24 @@ func _unhandled_input(event : InputEvent) -> void:
 
 # Called at a fixed interval (default 60Hz)
 func _physics_process(_delta : float) -> void:
+	# If there is a 'glyph_start_mouse_position', then translate it into
+	# a glyph stroke start position.
+	if _glyph_start_mouse_position != Vector2.ZERO:
+		assert(_state == State.SELECT)
+		assert(_glyph != null)
+		var space_state = get_world_3d().direct_space_state
+		var origin = _camera.project_ray_origin(_glyph_start_mouse_position)
+		var end = origin + _camera.project_ray_normal(_glyph_start_mouse_position) * _arena.size().length()
+		var query = PhysicsRayQueryParameters3D.create(origin, end)
+		query.collide_with_areas = false
+		query.collision_mask = (1 << 10) # layer "player glyph"
+		var result := space_state.intersect_ray(query)
+		if result.size() > 0:
+			assert(result.has("position"))
+			if result.has("position"):
+				_glyph.start_stroke(result.position)
+		_glyph_start_mouse_position = Vector2.ZERO
+
 	# If there is a 'target_mouse_position', then translate it into
 	# 'target_position' in world space by casting a ray and determining where
 	# it hits in the arena.
@@ -270,14 +319,12 @@ func _process(_delta : float) -> void:
 		assert(_state == State.TARGET)
 		assert(_target_mouse_position == Vector2.ZERO)
 		assert(_trajectory == null)
-		_trajectory = _trajectory_scene.instantiate()
 
 		# The target position is in arena-space; translate that position
-		# so that is relative to 'self'.
+		# so that is relative to this cast.
 		var target_position_transform : Transform3D = Transform3D(Basis.IDENTITY, _target_position)
 		var target_transform : Transform3D = transform.inverse() * get_parent().transform * target_position_transform
-		_trajectory.initialize(target_transform.origin)
-		call_deferred("add_child", _trajectory)
+		call_deferred("add_child", _trajectory_new(target_transform.origin))
 		_target_position = Vector3.ZERO
 
 # Handle a 'collider' colliding with this player.

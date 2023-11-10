@@ -70,6 +70,14 @@ func _unhandled_input(_event : InputEvent) -> void:
 	if right_focus:
 		_left_cast.release_mouse_focus()
 
+# Return the transform and size to use for any glyph created by this player,
+# assuming the glyph will be added to arena-space. We want the glyph centered in the arena
+# at an appropriate distance from the first-person camera.
+func glyph_transform() -> Transform3D:
+	return transform.inverse() * Transform3D(Basis.IDENTITY, Vector3(0.0, _arena.size().y / 2.0, 1.0))
+func glyph_size() -> Vector3:
+	return Vector3(_arena.size().x, _arena.size().y, 0.01)
+
 # Handle a 'collider' colliding with this player.
 func handle_collision(collider : Node) -> void:
 	print(name, " handle_collision with ", collider.name)

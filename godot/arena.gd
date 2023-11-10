@@ -8,7 +8,7 @@ class_name HecateArena extends Node3D
 # size of the arena is determined by the size of the meshes that make up
 # the arena and so this value must be changed whenever the arena meshes are
 # changed.
-const _arena_size := Vector3(5.0, 4.0, 10.0)
+const _arena_size := Vector3(6.0, 6.0, 10.0)
 
 # Player
 const _player_scene = preload("res://player.tscn")

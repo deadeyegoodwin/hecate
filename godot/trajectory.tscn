@@ -17,7 +17,10 @@ noise = SubResource("FastNoiseLite_fkugc")
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3ut4h"]
 render_priority = 0
 shader = ExtResource("2_0vcfe")
-shader_parameter/speed = 20.0
+shader_parameter/drift_size = 0.0
+shader_parameter/noise_motion = 0.02
+shader_parameter/primary_alpha_rate = 0.03
+shader_parameter/secondary_alpha_rate = 0.08
 shader_parameter/primary_color = Color(0.192157, 0.498039, 0.929412, 0.670588)
 shader_parameter/secondary_color = Color(0.0705882, 0.298039, 0.952941, 0.721569)
 shader_parameter/noise = SubResource("NoiseTexture2D_841d3")

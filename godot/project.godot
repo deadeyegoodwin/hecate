@@ -68,6 +68,7 @@ player_spell_right_prev={
 3d_physics/layer_1="walls"
 3d_physics/layer_9="player"
 3d_physics/layer_10="player projectile"
+3d_physics/layer_11="player glyph"
 3d_physics/layer_17="opponent"
 3d_physics/layer_18="opponent projectile"
 
