@@ -11,10 +11,14 @@ ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
 sky_material = SubResource("ProceduralSkyMaterial_g83ns")
 
 [sub_resource type="Environment" id="Environment_4w1w2"]
-background_mode = 2
 sky = SubResource("Sky_1i0wx")
+ambient_light_source = 1
+reflected_light_source = 1
 tonemap_mode = 2
 glow_enabled = true
+fog_enabled = true
+fog_light_energy = 0.76
+volumetric_fog_enabled = true
 
 [node name="Main" type="Node"]
 script = ExtResource("1_omplj")
@@ -23,8 +27,9 @@ script = ExtResource("1_omplj")
 environment = SubResource("Environment_4w1w2")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.984808, -0.173648, -7.5904e-09, 0, -4.37114e-08, 1, -0.173648, -0.984808, -4.30473e-08, 0, 0, 0)
+transform = Transform3D(0.906308, 4.09542e-09, -0.422618, 0.422618, -1.84732e-08, 0.906308, -4.09542e-09, -1, -1.84732e-08, -2.686, 5.922, 0)
 shadow_enabled = true
+sky_mode = 1
 
 [node name="CameraPivot" type="Marker3D" parent="."]
 rotation_edit_mode = 2
