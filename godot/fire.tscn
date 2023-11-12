@@ -1,0 +1,57 @@
+[gd_scene load_steps=9 format=3 uid="uid://ci5brthr3wrk"]
+
+[ext_resource type="Gradient" path="res://third_party/fire_sprite_sheet/fire.tres" id="1_uacyu"]
+[ext_resource type="Texture2D" uid="uid://cdrbpwbv2uhd0" path="res://third_party/fire_sprite_sheet/fire1_64.png" id="2_igxvj"]
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_y8wwx"]
+gradient = ExtResource("1_uacyu")
+
+[sub_resource type="Curve" id="Curve_yct3t"]
+_data = [Vector2(0.0032949, 0.255249), 0.0, 0.0, 0, 0, Vector2(0.319605, 0.996101), 0.0, 0.0, 0, 0, Vector2(1, 0.0914817), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_a3r0u"]
+curve = SubResource("Curve_yct3t")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_aw0rp"]
+angle_min = -15.0
+angle_max = 15.0
+direction = Vector3(0, 1, 0)
+spread = 0.0
+initial_velocity_min = 0.5
+initial_velocity_max = 2.0
+gravity = Vector3(0, 0, 0)
+linear_accel_max = 2.0
+scale_min = 0.0
+scale_curve = SubResource("CurveTexture_a3r0u")
+color_ramp = SubResource("GradientTexture1D_y8wwx")
+hue_variation_min = -0.01
+hue_variation_max = 0.01
+anim_speed_min = 0.05
+anim_speed_max = 0.1
+anim_offset_max = 1.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m1jly"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("2_igxvj")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 10
+particles_anim_v_frames = 6
+particles_anim_loop = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_5us5b"]
+material = SubResource("StandardMaterial3D_m1jly")
+
+[node name="HecateFire" type="Node3D"]
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+amount = 64
+lifetime = 0.5
+randomness = 1.0
+draw_order = 3
+process_material = SubResource("ParticleProcessMaterial_aw0rp")
+draw_pass_1 = SubResource("QuadMesh_5us5b")
