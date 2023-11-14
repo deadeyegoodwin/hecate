@@ -9,12 +9,14 @@ height = 1.6
 radius = 0.2
 
 [node name="HecatePlayer" type="CharacterBody3D"]
+rotation_edit_mode = 2
 collision_layer = 256
 collision_mask = 196609
 script = ExtResource("1_pfm37")
 
 [node name="FirstPersonCamera" type="Camera3D" parent="."]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 1.46865, 0.215069)
+rotation_edit_mode = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)

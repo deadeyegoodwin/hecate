@@ -48,3 +48,4 @@ rotation_edit_mode = 2
 [node name="Camera" type="Camera3D" parent="CameraPivot"]
 
 [node name="Arena" parent="." instance=ExtResource("2_856yu")]
+rotation_edit_mode = 2

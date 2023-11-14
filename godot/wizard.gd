@@ -10,13 +10,12 @@ var _statistics : HecateStatistics = null
 # for other nodes created by the wizard.
 var _arena : HecateArena = null
 
-# Initialize the wizard at a starting position and rotation.
-func initialize(a : HecateArena, stats : Dictionary,
-				n : String, pos : Vector3, rot_degrees : Vector3 = Vector3.ZERO) -> void:
+# Initialize the wizard.
+func initialize(a : HecateArena, n : String, stats : Dictionary,
+				tform : Transform3D = Transform3D.IDENTITY) -> void:
 	_arena = a
 	name = n
-	position = pos
-	rotation_degrees = rot_degrees
+	transform = tform
 	_statistics = HecateStatistics.new(stats)
 
 # Handle a 'collider' colliding with this wizard.

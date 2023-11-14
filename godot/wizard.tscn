@@ -8,6 +8,7 @@ height = 1.6
 radius = 0.2
 
 [node name="HecateWizard" type="CharacterBody3D"]
+rotation_edit_mode = 2
 collision_layer = 65536
 collision_mask = 769
 script = ExtResource("1_rfqy8")

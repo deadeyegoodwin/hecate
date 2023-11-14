@@ -17,13 +17,12 @@ var _arena : HecateArena = null
 # Statistics for the player.
 var _statistics : HecateStatistics = null
 
-# Initialize the player at a starting position and rotation.
-func initialize(a : HecateArena, stats : Dictionary,
-				n : String, pos : Vector3, rot_degrees : Vector3 = Vector3.ZERO) -> void:
+# Initialize the player.
+func initialize(a : HecateArena, n : String, stats : Dictionary,
+				tform : Transform3D = Transform3D.IDENTITY) -> void:
 	_arena = a
 	name = n
-	position = pos
-	rotation_degrees = rot_degrees
+	transform = tform
 	_statistics = HecateStatistics.new(stats)
 
 func _ready() -> void:
