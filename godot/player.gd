@@ -53,7 +53,7 @@ func _unhandled_input(_event : InputEvent) -> void:
 		var r := _left_cast.next()
 		left_focus = r[1]
 	if left_focus:
-		_right_cast.release_mouse_focus()
+		_right_cast.release_glyph_focus()
 
 	var right_focus := false
 	if spell_right_prev and spell_right_next:
@@ -67,7 +67,7 @@ func _unhandled_input(_event : InputEvent) -> void:
 		var r := _right_cast.next()
 		right_focus = r[1]
 	if right_focus:
-		_left_cast.release_mouse_focus()
+		_left_cast.release_glyph_focus()
 
 # Return the transform and size to use for any glyph created by this player,
 # assuming the glyph will be added to arena-space. We want the glyph centered in the arena

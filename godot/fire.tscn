@@ -48,6 +48,7 @@ anim_offset_max = 1.0
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m1jly"]
 transparency = 1
 blend_mode = 1
+cull_mode = 2
 shading_mode = 0
 vertex_color_use_as_albedo = true
 albedo_texture = ExtResource("2_igxvj")
@@ -71,7 +72,7 @@ light_indirect_energy = 3.0
 light_volumetric_fog_energy = 0.0
 shadow_enabled = true
 
-[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+[node name="Flames" type="GPUParticles3D" parent="."]
 amount = 16
 lifetime = 0.5
 randomness = 1.0
