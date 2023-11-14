@@ -20,7 +20,6 @@ class_name HecateCast extends Node3D
 
 const _glyph_scene = preload("res://glyph.tscn")
 const _projectile_scene = preload("res://projectile.tscn")
-const _trajectory_scene = preload("res://trajectory.tscn")
 
 # Projectile properties
 const _projectile_velocity : float = 5.0
@@ -72,17 +71,14 @@ func _glyph_free() -> void:
 		_glyph = null
 
 # Create and return the trajectory associated with this cast.
-func _trajectory_new(pos : Vector3) -> HecateTrajectory:
+func _trajectory_new(start : Vector3, end : Vector3, curve : Curve3D) -> HecateTrajectory:
 	assert(_trajectory == null)
-	_trajectory = _trajectory_scene.instantiate()
-	_trajectory.initialize(pos)
+	_trajectory = HecateTrajectory.new(start, end, curve)
 	return _trajectory
 
 # Free the trajectory associated with this cast, if any.
 func _trajectory_free() -> void:
-	if _trajectory != null:
-		_trajectory.queue_free()
-		_trajectory = null
+	_trajectory = null  # RefCounted
 
 # Transition state from IDLE to SELECT.
 func _idle_to_select() -> void:
@@ -144,9 +140,8 @@ func _target_to_cast() -> void:
 	assert(_projectile == null)
 	# Create a projectile, but do not launch it. The projectile follows the
 	# trajectory curve in arena-space.
-	var curve_transform : Transform3D = get_parent().transform.inverse() * transform
 	_projectile = _projectile_scene.instantiate()
-	_projectile.initialize(HecateProjectile.Owner.PLAYER, _trajectory.curve(), curve_transform)
+	_projectile.initialize(HecateProjectile.Owner.PLAYER, _trajectory.curve())
 	_arena.call_deferred("add_child", _projectile)
 	_glyph_free()
 	_trajectory_free()
@@ -318,13 +313,13 @@ func _process(_delta : float) -> void:
 	if _target_position != Vector3.ZERO:
 		assert(_state == State.TARGET)
 		assert(_target_mouse_position == Vector2.ZERO)
+		assert((_glyph != null) and _glyph.is_complete() and
+				(_glyph.trajectory_curve() != null))
 		assert(_trajectory == null)
 
-		# The target position is in arena-space; translate that position
-		# so that is relative to this cast.
-		var target_position_transform : Transform3D = Transform3D(Basis.IDENTITY, _target_position)
-		var target_transform : Transform3D = transform.inverse() * get_parent().transform * target_position_transform
-		call_deferred("add_child", _trajectory_new(target_transform.origin))
+		# Create trajectory, start position needs to be converted to arena-space.
+		var position_transform : Transform3D = get_parent().transform * transform
+		_trajectory_new(position_transform.origin, _target_position, _glyph.trajectory_curve())
 		_target_position = Vector3.ZERO
 
 # Handle a 'collider' colliding with this player.

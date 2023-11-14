@@ -30,6 +30,17 @@ func _ready() -> void:
 func is_complete() -> bool:
 	return _complete
 
+# Return the Curve3D that represents the trajectory described by
+# this glyph. Return null if glyph is not complete or if it does not
+# describe a trajectory.
+func trajectory_curve() -> Curve3D:
+	if not _complete:
+		return null
+
+	# FIXME, for now there is just 1 curve and we assume it is always a
+	# trajectory.
+	return _curve
+
 # Return true if there is a glyph stroke that has been started and not ended.
 func is_active_stroke() -> bool:
 	return _curve.point_count > 0

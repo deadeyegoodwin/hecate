@@ -1,7 +1,7 @@
 # Copyright (c) 2023, David Goodwin. All rights reserved.
 
 # Manage a general set of statistics.
-class_name HecateStatistics extends Object
+class_name HecateStatistics extends RefCounted
 
 # Enumeration for common statistics.
 enum Kind { HEALTH }

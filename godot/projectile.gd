@@ -27,7 +27,8 @@ var _curve_transform : Transform3D
 var _curve_delta : float = 0.0
 
 # Initialize the projectile that will follow a curve.
-func initialize(powner : Owner, curve : Curve3D, curve_transform : Transform3D) -> void:
+func initialize(powner : Owner, curve : Curve3D,
+				 curve_transform : Transform3D = Transform3D.IDENTITY) -> void:
 	_owner = powner
 	_curve = curve
 	_curve_transform = curve_transform
