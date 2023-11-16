@@ -1,0 +1,33 @@
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build_hecate:
+    runs-on: ubuntu-latest
+    name: Build Hecate
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3.3.0
+      - name: install wine
+        id: wine_install
+        run: |
+          sudo apt install wine64
+          echo "WINE_PATH=$(which wine64)" >> $GITHUB_OUTPUT
+      - name: build
+        id: build
+        uses: firebelley/godot-export@v5.2.0
+        with:
+          godot_executable_download_url: https://github.com/godotengine/godot-builds/releases/download/4.2-beta5/Godot_v4.2-beta5_linux.x86_64.zip
+          godot_export_templates_download_url: https://github.com/godotengine/godot-builds/releases/download/4.2-beta5/Godot_v4.2-beta5_export_templates.tpz
+          relative_project_path: ./godot
+          relative_export_path: ./builds
+          archive_output: true
+          wine_path: ${{ steps.wine_install.outputs.WINE_PATH }}
+      - name: upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: executables
+          path: ${{ steps.build.outputs.archive_directory }}/*
+          retention-days: 30
