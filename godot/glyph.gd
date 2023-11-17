@@ -66,6 +66,7 @@ func start_stroke(global_pos : Vector3) -> void:
 	assert(not _is_active_stroke)
 	if not _is_active_stroke:
 		_is_active_stroke = true
+		_complete = false
 		var stroke := _glyph_stroke_scene.instantiate()
 		call_deferred("add_child", stroke)
 		_strokes.append(stroke)

@@ -32,6 +32,7 @@ point_count = 2
 curve = SubResource("Curve_bnv61")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_whdn1"]
+resource_local_to_scene = true
 emission_shape = 4
 emission_point_count = 4
 direction = Vector3(0, 0, 0)

@@ -307,10 +307,9 @@ func _process(_delta : float) -> void:
 			Input.is_action_just_pressed("glyph_stroke_update")):
 			_glyph_mouse_position = get_viewport().get_mouse_position()
 		elif Input.is_action_just_pressed("glyph_stroke_end"):
-			if (_glyph_mouse_position == Vector2.ZERO) and _glyph.is_active_stroke():
-				_glyph.end_stroke()
-			else:
+			if _glyph.is_active_stroke():
 				_glyph_mouse_position = Vector2.ZERO
+				_glyph.end_stroke()
 
 	# If there is a target position, then create a trajectory node for it and add
 	# it to the arena so that the trajectory is shown.
@@ -320,7 +319,6 @@ func _process(_delta : float) -> void:
 		assert((_glyph != null) and _glyph.is_complete() and
 				(_glyph.trajectory_curve() != null))
 		assert(_trajectory == null)
-
 		# Create trajectory, start position needs to be converted to arena-space.
 		var position_transform : Transform3D = get_parent().transform * transform
 		_trajectory_new(position_transform.origin, _target_position, _glyph.trajectory_curve())
