@@ -55,4 +55,8 @@ func _init(start : Vector3, end : Vector3, curve_template : Curve3D) -> void:
 				trajectory_dir.length() / curve_dir.length()))
 	var tform := start_end_transform * tscale * curve_transform.inverse()
 	for idx in range(curve_template.point_count):
-		_curve.add_point((tform * curve_template.get_point_position(idx)))
+		var pt : Vector3 = curve_template.get_point_position(idx)
+		var tform_pt_in : Vector3 = tform * (pt + curve_template.get_point_in(idx))
+		var tform_pt_out : Vector3 = tform * (pt + curve_template.get_point_out(idx))
+		var tform_pt : Vector3 = tform * pt
+		_curve.add_point(tform_pt, tform_pt_in - tform_pt, tform_pt_out - tform_pt)
