@@ -43,6 +43,9 @@ var _arena : HecateArena = null
 # The camera used to translate mouse position to model position
 var _camera : Camera3D = null
 
+# The animation manager that is used by this cast to control the player.
+var _animation : HecateWizardAnimation = null
+
 # The current state.
 enum State { IDLE, SELECT, TARGET, CAST }
 var _state : State = State.IDLE
@@ -65,11 +68,12 @@ var _trajectory : HecateTrajectory = null
 var _projectile : HecateProjectile = null
 
 # Initialize the cast.
-func initialize(a : HecateArena, c: Camera3D, g : HecateGlyph) -> void:
-	_arena = a
-	_camera = c
-	_glyph = g
-	visible = false
+func initialize(arena : HecateArena, camera: Camera3D,
+				animation : HecateWizardAnimation, glyph : HecateGlyph) -> void:
+	_arena = arena
+	_camera = camera
+	_animation = animation
+	_glyph = glyph
 
 # Create and return the trajectory associated with this cast.
 func _trajectory_new(start : Vector3, end : Vector3, curve : Curve3D) -> HecateTrajectory:
@@ -92,7 +96,6 @@ func _idle_to_select() -> void:
 	assert(_projectile == null)
 	_glyph.reset()
 	_glyph_focus = true
-	visible = true
 	_state = State.SELECT
 
 # Transition state from SELECT to IDLE.
@@ -103,7 +106,6 @@ func _select_to_idle() -> void:
 	assert(_projectile == null)
 	_glyph.reset()
 	_glyph_focus = false
-	visible = false
 	_glyph_mouse_position = Vector2.ZERO
 	_state = State.IDLE
 
@@ -192,6 +194,7 @@ func next() -> Array[bool]:
 	var r := true
 	match _state:
 		State.IDLE:
+			_animation.enqueue(HecateWizardAnimation.State.GLYPH)
 			_idle_to_select()
 		State.SELECT:
 			if not _glyph_focus:
@@ -214,6 +217,7 @@ func next() -> Array[bool]:
 				else:
 					r = false
 		State.CAST:
+			_animation.enqueue(HecateWizardAnimation.State.CAST)
 			# FIXME stop power increase
 			_cast_to_select()
 		_:

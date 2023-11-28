@@ -22,12 +22,16 @@ const _glyph_scene = preload("res://glyph.tscn")
 # First person camera and where it attaches to the skeleton.
 @onready var _camera_attachment := $Character/Armature/GeneralSkeleton/HeadBone
 @onready var _camera : Camera3D = null
+var _camera_steady_transform : Transform3D
 
 # The left and right hand of the player and the associated HecateCast
 @onready var _left_hand_attachment := $Character/Armature/GeneralSkeleton/LeftHandBone
 @onready var _right_hand_attachment := $Character/Armature/GeneralSkeleton/RightHandBone
 @onready var _left_cast : HecateCast
 @onready var _right_cast : HecateCast
+
+# Animation control.
+@onready var _animation := $Animation
 
 # The arena that contains this player, will also act as the container
 # for other nodes created by the parent.
@@ -46,20 +50,27 @@ func initialize(a : HecateArena, n : String, stats : Dictionary,
 
 func _ready() -> void:
 	# The camera attaches to the head bone of the character to provide a
-	# first-person viewpoint.
+	# first-person viewpoint. We rely on the initial animation being the
+	# "start" animation (tpose) so that we can capture the "steady"
+	# camera location and orientation.
 	_camera = Camera3D.new()
 	_camera.rotate_object_local(Vector3.UP, deg_to_rad(180.0))
 	_camera.translate_object_local(Vector3(0.0, 0.0, -0.2))
+	_camera_steady_transform = _camera.transform
 	_camera.make_current()
 	_camera_attachment.call_deferred("add_child", _camera)
+
+	# Starting animation...
+	_animation.initialize($Character/AnimationTree)
+	_animation.start()
 
 	# The left hand and right hand can each perform a cast. Each cast requires
 	# a glyph which is initialized relative to the player.
 	_left_cast = _cast_scene.instantiate()
-	_left_cast.initialize(_arena, _camera, _glyph_new())
+	_left_cast.initialize(_arena, _camera, _animation, _glyph_new())
 	_left_hand_attachment.call_deferred("add_child", _left_cast)
 	_right_cast = _cast_scene.instantiate()
-	_right_cast.initialize(_arena, _camera, _glyph_new())
+	_right_cast.initialize(_arena, _camera, _animation, _glyph_new())
 	_right_hand_attachment.call_deferred("add_child", _right_cast)
 
 # Return a new glyph appropriate for this player and add the glyph to arena-space.

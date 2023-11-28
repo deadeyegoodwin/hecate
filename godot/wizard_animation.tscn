@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cpkwj3mm1doln"]
+
+[ext_resource type="Script" path="res://wizard_animation.gd" id="1_ium64"]
+
+[node name="HecateWizardAnimation" type="Node"]
+script = ExtResource("1_ium64")

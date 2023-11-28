@@ -1,33 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://b2u6t7e8q1h7a"]
+[gd_scene load_steps=2 format=3 uid="uid://b2u6t7e8q1h7a"]
 
 [ext_resource type="Script" path="res://cast.gd" id="1_8b8mg"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_rirek"]
-size = Vector3(0.07, 0.08, 0.02)
-
-[sub_resource type="BoxMesh" id="BoxMesh_3652d"]
-size = Vector3(0.013, 0.07, 0.02)
-
-[sub_resource type="BoxMesh" id="BoxMesh_xu10q"]
-size = Vector3(0.017, 0.06, 0.025)
 
 [node name="HecateCast" type="Node3D"]
 rotation_edit_mode = 2
 script = ExtResource("1_8b8mg")
-
-[node name="HandMesh" type="Node3D" parent="."]
-rotation_edit_mode = 2
-
-[node name="Palm" type="MeshInstance3D" parent="HandMesh"]
-rotation_edit_mode = 2
-mesh = SubResource("BoxMesh_rirek")
-
-[node name="Pointer" type="MeshInstance3D" parent="HandMesh"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.028, 0.075, 0)
-rotation_edit_mode = 2
-mesh = SubResource("BoxMesh_3652d")
-
-[node name="Thumb" type="MeshInstance3D" parent="HandMesh"]
-transform = Transform3D(0.828227, 0.560393, 0, -0.560393, 0.828227, 0, 0, 0, 1, 0.0452716, -0.00305964, 0)
-rotation_edit_mode = 2
-mesh = SubResource("BoxMesh_xu10q")
