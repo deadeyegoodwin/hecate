@@ -38,13 +38,13 @@ func size() -> Vector3:
 func _ready() -> void:
 	_player = _player_scene.instantiate()
 	var player_stats = { HecateStatistics.Kind.HEALTH : 100.0 }
-	var player_transform := Transform3D.IDENTITY.translated_local(Vector3(0, 0, _arena_size.z / 2.0 - 0.5))
+	var player_transform := Transform3D.IDENTITY.translated_local(Vector3(0, 0, _arena_size.z / 2.0 - 1.0))
 	player_transform = player_transform.rotated_local(Vector3.UP, deg_to_rad(180.0))
 	_player.initialize(self, "player", player_stats, player_transform)
 	call_deferred("add_child", _player)
 
 	_opponent = _wizard_scene.instantiate()
 	var opponent_stats = { HecateStatistics.Kind.HEALTH : 100.0 }
-	var opponent_transform := Transform3D.IDENTITY.translated_local(Vector3(0, 0, 0.5 - _arena_size.z / 2.0))
+	var opponent_transform := Transform3D.IDENTITY.translated_local(Vector3(0, 0, 1.0 - _arena_size.z / 2.0))
 	_opponent.initialize(self, "opponent", opponent_stats, opponent_transform)
 	call_deferred("add_child", _opponent)

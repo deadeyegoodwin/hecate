@@ -31,7 +31,6 @@
 #
 class_name HecateCast extends Node3D
 
-const _glyph_scene = preload("res://glyph.tscn")
 const _projectile_scene = preload("res://projectile.tscn")
 
 # Projectile properties
@@ -66,23 +65,11 @@ var _trajectory : HecateTrajectory = null
 var _projectile : HecateProjectile = null
 
 # Initialize the cast.
-func initialize(a : HecateArena, c: Camera3D) -> void:
+func initialize(a : HecateArena, c: Camera3D, g : HecateGlyph) -> void:
 	_arena = a
 	_camera = c
+	_glyph = g
 	visible = false
-
-# Create and return the glyph associated with this cast.
-func _glyph_new() -> HecateGlyph:
-	assert(_glyph == null)
-	_glyph = _glyph_scene.instantiate()
-	_glyph.initialize(get_parent().glyph_transform(), get_parent().glyph_size())
-	return _glyph
-
-# Free the glyph associated with this cast, if any.
-func _glyph_free() -> void:
-	if _glyph != null:
-		_glyph.queue_free()
-		_glyph = null
 
 # Create and return the trajectory associated with this cast.
 func _trajectory_new(start : Vector3, end : Vector3, curve : Curve3D) -> HecateTrajectory:
@@ -97,28 +84,27 @@ func _trajectory_free() -> void:
 # Transition state from IDLE to SELECT.
 func _idle_to_select() -> void:
 	assert(not _glyph_focus)
+	assert(not _glyph.is_complete())
 	assert(_target_mouse_position == Vector2.ZERO)
 	assert(_target_position == Vector3.ZERO)
 	assert(_glyph_mouse_position == Vector2.ZERO)
-	assert(_glyph == null)
 	assert(_trajectory == null)
 	assert(_projectile == null)
+	_glyph.reset()
 	_glyph_focus = true
 	visible = true
-	_arena.call_deferred("add_child", _glyph_new())
 	_state = State.SELECT
 
 # Transition state from SELECT to IDLE.
 func _select_to_idle() -> void:
 	assert(_target_mouse_position == Vector2.ZERO)
 	assert(_target_position == Vector3.ZERO)
-	assert(_glyph != null)
 	assert(_trajectory == null)
 	assert(_projectile == null)
+	_glyph.reset()
 	_glyph_focus = false
 	visible = false
 	_glyph_mouse_position = Vector2.ZERO
-	_glyph_free()
 	_state = State.IDLE
 
 # Transition from SELECT to TARGET.
@@ -127,7 +113,7 @@ func _select_to_target() -> void:
 	assert(_target_mouse_position == Vector2.ZERO)
 	assert(_target_position == Vector3.ZERO)
 	assert(_glyph_mouse_position == Vector2.ZERO)
-	assert((_glyph != null) and _glyph.is_complete())
+	assert(_glyph.is_complete())
 	assert(_trajectory == null)
 	assert(_projectile == null)
 	_state = State.TARGET
@@ -135,13 +121,12 @@ func _select_to_target() -> void:
 # Transition state from TARGET to SELECT.
 func _target_to_select() -> void:
 	assert(_glyph_mouse_position == Vector2.ZERO)
-	assert((_glyph != null) and _glyph.is_complete())
+	assert(_glyph.is_complete())
 	assert(_projectile == null)
 	_target_mouse_position = Vector2.ZERO
 	_target_position = Vector3.ZERO
 	_trajectory_free()
-	_glyph_free()
-	_arena.call_deferred("add_child", _glyph_new())
+	_glyph.reset()
 	_state = State.SELECT
 
 # Transition from TARGET to CAST.
@@ -149,7 +134,7 @@ func _target_to_cast() -> void:
 	assert(_target_mouse_position == Vector2.ZERO)
 	assert(_target_position == Vector3.ZERO)
 	assert(_glyph_mouse_position == Vector2.ZERO)
-	assert((_glyph != null) and _glyph.is_complete())
+	assert(_glyph.is_complete())
 	assert(_trajectory != null)
 	assert(_projectile == null)
 	# Create a projectile, but do not launch it. The projectile follows the
@@ -157,7 +142,7 @@ func _target_to_cast() -> void:
 	_projectile = _projectile_scene.instantiate()
 	_projectile.initialize(HecateProjectile.Owner.PLAYER, _trajectory.curve())
 	_arena.call_deferred("add_child", _projectile)
-	_glyph_free()
+	_glyph.reset()
 	_trajectory_free()
 	_state = State.CAST
 
@@ -166,12 +151,11 @@ func _cast_to_select() -> void:
 	assert(_target_mouse_position == Vector2.ZERO)
 	assert(_target_position == Vector3.ZERO)
 	assert(_glyph_mouse_position == Vector2.ZERO)
-	assert(_glyph == null)
+	assert(not _glyph.is_complete())
 	assert(_trajectory == null)
 	assert(_projectile != null)
 	_projectile.launch(_projectile_velocity, _projectile_acceleration)
 	_projectile = null
-	_arena.call_deferred("add_child", _glyph_new())
 	_state = State.SELECT
 
 # Release the mouse focus from this cast. This cast can only regain mouse
@@ -215,7 +199,6 @@ func next() -> Array[bool]:
 				r = false
 			else:
 				# Can only transition if 'glyph' is complete.
-				assert(_glyph != null)
 				if _glyph.is_complete():
 					_select_to_target()
 				else:
@@ -263,7 +246,6 @@ func _physics_process(_delta : float) -> void:
 	# the glyph stroke.
 	if _glyph_mouse_position != Vector2.ZERO:
 		assert(_state == State.SELECT)
-		assert(_glyph != null)
 		var space_state = get_world_3d().direct_space_state
 		var origin = _camera.project_ray_origin(_glyph_mouse_position)
 		var end = origin + _camera.project_ray_normal(_glyph_mouse_position) * _arena.size().length()
@@ -316,12 +298,9 @@ func _process(_delta : float) -> void:
 	if _target_position != Vector3.ZERO:
 		assert(_state == State.TARGET)
 		assert(_target_mouse_position == Vector2.ZERO)
-		assert((_glyph != null) and _glyph.is_complete() and
-				(_glyph.trajectory_curve() != null))
+		assert(_glyph.is_complete() and (_glyph.trajectory_curve() != null))
 		assert(_trajectory == null)
-		# Create trajectory, start position needs to be converted to arena-space.
-		var position_transform : Transform3D = get_parent().transform * transform
-		_trajectory_new(position_transform.origin, _target_position, _glyph.trajectory_curve())
+		_trajectory_new(global_position, _target_position, _glyph.trajectory_curve())
 		_target_position = Vector3.ZERO
 
 # Handle a 'collider' colliding with this player.

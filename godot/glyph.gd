@@ -32,7 +32,7 @@ var _strokes : Array[HecateGlyphStroke]
 var _is_active_stroke : bool = false
 
 # Has a complete glyph been described?
-var _complete : bool = false
+var _is_complete : bool = false
 
 # Initialize the glyph.
 func initialize(tform : Transform3D, size : Vector3) -> void:
@@ -42,9 +42,17 @@ func initialize(tform : Transform3D, size : Vector3) -> void:
 func _ready() -> void:
 	_collision_shape.shape.size = _collision_shape_size
 
+# Remove all strokes from the glyph and reset to initial state.
+func reset() -> void:
+	for s : HecateGlyphStroke in _strokes:
+		s.queue_free()
+	_strokes.clear()
+	_is_active_stroke = false
+	_is_complete = false
+
 # Return true if a complete glyph has been described.
 func is_complete() -> bool:
-	return _complete
+	return _is_complete
 
 # Return true if there is a glyph stroke that has been started and not ended.
 func is_active_stroke() -> bool:
@@ -54,7 +62,7 @@ func is_active_stroke() -> bool:
 # this glyph. Return null if glyph is not complete or if it does not
 # describe a trajectory.
 func trajectory_curve() -> Curve3D:
-	if not _complete:
+	if not _is_complete:
 		return null
 
 	# FIXME, for now there is just 1 curve and we assume it is always a
@@ -66,7 +74,7 @@ func start_stroke(global_pos : Vector3) -> void:
 	assert(not _is_active_stroke)
 	if not _is_active_stroke:
 		_is_active_stroke = true
-		_complete = false
+		_is_complete = false
 		var stroke := _glyph_stroke_scene.instantiate()
 		call_deferred("add_child", stroke)
 		_strokes.append(stroke)
@@ -81,7 +89,7 @@ func end_stroke() -> void:
 		_strokes.pop_back()
 	else:
 		# FIXME For now just show glyph complete.
-		_complete = true
+		_is_complete = true
 	_is_active_stroke = false
 
 # Add a point to the currently active stroke.

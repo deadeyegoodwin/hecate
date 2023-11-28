@@ -16,12 +16,18 @@
 # The player controlled character within an arena.
 class_name HecatePlayer extends CharacterBody3D
 
-# First person camera.
-@onready var _camera := $FirstPersonCamera
+const _cast_scene = preload("res://cast.tscn")
+const _glyph_scene = preload("res://glyph.tscn")
 
-# Things that the player can use to cast.
-@onready var _left_cast : HecateCast = $LeftCast
-@onready var _right_cast : HecateCast = $RightCast
+# First person camera and where it attaches to the skeleton.
+@onready var _camera_attachment := $Character/Armature/GeneralSkeleton/HeadBone
+@onready var _camera : Camera3D = null
+
+# The left and right hand of the player and the associated HecateCast
+@onready var _left_hand_attachment := $Character/Armature/GeneralSkeleton/LeftHandBone
+@onready var _right_hand_attachment := $Character/Armature/GeneralSkeleton/RightHandBone
+@onready var _left_cast : HecateCast
+@onready var _right_cast : HecateCast
 
 # The arena that contains this player, will also act as the container
 # for other nodes created by the parent.
@@ -39,9 +45,33 @@ func initialize(a : HecateArena, n : String, stats : Dictionary,
 	_statistics = HecateStatistics.new(stats)
 
 func _ready() -> void:
+	# The camera attaches to the head bone of the character to provide a
+	# first-person viewpoint.
+	_camera = Camera3D.new()
+	_camera.rotate_object_local(Vector3.UP, deg_to_rad(180.0))
+	_camera.translate_object_local(Vector3(0.0, 0.0, -0.2))
 	_camera.make_current()
-	_left_cast.initialize(_arena, _camera)
-	_right_cast.initialize(_arena, _camera)
+	_camera_attachment.call_deferred("add_child", _camera)
+
+	# The left hand and right hand can each perform a cast. Each cast requires
+	# a glyph which is initialized relative to the player.
+	_left_cast = _cast_scene.instantiate()
+	_left_cast.initialize(_arena, _camera, _glyph_new())
+	_left_hand_attachment.call_deferred("add_child", _left_cast)
+	_right_cast = _cast_scene.instantiate()
+	_right_cast.initialize(_arena, _camera, _glyph_new())
+	_right_hand_attachment.call_deferred("add_child", _right_cast)
+
+# Return a new glyph appropriate for this player and add the glyph to arena-space.
+# We want the glyph centered in the arena at an appropriate distance from the
+# first-person camera.
+func _glyph_new() -> HecateGlyph:
+	var tform : Transform3D = transform.inverse() * Transform3D(Basis.IDENTITY, Vector3(0.0, _arena.size().y / 2.0, 1.0))
+	var size := Vector3(_arena.size().x, _arena.size().y, 0.01)
+	var glyph := _glyph_scene.instantiate()
+	glyph.initialize(tform, size)
+	_arena.call_deferred("add_child", glyph)
+	return glyph
 
 # Handle inputs...
 func _unhandled_input(_event : InputEvent) -> void:
@@ -81,14 +111,6 @@ func _unhandled_input(_event : InputEvent) -> void:
 		right_focus = r[1]
 	if right_focus:
 		_left_cast.release_glyph_focus()
-
-# Return the transform and size to use for any glyph created by this player,
-# assuming the glyph will be added to arena-space. We want the glyph centered in the arena
-# at an appropriate distance from the first-person camera.
-func glyph_transform() -> Transform3D:
-	return transform.inverse() * Transform3D(Basis.IDENTITY, Vector3(0.0, _arena.size().y / 2.0, 1.0))
-func glyph_size() -> Vector3:
-	return Vector3(_arena.size().x, _arena.size().y, 0.01)
 
 # Handle a 'collider' colliding with this player.
 func handle_collision(collider : Node) -> void:

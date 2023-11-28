@@ -1,20 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://b68tvdtx85lp5"]
+[gd_scene load_steps=3 format=3 uid="uid://dly6bf4unxe4h"]
 
-[ext_resource type="Script" path="res://wizard.gd" id="1_rfqy8"]
-[ext_resource type="PackedScene" uid="uid://bxswudl1alp7l" path="res://wizard0.tscn" id="2_lkpy3"]
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_rc5am"]
-height = 1.6
-radius = 0.2
+[ext_resource type="Script" path="res://wizard.gd" id="1_kyktx"]
+[ext_resource type="PackedScene" uid="uid://c568x5j8b723u" path="res://characters/nightshade.tscn" id="2_kkdld"]
 
 [node name="HecateWizard" type="CharacterBody3D"]
-rotation_edit_mode = 2
-collision_layer = 65536
-collision_mask = 769
-script = ExtResource("1_rfqy8")
+script = ExtResource("1_kyktx")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
-shape = SubResource("CylinderShape3D_rc5am")
-
-[node name="Mesh" parent="." instance=ExtResource("2_lkpy3")]
+[node name="Character" parent="." instance=ExtResource("2_kkdld")]
