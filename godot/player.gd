@@ -16,13 +16,13 @@
 # The player controlled character within an arena.
 class_name HecatePlayer extends CharacterBody3D
 
+const _steady_camera_scene = preload("res://steady_camera.tscn")
 const _cast_scene = preload("res://cast.tscn")
 const _glyph_scene = preload("res://glyph.tscn")
 
 # First person camera and where it attaches to the skeleton.
-@onready var _camera_attachment := $Character/Armature/GeneralSkeleton/HeadBone
-@onready var _camera : Camera3D = null
-var _camera_steady_transform : Transform3D
+@onready var _camera_attachment = $Character.eye_marker
+@onready var _camera : HecateSteadyCamera = null
 
 # The left and right hand of the player and the associated HecateCast
 @onready var _left_hand_attachment := $Character/Armature/GeneralSkeleton/LeftHandBone
@@ -53,10 +53,9 @@ func _ready() -> void:
 	# first-person viewpoint. We rely on the initial animation being the
 	# "start" animation (tpose) so that we can capture the "steady"
 	# camera location and orientation.
-	_camera = Camera3D.new()
+	_camera = _steady_camera_scene.instantiate()
 	_camera.rotate_object_local(Vector3.UP, deg_to_rad(180.0))
-	_camera.translate_object_local(Vector3(0.0, 0.0, -0.2))
-	_camera_steady_transform = _camera.transform
+	_camera.initialize()
 	_camera.make_current()
 	_camera_attachment.call_deferred("add_child", _camera)
 
@@ -90,6 +89,10 @@ func _unhandled_input(_event : InputEvent) -> void:
 	var spell_left_next : bool = Input.is_action_just_pressed("player_spell_left_next")
 	var spell_right_prev : bool = Input.is_action_just_pressed("player_spell_right_prev")
 	var spell_right_next : bool = Input.is_action_just_pressed("player_spell_right_next")
+
+	# FIXME adjust with state changes...
+	_camera.follow(Vector3(_camera_attachment.position.x, _camera_attachment.position.y,
+							_camera_attachment.position.z - 10.0))
 
 	# If a hand takes mouse focus then remove that focus from the other.
 	# We arbitrarily process left then right...
