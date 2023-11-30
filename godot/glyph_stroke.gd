@@ -13,7 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Hecate. If not, see <https://www.gnu.org/licenses/>.
 
-# A stroke in a HecateGlyph.
+# A stroke in a HecateGlyph. A stroke can be a single point, or a curve formed
+# by two or more points.
 class_name HecateGlyphStroke extends Node3D
 
 @onready var _particles := $GPUParticles3D
@@ -25,7 +26,7 @@ var _curve := HecateBezierCurve.new()
 # Pending new points to the stroke.
 var _pending_adds : Array[Vector3]
 
-# The points that compose the stroke must be represented in an Image
+# The points that compose a stroke curve must be represented in an Image
 # that is then used as the "emission points" for the particles composing
 # the visual representation of the stroke. Create the underlying image
 # once and update it as necessary as the stoke changes.
@@ -57,8 +58,26 @@ func _refresh_emission_points() -> void:
 		_particles.process_material.emission_point_texture = image_texture
 	_particles.process_material.emission_point_count = cnt
 
-# Return the Curve3D representation of this stroke.
+# Return true if stroke is a single point.
+func is_point() -> bool:
+	return _curve.curve().point_count == 1
+
+# Return true if stroke is a curve composed of 2 or more points.
+func is_curve() -> bool:
+	return _curve.curve().point_count >= 1
+
+# Return the first point of this stroke. Return Vector3.ZERO if stroke
+# has no points.
+func first_point() -> Vector3:
+	if _curve.curve().point_count == 0:
+		return Vector3.ZERO
+	return _curve.curve().get_point_position(0)
+
+# Return the Curve3D representation of this stroke. Return null if stroke
+# does not represent a curve (i.e. it represents a point).
 func curve() -> Curve3D:
+	if not is_curve():
+		return null
 	return _curve.curve()
 
 # Add a new point to the end of the stroke.
@@ -66,3 +85,10 @@ func add_point(pt : Vector3) -> void:
 	# Just record the new point here... added to '_curve' in _process.
 	_pending_adds.append(pt)
 
+# Free this stroke and remove it from the scene tree. If 'fade' is true
+# then allow existing particles to complete their lifetime.
+func release(fade : bool = true):
+	if fade:
+		_particles.emitting = false
+		await _particles.finished
+	queue_free()

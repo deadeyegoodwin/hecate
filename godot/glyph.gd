@@ -34,6 +34,13 @@ var _is_active_stroke : bool = false
 # Has a complete glyph been described?
 var _is_complete : bool = false
 
+# The target position described by this glyph, or Vector3.ZERO if no target.
+var _target : Vector3 = Vector3.ZERO
+
+# The Curve3D of the trajectory described by this glyph, or null if the glyph
+# does not describe a trajectory.
+var _trajectory : Curve3D = null
+
 # Initialize the glyph.
 func initialize(tform : Transform3D, size : Vector3) -> void:
 	transform = tform
@@ -45,7 +52,7 @@ func _ready() -> void:
 # Remove all strokes from the glyph and reset to initial state.
 func reset() -> void:
 	for s : HecateGlyphStroke in _strokes:
-		s.queue_free()
+		s.release()
 	_strokes.clear()
 	_is_active_stroke = false
 	_is_complete = false
@@ -58,16 +65,20 @@ func is_complete() -> bool:
 func is_active_stroke() -> bool:
 	return _is_active_stroke
 
+# Return the target point described by this glyph of Vector3.ZERO if no
+# target is described.
+func target_point() -> Vector3:
+	if not _is_complete:
+		return Vector3.ZERO
+	return _target
+
 # Return the Curve3D that represents the trajectory described by
 # this glyph. Return null if glyph is not complete or if it does not
 # describe a trajectory.
 func trajectory_curve() -> Curve3D:
 	if not _is_complete:
 		return null
-
-	# FIXME, for now there is just 1 curve and we assume it is always a
-	# trajectory.
-	return _strokes[0].curve()
+	return _trajectory
 
 # Start a glyph stroke at the specified start position.
 func start_stroke(global_pos : Vector3) -> void:
@@ -84,11 +95,20 @@ func start_stroke(global_pos : Vector3) -> void:
 func end_stroke() -> void:
 	assert(_is_active_stroke)
 	assert(not _strokes.is_empty())
-	if _strokes[-1].curve().point_count <= 1:
-		_strokes[-1].queue_free()
-		_strokes.pop_back()
-	else:
-		# FIXME For now just show glyph complete.
+
+	# If glyph is a single point then take it as the target and set the
+	# trajectory to be equivalent to a straight up glyph.
+	if (_strokes.size() == 1) and _strokes[0].is_point():
+		_target = _strokes[0].first_point()
+		_trajectory = Curve3D.new()
+		_trajectory.add_point(Vector3(0, 0, 0))
+		_trajectory.add_point(Vector3(0, 1, 0))
+		_is_complete = true
+	# If glyph is 2 strokes, a curve followed by a point, then those are the
+	# trajectory and the target.
+	elif (_strokes.size() == 2) and _strokes[0].is_curve() and _strokes[1].is_point():
+		_target = _strokes[1].first_point()
+		_trajectory = _strokes[0].curve()
 		_is_complete = true
 	_is_active_stroke = false
 

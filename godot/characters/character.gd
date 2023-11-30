@@ -22,3 +22,9 @@ class_name HecateCharacter extends Node3D
 # with animations. In particular the glyph hand should be visible when
 # glyphing / targeting.
 @export var eye_marker : Marker3D
+
+# The position / orientation of the left-hand cast.
+@export var left_cast_marker : Marker3D
+
+# The position / orientation of the left-hand cast.
+@export var right_cast_marker : Marker3D

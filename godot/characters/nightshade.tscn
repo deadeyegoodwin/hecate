@@ -434,9 +434,11 @@ _data = {
 "Armature|mixamo_com|Layer0": SubResource("Animation_h63oq")
 }
 
-[node name="HecateCharacterNightshade" node_paths=PackedStringArray("eye_marker") instance=ExtResource("1_kw0ij")]
+[node name="HecateCharacterNightshade" node_paths=PackedStringArray("eye_marker", "left_cast_marker", "right_cast_marker") instance=ExtResource("1_kw0ij")]
 script = ExtResource("2_iiyw7")
 eye_marker = NodePath("Armature/GeneralSkeleton/HeadBone/EyeMarker")
+left_cast_marker = NodePath("Armature/GeneralSkeleton/LeftHandBone/LeftCastMarker")
+right_cast_marker = NodePath("Armature/GeneralSkeleton/RightHandBone/RightCastMarker")
 
 [node name="HeadBone" type="BoneAttachment3D" parent="Armature/GeneralSkeleton" index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.7466e-06, 1.84751, -0.0537126)
@@ -444,7 +446,7 @@ bone_name = "Head"
 bone_idx = 5
 
 [node name="EyeMarker" type="Marker3D" parent="Armature/GeneralSkeleton/HeadBone" index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0.1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0.15)
 visible = false
 
 [node name="LeftHandBone" type="BoneAttachment3D" parent="Armature/GeneralSkeleton" index="2"]
@@ -452,10 +454,16 @@ transform = Transform3D(0, 1, 0, 0, 0, -1, -1, 0, 0, 0.733498, 1.70599, -0.06060
 bone_name = "LeftHand"
 bone_idx = 10
 
+[node name="LeftCastMarker" type="Marker3D" parent="Armature/GeneralSkeleton/LeftHandBone" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.120164, 0.0328125)
+
 [node name="RightHandBone" type="BoneAttachment3D" parent="Armature/GeneralSkeleton" index="3"]
 transform = Transform3D(0, -1, 0, 0, 0, -1, 1, 0, 0, -0.737204, 1.70086, -0.0606784)
 bone_name = "RightHand"
 bone_idx = 34
+
+[node name="RightCastMarker" type="Marker3D" parent="Armature/GeneralSkeleton/RightHandBone" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0.033)
 
 [node name="AnimationPlayer" parent="." index="1"]
 libraries = {
