@@ -81,6 +81,11 @@ func is_current_at_end() -> bool:
 			(is_equal_approx(_playback.get_current_length(), _playback.get_current_play_position()) or
 			 (_playback.get_current_play_position() > _playback.get_current_length())))
 
+# Return true if the animation for the current state is at or beyond 'timestamp'.
+func is_current_beyond_timestamp(timestamp : float) -> bool:
+	return(_playback.is_playing() and (_playback.get_current_node() == _state_to_name(_current_state)) and
+			(timestamp < _playback.get_current_play_position()))
+
 # Set the target state. Returns false if there is already a target state
 # pending.
 func set_target(target : State) -> bool:

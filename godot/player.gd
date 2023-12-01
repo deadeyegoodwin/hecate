@@ -30,6 +30,11 @@ const _glyph_scene = preload("res://glyph.tscn")
 @onready var _left_cast : HecateCast
 @onready var _right_cast : HecateCast
 
+# The animation timestamp for left and right cast when the actual cast should
+# happen.
+@onready var _left_hand_cast_timestamp : float = $Character.left_cast_animation_timestamp
+@onready var _right_hand_cast_timestamp : float = $Character.right_cast_animation_timestamp
+
 # Animation control.
 @onready var _animation : HecateWizardAnimation = $Animation
 
@@ -105,7 +110,7 @@ func _process(_delta : float) -> void:
 			HecateWizardAnimation.State.CAST_LEFT:
 				# Reached cast animation state, update cast when animation
 				# completes and transition to idle.
-				if _animation.is_current_at_end():
+				if _animation.is_current_beyond_timestamp(_left_hand_cast_timestamp):
 					var r := _animation.set_target(HecateWizardAnimation.State.IDLE_LEFT); assert(r)
 					r = _left_cast.cast(); assert(r)
 					ignore_input = true
@@ -121,7 +126,7 @@ func _process(_delta : float) -> void:
 			HecateWizardAnimation.State.CAST_RIGHT:
 				# Reached cast animation state, update cast when animation
 				# completes and transition to idle.
-				if _animation.is_current_at_end():
+				if _animation.is_current_beyond_timestamp(_right_hand_cast_timestamp):
 					var r := _animation.set_target(HecateWizardAnimation.State.IDLE_RIGHT); assert(r)
 					r = _right_cast.cast(); assert(r)
 					ignore_input = true

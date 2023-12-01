@@ -23,8 +23,10 @@ class_name HecateCharacter extends Node3D
 # glyphing / targeting.
 @export var eye_marker : Marker3D
 
-# The position / orientation of the left-hand cast.
+# The position / orientation of the left- and right-hand cast.
 @export var left_cast_marker : Marker3D
-
-# The position / orientation of the left-hand cast.
 @export var right_cast_marker : Marker3D
+
+# The animation timestamp to release the cast for left- and right-hand cast.
+@export var left_cast_animation_timestamp : float
+@export var right_cast_animation_timestamp : float

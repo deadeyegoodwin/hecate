@@ -45,8 +45,8 @@ var _glyph_mouse_position : Vector2 = Vector2.ZERO
 var _target_mouse_position : Vector2 = Vector2.ZERO
 var _target_position : Vector3 = Vector3.ZERO
 
-# The projectile
-var _projectile : HecateProjectile = null
+# The trajectory specified by the glyph and used for the projectile.
+var _trajectory : HecateTrajectory = null
 
 # Initialize the cast.
 func initialize(arena : HecateArena, camera: Camera3D, hglyph : HecateGlyph) -> void:
@@ -62,6 +62,8 @@ func idle() -> bool:
 		_glyph_focus = false
 		_glyph_mouse_position = Vector2.ZERO
 		_target_mouse_position = Vector2.ZERO
+		_target_position = Vector3.ZERO
+		_trajectory = null
 		_state = State.IDLE
 	return true
 
@@ -75,6 +77,8 @@ func glyph() -> bool:
 		_glyph_focus = true
 		_glyph_mouse_position = Vector2.ZERO
 		_target_mouse_position = Vector2.ZERO
+		_target_position = Vector3.ZERO
+		_trajectory = null
 		_state = State.GLYPH
 		return true
 	return false
@@ -90,35 +94,28 @@ func invoke() -> bool:
 
 	assert(_glyph.is_complete() and (_glyph.trajectory_curve() != null))
 	assert(_target_position != Vector3.ZERO)
-	var trajectory := HecateTrajectory.new(global_position, _target_position, _glyph.trajectory_curve())
-	_target_position = Vector3.ZERO
+	assert(_trajectory == null)
+	_trajectory = HecateTrajectory.new(_glyph.trajectory_curve())
 	_glyph_focus = false
 	_glyph.reset()
-
-	assert(_projectile == null)
-	_projectile = _projectile_scene.instantiate()
-	_projectile.initialize(HecateProjectile.Owner.PLAYER, trajectory.curve())
-	_arena.call_deferred("add_child", _projectile)
 	_state = State.INVOKE
 	return true
 
-# Set this cast to cast state. Return false if unable to enter
-# cast state at the current time.
+# Set to cast state. Return false if unable to enter cast state.
 func cast() -> bool:
 	if _state == State.CAST:
 		return true
-	assert(_projectile != null)
-	_projectile.launch(_projectile_velocity, _projectile_acceleration)
-	_projectile = null
+
+	assert(_target_position != Vector3.ZERO)
+	assert(_trajectory != null)
+	var projectile := _projectile_scene.instantiate()
+	projectile.initialize(HecateProjectile.Owner.PLAYER, _trajectory.curve(global_position, _target_position))
+	projectile.launch(_projectile_velocity, _projectile_acceleration)
+	_arena.call_deferred("add_child", projectile)
+	_target_position = Vector3.ZERO
+	_trajectory = null
 	_state = State.CAST
 	return true
-
-# Release the mouse focus from this cast. This cast can only regain mouse
-# focus via a prev() or next() call.
-func release_glyph_focus() -> void:
-	if _state == State.IDLE:
-		assert(not _glyph_focus)
-	_glyph_focus = false
 
 # Called at a fixed interval (default 60Hz)
 func _physics_process(_delta : float) -> void:
