@@ -1,7 +1,75 @@
-[gd_scene load_steps=2 format=3 uid="uid://b2u6t7e8q1h7a"]
+[gd_scene load_steps=10 format=3 uid="uid://b2u6t7e8q1h7a"]
 
 [ext_resource type="Script" path="res://cast.gd" id="1_8b8mg"]
+[ext_resource type="Texture2D" uid="uid://de8x45fep8poe" path="res://third_party/smoke_aura/Smoke30Frames.png" id="3_cll3i"]
+
+[sub_resource type="Curve" id="Curve_x2ow1"]
+_data = [Vector2(0.00595238, 0.0942622), 0.0, 0.0, 0, 0, Vector2(0.208333, 0.992389), 0.0, 0.0, 0, 0, Vector2(0.785714, 0.992389), 0.0, 0.0, 0, 0, Vector2(0.994048, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_46ff0"]
+curve = SubResource("Curve_x2ow1")
+
+[sub_resource type="Curve" id="Curve_rh0cv"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.83631, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.117096), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_jkf6w"]
+curve = SubResource("Curve_rh0cv")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_etadn"]
+lifetime_randomness = 0.5
+emission_shape = 2
+emission_sphere_radius = 0.05
+direction = Vector3(0, 0, 0)
+spread = 180.0
+initial_velocity_max = 0.05
+gravity = Vector3(0, -0.05, 0)
+scale_min = 0.5
+scale_curve = SubResource("CurveTexture_jkf6w")
+color = Color(0.270588, 0.572549, 1, 1)
+alpha_curve = SubResource("CurveTexture_46ff0")
+hue_variation_min = -0.02
+hue_variation_max = 0.02
+anim_speed_min = 1.0
+anim_speed_max = 1.0
+turbulence_enabled = true
+turbulence_noise_strength = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m1jly"]
+transparency = 1
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("3_cll3i")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 6
+particles_anim_v_frames = 5
+particles_anim_loop = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_4wbec"]
+material = SubResource("StandardMaterial3D_m1jly")
+size = Vector2(0.05, 0.05)
 
 [node name="HecateCast" type="Node3D"]
 rotation_edit_mode = 2
 script = ExtResource("1_8b8mg")
+
+[node name="GlyphGlow" type="OmniLight3D" parent="."]
+visible = false
+light_color = Color(0.356863, 0.552941, 1, 1)
+light_volumetric_fog_energy = 0.0
+shadow_enabled = true
+
+[node name="InvokeEnergy" type="GPUParticles3D" parent="."]
+emitting = false
+amount = 1024
+amount_ratio = 0.25
+lifetime = 3.0
+explosiveness = 0.1
+randomness = 0.3
+draw_order = 3
+process_material = SubResource("ParticleProcessMaterial_etadn")
+draw_pass_1 = SubResource("QuadMesh_4wbec")

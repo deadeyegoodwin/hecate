@@ -17,14 +17,14 @@ generate_mipmaps = false
 seamless = true
 noise = SubResource("FastNoiseLite_6y8y7")
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_y8wwx"]
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_qdulc"]
 gradient = ExtResource("1_uacyu")
 
 [sub_resource type="Curve" id="Curve_yct3t"]
 _data = [Vector2(0.0032949, 0.255249), 0.0, 0.0, 0, 0, Vector2(0.319605, 0.996101), 0.0, 0.0, 0, 0, Vector2(1, 0.0914817), 0.0, 0.0, 0, 0]
 point_count = 3
 
-[sub_resource type="CurveTexture" id="CurveTexture_a3r0u"]
+[sub_resource type="CurveTexture" id="CurveTexture_hneln"]
 curve = SubResource("Curve_yct3t")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_aw0rp"]
@@ -37,15 +37,15 @@ initial_velocity_max = 2.0
 gravity = Vector3(0, 0, 0)
 linear_accel_max = 2.0
 scale_min = 0.0
-scale_curve = SubResource("CurveTexture_a3r0u")
-color_ramp = SubResource("GradientTexture1D_y8wwx")
+scale_curve = SubResource("CurveTexture_hneln")
+color_ramp = SubResource("GradientTexture1D_qdulc")
 hue_variation_min = -0.01
 hue_variation_max = 0.01
 anim_speed_min = 0.05
 anim_speed_max = 0.1
 anim_offset_max = 1.0
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m1jly"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tjm8j"]
 transparency = 1
 blend_mode = 1
 cull_mode = 2
@@ -59,7 +59,7 @@ particles_anim_v_frames = 6
 particles_anim_loop = true
 
 [sub_resource type="QuadMesh" id="QuadMesh_5us5b"]
-material = SubResource("StandardMaterial3D_m1jly")
+material = SubResource("StandardMaterial3D_tjm8j")
 
 [node name="HecateFire" type="Node3D"]
 script = ExtResource("1_dtp3b")

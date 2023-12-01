@@ -110,10 +110,10 @@ func _process(_delta : float) -> void:
 			HecateWizardAnimation.State.CAST_LEFT:
 				# Reached cast animation state, update cast when animation
 				# completes and transition to idle.
+				ignore_input = true
 				if _animation.is_current_beyond_timestamp(_left_hand_cast_timestamp):
 					var r := _animation.set_target(HecateWizardAnimation.State.IDLE_LEFT); assert(r)
 					r = _left_cast.cast(); assert(r)
-					ignore_input = true
 			HecateWizardAnimation.State.IDLE_RIGHT:
 				# In idle animation state, make sure cast in idle state.
 				var r := _right_cast.idle(); assert(r)
@@ -126,10 +126,10 @@ func _process(_delta : float) -> void:
 			HecateWizardAnimation.State.CAST_RIGHT:
 				# Reached cast animation state, update cast when animation
 				# completes and transition to idle.
+				ignore_input = true
 				if _animation.is_current_beyond_timestamp(_right_hand_cast_timestamp):
 					var r := _animation.set_target(HecateWizardAnimation.State.IDLE_RIGHT); assert(r)
 					r = _right_cast.cast(); assert(r)
-					ignore_input = true
 
 	# If transitioning between animation states then ignore any cast commands.
 	# Commands are not recognized while animating between states, and casts
@@ -155,7 +155,9 @@ func _process(_delta : float) -> void:
 						if _left_cast.is_glyph_complete():
 							var r := _animation.set_target(HecateWizardAnimation.State.INVOKE_LEFT); assert(r)
 					HecateWizardAnimation.State.INVOKE_LEFT:
-						var r := _animation.set_target(HecateWizardAnimation.State.CAST_LEFT); assert(r)
+						if _left_cast.is_invoke_complete():
+							_left_cast.invoke_finalize()
+							var r := _animation.set_target(HecateWizardAnimation.State.CAST_LEFT); assert(r)
 		# If right cast action...
 		elif Input.is_action_just_pressed("player_cast_right_action"):
 			get_viewport().set_input_as_handled()

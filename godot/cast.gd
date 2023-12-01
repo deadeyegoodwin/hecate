@@ -18,6 +18,13 @@ class_name HecateCast extends Node3D
 
 const _projectile_scene = preload("res://projectile.tscn")
 
+# The light that activates when in glyph state to indicate that glyph
+# strokes can be created.
+@onready var _glyph_glow := $GlyphGlow
+
+# The visual representation of invocation state.
+@onready var _invoke_energy := $InvokeEnergy
+
 # Projectile properties
 const _projectile_velocity : float = 5.0
 const _projectile_acceleration : float = 1.0
@@ -60,6 +67,8 @@ func idle() -> bool:
 	if _state != State.IDLE:
 		_glyph.reset()
 		_glyph_focus = false
+		_glyph_glow.visible = false
+		_invoke_energy.emitting = false
 		_glyph_mouse_position = Vector2.ZERO
 		_target_mouse_position = Vector2.ZERO
 		_target_position = Vector3.ZERO
@@ -75,6 +84,8 @@ func glyph() -> bool:
 	if _state == State.IDLE:
 		_glyph.reset()
 		_glyph_focus = true
+		_glyph_glow.visible = true
+		_invoke_energy.emitting = false
 		_glyph_mouse_position = Vector2.ZERO
 		_target_mouse_position = Vector2.ZERO
 		_target_position = Vector3.ZERO
@@ -97,9 +108,20 @@ func invoke() -> bool:
 	assert(_trajectory == null)
 	_trajectory = HecateTrajectory.new(_glyph.trajectory_curve())
 	_glyph_focus = false
+	_glyph_glow.visible = false
+	_invoke_energy.amount_ratio = 0.25
+	_invoke_energy.emitting = true
 	_glyph.reset()
 	_state = State.INVOKE
 	return true
+
+# Does this cast have a completed invoke?
+func is_invoke_complete() -> bool:
+	return true
+
+# Finalize the invoke state.
+func invoke_finalize() -> void:
+	_invoke_energy.amount_ratio = 1.0
 
 # Set to cast state. Return false if unable to enter cast state.
 func cast() -> bool:
@@ -114,6 +136,7 @@ func cast() -> bool:
 	_arena.call_deferred("add_child", projectile)
 	_target_position = Vector3.ZERO
 	_trajectory = null
+	_invoke_energy.emitting = false
 	_state = State.CAST
 	return true
 
