@@ -95,8 +95,8 @@ func _process(_delta : float) -> void:
 							_camera_attachment.position.z - 10.0))
 
 	# Update based on the current animation state...
-	var ignore_input : bool = false
-	if not _animation.is_pending_target_state():
+	var is_pending_target : bool = _animation.is_pending_target_state()
+	if not is_pending_target:
 		match _animation.current_state():
 			HecateWizardAnimation.State.IDLE_LEFT:
 				# In idle animation state, make sure cast in idle state.
@@ -110,7 +110,6 @@ func _process(_delta : float) -> void:
 			HecateWizardAnimation.State.CAST_LEFT:
 				# Reached cast animation state, update cast when animation
 				# completes and transition to idle.
-				ignore_input = true
 				if _animation.is_current_beyond_timestamp(_left_hand_cast_timestamp):
 					var r := _animation.set_target(HecateWizardAnimation.State.IDLE_LEFT); assert(r)
 					r = _left_cast.cast(); assert(r)
@@ -126,7 +125,6 @@ func _process(_delta : float) -> void:
 			HecateWizardAnimation.State.CAST_RIGHT:
 				# Reached cast animation state, update cast when animation
 				# completes and transition to idle.
-				ignore_input = true
 				if _animation.is_current_beyond_timestamp(_right_hand_cast_timestamp):
 					var r := _animation.set_target(HecateWizardAnimation.State.IDLE_RIGHT); assert(r)
 					r = _right_cast.cast(); assert(r)
@@ -134,7 +132,7 @@ func _process(_delta : float) -> void:
 	# If transitioning between animation states then ignore any cast commands.
 	# Commands are not recognized while animating between states, and casts
 	# don't change state until animation is complete.
-	if not ignore_input:
+	if not is_pending_target:
 		# If left cast action...
 		if Input.is_action_just_pressed("player_cast_left_action"):
 			get_viewport().set_input_as_handled()
