@@ -13,16 +13,5 @@
 # You should have received a copy of the GNU General Public License
 # along with Hecate. If not, see <https://www.gnu.org/licenses/>.
 
-# Top-level node.
-extends Node
-
-# Camera manager
-@onready var _camera_manager : HecateCameraManager = $CameraManager
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta : float) -> void:
-	# Cycle through the cameras...
-	if Input.is_action_just_pressed("camera_manager_next"):
-		_camera_manager.activate_camera_next()
-	elif Input.is_action_just_pressed("camera_manager_prev"):
-		_camera_manager.activate_camera_prev()
+# Base class for cameras.
+class_name HecateCamera extends Camera3D

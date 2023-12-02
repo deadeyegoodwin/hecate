@@ -1,11 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://d0t1ucmo1mwka"]
+[gd_scene load_steps=5 format=3 uid="uid://d0t1ucmo1mwka"]
 
 [ext_resource type="PackedScene" uid="uid://c568x5j8b723u" path="res://characters/nightshade.tscn" id="1_a5183"]
 [ext_resource type="Script" path="res://player.gd" id="1_pfm37"]
+[ext_resource type="PackedScene" uid="uid://dp3s6hbtg1p2b" path="res://camera_attached.tscn" id="2_676hv"]
 [ext_resource type="PackedScene" uid="uid://cpkwj3mm1doln" path="res://wizard_animation.tscn" id="3_goc0h"]
 
 [node name="HecatePlayer" type="CharacterBody3D"]
 script = ExtResource("1_pfm37")
+
+[node name="FirstPersonCamera" parent="." instance=ExtResource("2_676hv")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 1.9, 0.2)
 
 [node name="Character" parent="." instance=ExtResource("1_a5183")]
 

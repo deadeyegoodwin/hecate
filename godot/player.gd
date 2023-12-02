@@ -16,13 +16,12 @@
 # The player controlled character within an arena.
 class_name HecatePlayer extends CharacterBody3D
 
-const _steady_camera_scene = preload("res://steady_camera.tscn")
 const _cast_scene = preload("res://cast.tscn")
 const _glyph_scene = preload("res://glyph.tscn")
 
-# First person camera and where it attaches to the skeleton.
-@onready var _camera_attachment = $Character.eye_marker
-@onready var _camera : HecateSteadyCamera = null
+# The camera manager, the first-person camera and where it attaches.
+@export var camera_manager : HecateCameraManager
+@onready var _camera : HecateAttachedCamera = $FirstPersonCamera
 
 # The left and right hand of the player and the associated HecateCast
 @onready var _left_hand_attachment = $Character.left_cast_marker
@@ -54,15 +53,11 @@ func initialize(a : HecateArena, n : String, stats : Dictionary,
 	_statistics = HecateStatistics.new(stats)
 
 func _ready() -> void:
-	# The camera attaches to the head bone of the character to provide a
-	# first-person viewpoint. We rely on the initial animation being the
-	# "start" animation (tpose) so that we can capture the "steady"
-	# camera location and orientation.
-	_camera = _steady_camera_scene.instantiate()
-	_camera.rotate_object_local(Vector3.UP, deg_to_rad(180.0))
-	_camera.initialize()
-	_camera.make_current()
-	_camera_attachment.call_deferred("add_child", _camera)
+	# The camera attaches to the "eye marker" of the character to provide a
+	# first-person viewpoint. The player focuses straight ahead (negative Z).
+	_camera.set_attachment($Character.eye_marker)
+	_camera.set_focus(_camera.position + Vector3(0.0, 0.0, -5.0))
+	var r := camera_manager.register_camera(name, _camera); assert(r)
 
 	# Starting animation...
 	_animation.initialize($Character/AnimationTree)
@@ -90,10 +85,6 @@ func _glyph_new() -> HecateGlyph:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta : float) -> void:
-	# FIXME adjust with state changes...
-	_camera.follow(Vector3(_camera_attachment.position.x, _camera_attachment.position.y,
-							_camera_attachment.position.z - 10.0))
-
 	# Update based on the current animation state...
 	var is_pending_target : bool = _animation.is_pending_target_state()
 	if not is_pending_target:

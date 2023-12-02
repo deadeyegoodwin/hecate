@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bfwnykh66qhel"]
+
+[ext_resource type="Script" path="res://camera_orbit.gd" id="1_8ydri"]
+
+[node name="HecateOrbitCamera" type="Camera3D"]
+script = ExtResource("1_8ydri")

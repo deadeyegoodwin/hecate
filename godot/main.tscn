@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://cw8wthi1k8o7y"]
+[gd_scene load_steps=7 format=3 uid="uid://cw8wthi1k8o7y"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_omplj"]
 [ext_resource type="PackedScene" uid="uid://bcn178fcq10q5" path="res://arena.tscn" id="2_856yu"]
+[ext_resource type="Script" path="res://camera_manager.gd" id="3_n5cxd"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_g83ns"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -42,10 +43,9 @@ transform = Transform3D(0.906308, 4.09542e-09, -0.422618, 0.422618, -1.84732e-08
 shadow_enabled = true
 sky_mode = 1
 
-[node name="CameraPivot" type="Marker3D" parent="."]
+[node name="Arena" parent="." node_paths=PackedStringArray("camera_manager") instance=ExtResource("2_856yu")]
 rotation_edit_mode = 2
+camera_manager = NodePath("../CameraManager")
 
-[node name="Camera" type="Camera3D" parent="CameraPivot"]
-
-[node name="Arena" parent="." instance=ExtResource("2_856yu")]
-rotation_edit_mode = 2
+[node name="CameraManager" type="Node" parent="."]
+script = ExtResource("3_n5cxd")
