@@ -20,20 +20,16 @@ class_name HecateArena extends Node3D
 @export var camera_manager : HecateCameraManager
 @onready var _camera : HecateOrbitCamera = $OrbitCamera
 
+# The player and opponent.
+@onready var _player := $Player
+@onready var _opponent := $Opponent
+
 # The overall size of the arena. A const export would be useful here but
 # not supported so use the size() function to get this value. Note that the
 # size of the arena is determined by the size of the meshes that make up
 # the arena and so this value must be changed whenever the arena meshes are
 # changed.
 const _arena_size := Vector3(6.0, 6.0, 10.0)
-
-# Player
-const _player_scene = preload("res://player.tscn")
-var _player : HecatePlayer = null
-
-# Opponent
-const _wizard_scene = preload("res://wizard.tscn")
-var _opponent : HecateWizard = null
 
 # Get the bounding-box size of the arena.
 func size() -> Vector3:
@@ -43,20 +39,10 @@ func _ready() -> void:
 	var r := camera_manager.register_camera(name, _camera); assert(r)
 	camera_manager.activate_camera(name)
 
-	_player = _player_scene.instantiate()
-	_player.camera_manager = camera_manager
-	var player_stats = { HecateStatistics.Kind.HEALTH : 100.0 }
-	var player_transform := Transform3D.IDENTITY.translated_local(Vector3(0, 0, _arena_size.z / 2.0 - 1.0))
-	player_transform = player_transform.rotated_local(Vector3.UP, deg_to_rad(180.0))
-	_player.initialize(self, "player", player_stats, player_transform)
-	call_deferred("add_child", _player)
+	if camera_manager != null:
+		r = _player.set_camera_manager(camera_manager); assert(r)
+		r = _opponent.set_camera_manager(camera_manager); assert(r)
 
-	_opponent = _wizard_scene.instantiate()
-	var opponent_stats = { HecateStatistics.Kind.HEALTH : 100.0 }
-	var opponent_transform := Transform3D.IDENTITY.translated_local(Vector3(0, 0, 1.0 - _arena_size.z / 2.0))
-	_opponent.initialize(self, "opponent", opponent_stats, opponent_transform)
-	call_deferred("add_child", _opponent)
-
-	_camera.append_focus(Vector3(0, _arena_size.y / 2.0, 0), 5.0, PI / 2.0)
+	_camera.append_focus(Vector3(0, 2.0, 0), 5.0, PI / 2.0)
 	_camera.append_focus(_player.transform.origin + Vector3(0, 1.0, 0), 3.0, PI / 4.0)
 	_camera.append_focus(_opponent.transform.origin + Vector3(0, 1.0, 0), 3.0, PI * 0.75)
