@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 movie_writer/movie_file="/tmp/hecate.avi"
 
+[filesystem]
+
+import/blender/enabled=false
+
 [input]
 
 camera_manager_next={
