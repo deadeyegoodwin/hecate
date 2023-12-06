@@ -47,6 +47,9 @@ var _glyph_focus : bool = false
 var _glyph : HecateGlyph = null
 var _glyph_mouse_position : Vector2 = Vector2.ZERO
 
+# The owner of this cast, and all spells generated from it.
+var _owner_kind : HecateCharacter.OwnerKind = HecateCharacter.OwnerKind.NONE
+
 # When in TARGET state the following are used to record the target position
 # in viewport-space and model-space.
 var _target_mouse_position : Vector2 = Vector2.ZERO
@@ -56,10 +59,12 @@ var _target_position : Vector3 = Vector3.ZERO
 var _trajectory : HecateTrajectory = null
 
 # Initialize the cast.
-func initialize(arena : HecateArena, camera: Camera3D, hglyph : HecateGlyph) -> void:
+func initialize(arena : HecateArena, camera: Camera3D, hglyph : HecateGlyph,
+				owner_kind : HecateCharacter.OwnerKind) -> void:
 	_arena = arena
 	_camera = camera
 	_glyph = hglyph
+	_owner_kind = owner_kind
 
 # Idle this cast, canceling any in-progress glyph or invoke. Return false if
 # unable to idle at the current time.
@@ -131,7 +136,7 @@ func cast() -> bool:
 	assert(_target_position != Vector3.ZERO)
 	assert(_trajectory != null)
 	var projectile := _projectile_scene.instantiate()
-	projectile.initialize(HecateProjectile.Owner.PLAYER, _trajectory.curve(global_position, _target_position))
+	projectile.initialize(_owner_kind, _trajectory.curve(global_position, _target_position))
 	projectile.launch(_projectile_velocity, _projectile_acceleration)
 	_arena.call_deferred("add_child", projectile)
 	_target_position = Vector3.ZERO

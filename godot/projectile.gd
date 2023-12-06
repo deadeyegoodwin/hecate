@@ -20,8 +20,7 @@ class_name HecateProjectile extends CharacterBody3D
 @onready var _pathfollow := $Path3D/PathFollow3D
 
 # What entity owns/launched this projectile.
-enum Owner { NONE, PLAYER, OPPONENT }
-var _owner : Owner = Owner.NONE
+var _owner : HecateCharacter.OwnerKind = HecateCharacter.OwnerKind.NONE
 
 # Initial position, velocity, acceleration and surge of the projectile.
 var _initial_position := Vector3.ZERO
@@ -40,7 +39,7 @@ var _curve_transform : Transform3D
 var _curve_delta : float = 0.0
 
 # Initialize the projectile that will follow a curve.
-func initialize(powner : Owner, curve : Curve3D,
+func initialize(powner : HecateCharacter.OwnerKind, curve : Curve3D,
 				 curve_transform : Transform3D = Transform3D.IDENTITY) -> void:
 	_owner = powner
 	_curve = curve
@@ -61,11 +60,13 @@ func _ready() -> void:
 	_pathfollow.progress = 0
 
 	# Set the layer and mask of the projectile based on the owner.
+	set_collision_layer(0)
+	set_collision_mask(0)
 	set_collision_mask_value(1, true)  # "wall"
-	if _owner == Owner.PLAYER:
+	if _owner == HecateCharacter.OwnerKind.PLAYER:
 		set_collision_layer_value(10, true)  # layer "player projectile"
 		set_collision_mask_value(17, true)   # layer "opponent"
-	elif _owner == Owner.OPPONENT:
+	elif _owner == HecateCharacter.OwnerKind.OPPONENT:
 		set_collision_layer_value(18, true)  # layer "opponent projectile"
 		set_collision_mask_value(9, true)    # layer "player"
 

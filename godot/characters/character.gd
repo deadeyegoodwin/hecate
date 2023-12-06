@@ -37,6 +37,31 @@ class_name HecateCharacter extends Node3D
 ## character's hitboxes, by calling collision_handler.handle_character_collision().
 @export var collision_handler : Node
 
+# The kinds of owners for a character.
+enum OwnerKind { NONE, PLAYER, OPPONENT }
+var _owner : OwnerKind = OwnerKind.NONE
+
+# Set the owner for this character, and adjust hitbox layer/mask to be appropriate
+# for the owner.
+func set_owner_kind(owner_kind : OwnerKind) -> void:
+	_owner = owner_kind
+	# Set the layer and mask of every contained hitbox based on the owner.
+	_set_hitbox_layer_mask(self, _owner)
+
+func _set_hitbox_layer_mask(n : Node, owner_kind : OwnerKind) -> void:
+	if n is HecateHitbox:
+		n.set_collision_layer(0)
+		n.set_collision_mask(0)
+		n.set_collision_mask_value(1, true)  # "wall"
+		if owner_kind == HecateCharacter.OwnerKind.PLAYER:
+			n.set_collision_layer_value(9, true)  # layer "player"
+			n.set_collision_mask_value(18, true)   # layer "opponent projectile"
+		elif owner_kind == HecateCharacter.OwnerKind.OPPONENT:
+			n.set_collision_layer_value(17, true)  # layer "opponent"
+			n.set_collision_mask_value(10, true)    # layer "player projectile"
+	for c in n.get_children():
+		_set_hitbox_layer_mask(c, owner_kind)
+
 # Handle a collision with this character's 'hitbox_kind' hitbox by 'collider'.
 func handle_hitbox_collision(hitbox_kind : HecateHitbox.Kind, collider : Node) -> void:
 	if collision_handler != null:

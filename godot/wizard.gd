@@ -22,13 +22,18 @@ const _glyph_scene = preload("res://glyph.tscn")
 ## The arena that contains this wizard.
 @export var arena : HecateArena
 
-# The camera manager, the first-person camera and where it attaches.
+## The camera manager to register this wizard's camera.
 @export var camera_manager : HecateCameraManager = null
+## Should this wizard have a first-person camera?
 @export var enable_camera : bool = false
+## The first-person camera.
 var _camera : HecateAttachedCamera = null
 
-# The HecateWizardController that controls this wizard.
+## The HecateWizardController that controls this wizard.
 @export var controller : HecateWizardController
+
+## The owner of this wizard.
+@export var owner_kind : HecateCharacter.OwnerKind
 
 # The left and right hand of the wizard and the associated HecateCast
 @onready var _left_hand_attachment = $Character.left_cast_marker
@@ -67,6 +72,9 @@ func _ready() -> void:
 		if camera_manager != null:
 			var r := camera_manager.register_camera(name, _camera); assert(r)
 
+	# Set the character owner...
+	$Character.set_owner_kind(owner_kind)
+
 	# Starting animation...
 	_animation.initialize($Character/AnimationTree)
 	_animation.start(HecateWizardAnimation.State.IDLE_LEFT)
@@ -74,10 +82,10 @@ func _ready() -> void:
 	# The left hand and right hand can each perform a cast. Each cast requires
 	# a glyph which is initialized relative to the wizard.
 	_left_cast = _cast_scene.instantiate()
-	_left_cast.initialize(arena, _camera, _glyph_new())
+	_left_cast.initialize(arena, _camera, _glyph_new(), owner_kind)
 	_left_hand_attachment.call_deferred("add_child", _left_cast)
 	_right_cast = _cast_scene.instantiate()
-	_right_cast.initialize(arena, _camera, _glyph_new())
+	_right_cast.initialize(arena, _camera, _glyph_new(), owner_kind)
 	_right_hand_attachment.call_deferred("add_child", _right_cast)
 
 # Return a new glyph appropriate for this wizard and add the glyph to arena-space.
