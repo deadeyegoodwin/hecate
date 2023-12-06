@@ -40,7 +40,7 @@ func _ready() -> void:
 	camera_manager.activate_camera(name)
 
 	if camera_manager != null:
-		r = _player.set_camera_manager(camera_manager); assert(r)
+		r = _player.set_camera_manager(camera_manager, true); assert(r)
 		r = _opponent.set_camera_manager(camera_manager); assert(r)
 
 	_camera.append_focus(Vector3(0, 2.0, 0), 5.0, PI / 2.0)

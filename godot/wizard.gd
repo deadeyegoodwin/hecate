@@ -45,13 +45,16 @@ var _camera : HecateAttachedCamera = null
 @onready var _animation : HecateWizardAnimation = $Animation
 
 # Set the camera manager for the player. If player already has a camera
-# manager, then do nothing and return false.
-func set_camera_manager(cm : HecateCameraManager) -> bool:
+# manager, then do nothing and return false. If player has a camera, add
+# it to the manager and activate it if 'activate_camera' is true.
+func set_camera_manager(cm : HecateCameraManager, activate_camera : bool = false) -> bool:
 	if camera_manager != null:
 		return false
 	camera_manager = cm
 	if enable_camera:
 		var r := camera_manager.register_camera(name, _camera); assert(r)
+		if activate_camera:
+			camera_manager.activate_camera(name)
 	return true
 
 func _ready() -> void:
