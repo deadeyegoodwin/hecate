@@ -1,9 +1,10 @@
-[gd_scene load_steps=13 format=3 uid="uid://c568x5j8b723u"]
+[gd_scene load_steps=14 format=3 uid="uid://c568x5j8b723u"]
 
 [ext_resource type="PackedScene" uid="uid://db8s3pj4iuoi5" path="res://third_party/mixamo/nightshade/nightshade.gltf" id="1_kw0ij"]
 [ext_resource type="Script" path="res://characters/character.gd" id="2_iiyw7"]
 [ext_resource type="AnimationLibrary" uid="uid://dflrgddf2lqyr" path="res://third_party/mixamo/idle_cast_glyph.glb" id="2_nmcsf"]
 [ext_resource type="AnimationNodeStateMachine" uid="uid://gx4b66lqqh8g" path="res://wizard_state_machine.tres" id="3_0c62j"]
+[ext_resource type="Script" path="res://characters/hitbox.gd" id="3_ogpw3"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_nubad"]
 height = 0.404996
@@ -475,7 +476,10 @@ bone_idx = 5
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0.15)
 visible = false
 
-[node name="HeadHitbox" type="CharacterBody3D" parent="Armature/GeneralSkeleton/HeadBone" index="1"]
+[node name="HeadHitbox" type="CharacterBody3D" parent="Armature/GeneralSkeleton/HeadBone" index="1" node_paths=PackedStringArray("collision_handler")]
+script = ExtResource("3_ogpw3")
+collision_handler = NodePath("../../../..")
+kind = 1
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Armature/GeneralSkeleton/HeadBone/HeadHitbox" index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.147321, -0.027331)
@@ -486,7 +490,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.74667e-06, 1.45679, 0.0034
 bone_name = "Chest"
 bone_idx = 2
 
-[node name="ChestHitBox" type="CharacterBody3D" parent="Armature/GeneralSkeleton/ChestBone" index="0"]
+[node name="ChestHitBox" type="CharacterBody3D" parent="Armature/GeneralSkeleton/ChestBone" index="0" node_paths=PackedStringArray("collision_handler")]
+script = ExtResource("3_ogpw3")
+collision_handler = NodePath("../../../..")
+kind = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Armature/GeneralSkeleton/ChestBone/ChestHitBox" index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0247668, -0.0174841)
@@ -513,7 +520,10 @@ transform = Transform3D(-1, 0, 0, 0, -1, 0, 0, 0, 1, 0.122018, 1.22151, -0.00157
 bone_name = "LeftUpperLeg"
 bone_idx = 55
 
-[node name="LeftUpperLegHitbox" type="CharacterBody3D" parent="Armature/GeneralSkeleton/LeftUpperLegBone" index="0"]
+[node name="LeftUpperLegHitbox" type="CharacterBody3D" parent="Armature/GeneralSkeleton/LeftUpperLegBone" index="0" node_paths=PackedStringArray("collision_handler")]
+script = ExtResource("3_ogpw3")
+collision_handler = NodePath("../../../..")
+kind = 7
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Armature/GeneralSkeleton/LeftUpperLegBone/LeftUpperLegHitbox" index="0"]
 transform = Transform3D(1, 1.72085e-15, 0, 1.69309e-15, 1, 0, 0, 0, 1, 0, 0.271524, -1.16415e-10)
@@ -524,7 +534,10 @@ transform = Transform3D(1, 0, 0, 0, -1, 0, 0, 0, -1, 0.122017, 0.669969, 0.05771
 bone_name = "LeftLowerLeg"
 bone_idx = 56
 
-[node name="LeftLowerLegHitbox" type="CharacterBody3D" parent="Armature/GeneralSkeleton/LeftLowerLegBone" index="0"]
+[node name="LeftLowerLegHitbox" type="CharacterBody3D" parent="Armature/GeneralSkeleton/LeftLowerLegBone" index="0" node_paths=PackedStringArray("collision_handler")]
+script = ExtResource("3_ogpw3")
+collision_handler = NodePath("../../../..")
+kind = 8
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Armature/GeneralSkeleton/LeftLowerLegBone/LeftLowerLegHitbox" index="0"]
 transform = Transform3D(1, 1.72085e-15, 0, 1.69309e-15, 1, 0, 0, 0, 1, 0, 0.271524, 0.0805458)
@@ -535,7 +548,10 @@ transform = Transform3D(-1, 0, 0, 0, -1, 0, 0, 0, 1, -0.122018, 1.22151, -0.0015
 bone_name = "RightUpperLeg"
 bone_idx = 60
 
-[node name="RightUpperLegHitbox" type="CharacterBody3D" parent="Armature/GeneralSkeleton/RightUpperLegBone" index="0"]
+[node name="RightUpperLegHitbox" type="CharacterBody3D" parent="Armature/GeneralSkeleton/RightUpperLegBone" index="0" node_paths=PackedStringArray("collision_handler")]
+script = ExtResource("3_ogpw3")
+collision_handler = NodePath("../../../..")
+kind = 9
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Armature/GeneralSkeleton/RightUpperLegBone/RightUpperLegHitbox" index="0"]
 transform = Transform3D(1, 1.72085e-15, 0, 1.69309e-15, 1, 0, 0, 0, 1, 0, 0.271524, -1.16415e-10)
@@ -546,7 +562,10 @@ transform = Transform3D(1, 0, 0, 0, -1, 0, 0, 0, -1, -0.122018, 0.669969, 0.0577
 bone_name = "RightLowerLeg"
 bone_idx = 61
 
-[node name="RightLowerLegHitbox" type="CharacterBody3D" parent="Armature/GeneralSkeleton/RightLowerLegBone" index="0"]
+[node name="RightLowerLegHitbox" type="CharacterBody3D" parent="Armature/GeneralSkeleton/RightLowerLegBone" index="0" node_paths=PackedStringArray("collision_handler")]
+script = ExtResource("3_ogpw3")
+collision_handler = NodePath("../../../..")
+kind = 10
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Armature/GeneralSkeleton/RightLowerLegBone/RightLowerLegHitbox" index="0"]
 transform = Transform3D(1, 1.72085e-15, 0, 1.69309e-15, 1, 0, 0, 0, 1, 0, 0.271524, 0.0805458)

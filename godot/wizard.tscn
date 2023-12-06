@@ -5,12 +5,13 @@
 [ext_resource type="PackedScene" uid="uid://dp3s6hbtg1p2b" path="res://camera_attached.tscn" id="2_676hv"]
 [ext_resource type="PackedScene" uid="uid://cpkwj3mm1doln" path="res://wizard_animation.tscn" id="3_goc0h"]
 
-[node name="HecateWizard" type="CharacterBody3D"]
+[node name="HecateWizard" type="Node3D"]
 script = ExtResource("1_xcaxq")
 
 [node name="FirstPersonCamera" parent="." instance=ExtResource("2_676hv")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 1.9, 0.2)
 
-[node name="Character" parent="." instance=ExtResource("1_a5183")]
+[node name="Character" parent="." node_paths=PackedStringArray("collision_handler") instance=ExtResource("1_a5183")]
+collision_handler = NodePath("..")
 
 [node name="Animation" parent="." instance=ExtResource("3_goc0h")]

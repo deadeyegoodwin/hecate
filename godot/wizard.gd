@@ -14,7 +14,7 @@
 # along with Hecate. If not, see <https://www.gnu.org/licenses/>.
 
 # A wizard character.
-class_name HecateWizard extends CharacterBody3D
+class_name HecateWizard extends Node3D
 
 const _cast_scene = preload("res://cast.tscn")
 const _glyph_scene = preload("res://glyph.tscn")
@@ -131,6 +131,8 @@ func _process(_delta : float) -> void:
 	if not is_pending_target:
 		controller.step(_animation, _left_cast, _right_cast)
 
-# Handle a 'collider' colliding with this wizard.
-func handle_collision(collider : Node) -> void:
-	print(name, " handle_collision with ", collider.name)
+# Handle a collision with a hitbox of $Character
+func handle_character_collision(hitbox_kind : HecateHitbox.Kind, collider : Node) -> void:
+	# FIXME
+	print_debug(name, " unhandled hitbox collision on hitbox ",
+				HecateHitbox.Kind.keys()[hitbox_kind], " by ", collider.name)
