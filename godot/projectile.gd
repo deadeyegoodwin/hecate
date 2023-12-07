@@ -16,6 +16,9 @@
 # A projectile.
 class_name HecateProjectile extends CharacterBody3D
 
+## The amount of damage done by the projectile.
+@export var damage : float = 10.0
+
 @onready var _path := $Path3D
 @onready var _pathfollow := $Path3D/PathFollow3D
 

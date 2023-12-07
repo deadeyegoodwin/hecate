@@ -35,6 +35,9 @@ var _camera : HecateAttachedCamera = null
 ## The owner of this wizard.
 @export var owner_kind : HecateCharacter.OwnerKind
 
+## The current health of the wizard.
+@export var health : float = 20.0
+
 # The left and right hand of the wizard and the associated HecateCast
 @onready var _left_hand_attachment = $Character.left_cast_marker
 @onready var _right_hand_attachment = $Character.right_cast_marker
@@ -74,6 +77,9 @@ func _ready() -> void:
 
 	# Set the character owner...
 	$Character.set_owner_kind(owner_kind)
+
+	# Make this wizard handle collisions with hitboxes of $Character
+	$Character.collision_handler = self
 
 	# Starting animation...
 	_animation.initialize($Character/AnimationTree)
@@ -135,6 +141,10 @@ func _process(_delta : float) -> void:
 				if _animation.is_current_beyond_timestamp(_right_hand_cast_timestamp):
 					var r := _animation.set_target(HecateWizardAnimation.State.IDLE_RIGHT); assert(r)
 					r = _right_cast.cast(); assert(r)
+			HecateWizardAnimation.State.DEATH_FRONT_LEFT, HecateWizardAnimation.State.DEATH_FRONT_RIGHT:
+				# Reached death state, set all casts to idle.
+				var r := _left_cast.idle(); assert(r)
+				r = _right_cast.idle(); assert(r)
 
 	# If transitioning between animation states then ignore any cast commands.
 	# Commands are not recognized while animating between states, and casts
@@ -143,7 +153,8 @@ func _process(_delta : float) -> void:
 		controller.step(_animation, _left_cast, _right_cast)
 
 # Handle a collision with a hitbox of $Character
-func handle_character_collision(hitbox_kind : HecateHitbox.Kind, collider : Node) -> void:
-	# FIXME
-	print_debug(name, " unhandled hitbox collision on hitbox ",
-				HecateHitbox.Kind.keys()[hitbox_kind], " by ", collider.name)
+func handle_character_collision(_hitbox_kind : HecateHitbox.Kind, collider : Node) -> void:
+	if (collider != null) and ("damage" in collider):
+		health = max(0.0, health - collider.damage)
+		if health == 0:
+			var r := _animation.set_death(); assert(r)

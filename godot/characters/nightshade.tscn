@@ -1,10 +1,11 @@
-[gd_scene load_steps=14 format=3 uid="uid://c568x5j8b723u"]
+[gd_scene load_steps=15 format=3 uid="uid://c568x5j8b723u"]
 
 [ext_resource type="PackedScene" uid="uid://db8s3pj4iuoi5" path="res://third_party/mixamo/nightshade/nightshade.gltf" id="1_kw0ij"]
 [ext_resource type="Script" path="res://characters/character.gd" id="2_iiyw7"]
 [ext_resource type="AnimationLibrary" uid="uid://dflrgddf2lqyr" path="res://third_party/mixamo/idle_cast_glyph.glb" id="2_nmcsf"]
 [ext_resource type="AnimationNodeStateMachine" uid="uid://gx4b66lqqh8g" path="res://wizard_state_machine.tres" id="3_0c62j"]
 [ext_resource type="Script" path="res://characters/hitbox.gd" id="3_ogpw3"]
+[ext_resource type="AnimationLibrary" uid="uid://d02weg7b53ndd" path="res://third_party/mixamo/death.glb" id="4_xb35e"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_nubad"]
 height = 0.404996
@@ -574,12 +575,14 @@ shape = SubResource("CylinderShape3D_3nj7n")
 [node name="AnimationPlayer" parent="." index="1"]
 libraries = {
 "": SubResource("AnimationLibrary_mxvf4"),
+"death": ExtResource("4_xb35e"),
 "idle_cast_glyph": ExtResource("2_nmcsf")
 }
 
 [node name="AnimationTree" type="AnimationTree" parent="." index="2"]
 libraries = {
 "": SubResource("AnimationLibrary_mxvf4"),
+"death": ExtResource("4_xb35e"),
 "idle_cast_glyph": ExtResource("2_nmcsf")
 }
 tree_root = ExtResource("3_0c62j")

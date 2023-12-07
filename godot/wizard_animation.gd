@@ -22,7 +22,8 @@ class_name HecateWizardAnimation extends Node
 enum State { IDLE_LEFT, IDLE_RIGHT,
 			 GLYPH_LEFT, GLYPH_RIGHT,
 			 INVOKE_LEFT, INVOKE_RIGHT,
-			 CAST_LEFT, CAST_RIGHT }
+			 CAST_LEFT, CAST_RIGHT,
+			 DEATH_FRONT_LEFT, DEATH_FRONT_RIGHT }
 
 # Current animation state, and the target animation state that has been
 # requested. Animation state will remain current until the animation(s) that
@@ -44,6 +45,14 @@ func start(state : State = State.IDLE_LEFT) -> void:
 	_current_state = state
 	_target_state = state
 	_teleport(state, true)
+
+# Return true if in a death state. Death states are terminal and cannot
+# be exited / changed.
+func is_death_state() -> bool:
+	match _current_state:
+		State.DEATH_FRONT_LEFT, State.DEATH_FRONT_RIGHT:
+			return true
+	return false
 
 # Return true if current state is a left-hand state.
 func is_left_current_state() -> bool:
@@ -86,10 +95,23 @@ func is_current_beyond_timestamp(timestamp : float) -> bool:
 	return(_playback.is_playing() and (_playback.get_current_node() == _state_to_name(_current_state)) and
 			(timestamp < _playback.get_current_play_position()))
 
-# Set the target state. Returns false if there is already a target state
-# pending.
+# Set animation into the appropriate death state. Return false if unable to set to death.
+func set_death() -> bool:
+	if not is_death_state():
+		# Determine what node is currently playing, and from that choose the appropriate
+		# death state.
+		var target := State.DEATH_FRONT_RIGHT
+		match _playback.get_current_node():
+			"idle_right", "glyph_right", "cast_right", "idle_left_to_stand", "stand_to_idle_left":
+				target = State.DEATH_FRONT_LEFT
+		_target_state = target
+		_travel(target)
+	return true
+
+# Set the target state. Returns false if in a death state or if there is
+# already a target state pending.
 func set_target(target : State) -> bool:
-	if is_pending_target_state():
+	if is_death_state() or is_pending_target_state():
 		return false
 	if target != _current_state:
 		_target_state = target
@@ -119,6 +141,10 @@ func _state_to_name(s : State) -> String:
 			return "cast_left"
 		State.CAST_RIGHT:
 			return "cast_right"
+		State.DEATH_FRONT_LEFT:
+			return "death_front_left"
+		State.DEATH_FRONT_RIGHT:
+			return "death_front_right"
 		_:
 			assert(false)
 			return ""
