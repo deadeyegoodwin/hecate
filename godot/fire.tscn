@@ -71,6 +71,7 @@ light_energy = 4.0
 light_indirect_energy = 3.0
 light_volumetric_fog_energy = 0.0
 shadow_enabled = true
+omni_range = 10.0
 
 [node name="Flames" type="GPUParticles3D" parent="."]
 amount = 16
