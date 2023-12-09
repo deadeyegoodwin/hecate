@@ -30,13 +30,17 @@ var _offset : int
 func _ready() -> void:
 	_initial_energy = _light.light_energy
 	_initial_indirect_energy = _light.light_indirect_energy
-	await _noise.changed
 	_noise_image = _noise.get_image()
+	if _noise_image == null:
+		await _noise.changed
+		_noise_image = _noise.get_image()
+		assert(_noise_image != null)
 	_offset = randi_range(0, _noise_image.get_width() - 1)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta : float) -> void:
-	var d := _noise_image.get_pixel(_offset, 0)
-	_light.light_energy = _initial_energy * d.r
-	_light.light_indirect_energy = _initial_indirect_energy * d.r
-	_offset = (_offset + 1) % _noise_image.get_width()
+	if _noise_image != null:
+		var d := _noise_image.get_pixel(_offset, 0)
+		_light.light_energy = _initial_energy * d.r
+		_light.light_indirect_energy = _initial_indirect_energy * d.r
+		_offset = (_offset + 1) % _noise_image.get_width()

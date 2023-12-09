@@ -1,0 +1,84 @@
+[gd_scene load_steps=5 format=3 uid="uid://cciapl5y0gha4"]
+
+[ext_resource type="Script" path="res://title_screen.gd" id="1_jrusg"]
+[ext_resource type="Texture2D" uid="uid://c6p1xhml8fd85" path="res://third_party/rock_030/Rock030_1K-PNG_Color.png" id="2_p0gey"]
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_mkvll"]
+diffuse_texture = ExtResource("2_p0gey")
+
+[sub_resource type="Theme" id="Theme_m6okf"]
+
+[node name="TitleScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_jrusg")
+
+[node name="BackgroundTexture" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("CanvasTexture_mkvll")
+expand_mode = 3
+
+[node name="Title" type="RichTextLabel" parent="."]
+clip_contents = false
+custom_minimum_size = Vector2(800, 100)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -50.0
+offset_right = 400.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_m6okf")
+bbcode_enabled = true
+text = "[center][font_size=96][b][i][color=black]Strife of Hecate[/color][/i][/b][/font_size][/center]"
+fit_content = true
+scroll_active = false
+shortcut_keys_enabled = false
+deselect_on_focus_loss_enabled = false
+drag_and_drop_selection_enabled = false
+
+[node name="ButtonBar" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -297.0
+offset_top = -220.0
+offset_right = -128.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="StartButton" type="Button" parent="ButtonBar"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Start"
+
+[node name="QuitBuitton" type="Button" parent="ButtonBar"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Quit"
+
+[node name="CreditsButton" type="Button" parent="ButtonBar"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Credits"
+
+[connection signal="pressed" from="ButtonBar/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="ButtonBar/QuitBuitton" to="." method="_on_quit_buitton_pressed"]
+[connection signal="pressed" from="ButtonBar/CreditsButton" to="." method="_on_credits_button_pressed"]

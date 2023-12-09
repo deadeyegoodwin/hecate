@@ -13,20 +13,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Hecate. If not, see <https://www.gnu.org/licenses/>.
 
-# Top-level node.
-extends Node
+class_name HecateTitleScreen extends Control
 
-# Camera manager
-@onready var _camera_manager : HecateCameraManager = $CameraManager
+# Start button pressed...
+func _on_start_button_pressed():
+	get_tree().change_scene_to_file("res://main.tscn")
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta : float) -> void:
-	# Exit to menu?
-	if Input.is_action_just_pressed("exit_to_menu"):
-		get_tree().change_scene_to_file("res://title_screen.tscn")
+# Quit button pressed...
+func _on_quit_buitton_pressed():
+	get_tree().quit()
 
-	# Cycle through the cameras...
-	if Input.is_action_just_pressed("camera_manager_next"):
-		_camera_manager.activate_camera_next()
-	elif Input.is_action_just_pressed("camera_manager_prev"):
-		_camera_manager.activate_camera_prev()
+# Credits button pressed...
+func _on_credits_button_pressed():
+	get_tree().change_scene_to_file("res://credits_screen.tscn")
+
