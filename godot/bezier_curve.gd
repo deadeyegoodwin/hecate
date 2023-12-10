@@ -13,9 +13,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Hecate. If not, see <https://www.gnu.org/licenses/>.
 
+# Required because this class is used in some @tool scripts.
+# See https://github.com/godotengine/godot/issues/81250
+@tool
+
 # Generate a smooth Curve3D from a set of points. The curve will pass through
 # all points and will be continuous at the first and second derivative at
 # each of those points.
+#
+# LIMITATION: Currently only 5 points can be specified on the curve.
 #
 # Derived from Kirby Baker’s Mathematics of Computer Graphics course at UCLA.
 # https://www.math.ucla.edu/%7Ebaker/149.1.02w/handouts/dd_splines.pdf
@@ -30,7 +36,7 @@ var _needs_smoothing : bool = false
 # A 3x3 matrix needed to calculate the bezier control points. General matrix
 # support is not available in gdscript but we can use Basis for 3x3. The
 # limitation imposed by only having 3x3 matrix support is that there can be at
-# most 5 points on the curbe. '_A_inverse' is the inverse of the following:
+# most 5 points on the curve. '_A_inverse' is the inverse of the following:
 #   [ 4 1 0
 #     1 4 1
 #     0 1 4 ]
@@ -51,7 +57,8 @@ func reset() -> void:
 func append_point(pt : Vector3) -> void:
 	# Because limited to 3x3 matrix (see above), can have at most
 	# 5 points on the curve.
-	assert(_curve.point_count <= 4)
+	assert(_curve.point_count <= 4,
+			"HecateBezierCurve maximum points allowed = 5, got " + str(_curve.point_count + 1))
 	if _curve.point_count <= 4:
 		_curve.add_point(pt)
 		_needs_smoothing = true
