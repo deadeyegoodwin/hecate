@@ -5,24 +5,14 @@
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ei1ty"]
 albedo_color = Color(0.827451, 0, 0.831373, 1)
 
-[sub_resource type="Curve3D" id="Curve3D_4rftv"]
+[sub_resource type="Curve3D" id="Curve3D_50yjj"]
 bake_interval = 0.0001
-_data = {
-"points": PackedVector3Array(0, 0, 0, -0.0211191, -0.00989095, 0.197665, 0, 0, 0, -0.0422445, -0.0197849, 0.0112299, 0.0422318, 0.0197789, -0.0111881, 0, 0, 0.384159, -0.048174, -0.00988339, 0.0767567, 0.0481856, 0.00989132, -0.0767853, 0.196033, 0.0791319, 0.0760652, 0.0389471, -0.0197976, -0.0266123, -0.0389412, 0.0197877, 0.0266203, 0.196033, 0.0791319, 0.0924529, 0.0686526, -0.0692654, 0.0133082, 0, 0, 0, 0.0197659, 0.237471, 0.0924529),
-"tilts": PackedFloat32Array(0, 0, 0, 0, 0)
-}
-point_count = 5
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hmom8"]
 albedo_color = Color(0, 0.733333, 0.00784314, 1)
 
 [sub_resource type="Curve3D" id="Curve3D_ld3op"]
 bake_interval = 0.0001
-_data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.384159, 0, 0, 0, 0, 0, 0, 0.196033, 0.0791319, 0.0760652, 0, 0, 0, 0, 0, 0, 0.196033, 0.0791319, 0.0924529, 0, 0, 0, 0, 0, 0, 0.0197659, 0.237471, 0.0924529, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0)
-}
-point_count = 6
 
 [node name="HecateBezierCurveTest" type="Node"]
 script = ExtResource("1_28hw6")
@@ -46,7 +36,7 @@ material = SubResource("StandardMaterial3D_ei1ty")
 
 [node name="Path3D" type="Path3D" parent="SmoothCurve"]
 visible = false
-curve = SubResource("Curve3D_4rftv")
+curve = SubResource("Curve3D_50yjj")
 
 [node name="NonSmoothCurve" type="CSGPolygon3D" parent="."]
 polygon = PackedVector2Array(-0.005, -0.005, -0.005, 0.005, 0.005, 0.005, 0.005, -0.005)
