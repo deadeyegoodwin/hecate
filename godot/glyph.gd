@@ -13,6 +13,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Hecate. If not, see <https://www.gnu.org/licenses/>.
 
+# Required because this class is used in some @tool scripts.
+# See https://github.com/godotengine/godot/issues/81250
+@tool
+
 # A glyph composed of HecateGlyphStrokes.
 class_name HecateGlyph extends Node3D
 
@@ -20,13 +24,21 @@ const _glyph_stroke_scene = preload("res://glyph_stroke.tscn")
 
 # The collision shape that defines where the glyph is in arena-space. This
 # shape is not visible (the glyph is visual represented by its composing
-# strokes). This shape is used to determine where the mouse is when drawing
-# strokes.
+# HecateGlyphStroke objects). This shape is used to map mouse position to
+# stroke position.
 @onready var _collision_shape : CollisionShape3D = $CollisionShape3D
 var _collision_shape_size := Vector3.ZERO
 
 # The glyph strokes composing the glyph.
-var _strokes : Array[HecateGlyphStroke]
+var _strokes : Array[HecateGlyphStroke] = []
+
+# A pool of glyph stokes to use when a stroke is needed. If not initialized then
+# strokes are created dynamically as needed. If initialized then only this pool
+# of strokes is available for the glyph and once exhausted no more stokes can be
+# added to the glyph. It is assumed that the strokes in _strokes_pool are already
+# in the glyph scene tree and so they are just made visible/invisible as needed.
+var _next_strokes_pool_idx : int = -1
+var _strokes_pool : Array[HecateGlyphStroke] = []
 
 # Is a stroke being actively modified?
 var _is_active_stroke : bool = false
@@ -41,18 +53,34 @@ var _target : Vector3 = Vector3.ZERO
 # does not describe a trajectory.
 var _trajectory : Curve3D = null
 
-# Initialize the glyph.
-func initialize(tform : Transform3D, size : Vector3) -> void:
+# Initialize the collision shape for the glyph. Only needs to be called if collisions
+# with the glyph need to be detected.
+func initialize_for_collision(tform : Transform3D, size : Vector3) -> void:
 	transform = tform
 	_collision_shape_size = size
 
 func _ready() -> void:
 	_collision_shape.shape.size = _collision_shape_size
 
-# Remove all strokes from the glyph and reset to initial state.
+# Initialize the pool of HecateGlyphStroke objects to use as needed. Calling this method is
+# optional. By default, stroke objects will be created dynamically as needed. Return
+# false if the pool is already intialized by a previous call to set_strokes_pool().
+func set_strokes_pool(sp : Array[HecateGlyphStroke]) -> bool:
+	if not _strokes_pool.is_empty():
+		return false
+	if not sp.is_empty():
+		_strokes_pool = sp
+		_next_strokes_pool_idx = 0
+		for s in _strokes_pool:
+			s.visible = false
+	return true
+
+# Remove all strokes from the glyph and reset to initial state. The strokes pool, if used,
+# is not reset... a stroke from the pool can only be used once even if the glyph is reset.
 func reset() -> void:
 	for s : HecateGlyphStroke in _strokes:
-		s.release()
+		s.release(true, # fade
+				  _strokes_pool.is_empty()) # remove_from_scene
 	_strokes.clear()
 	_is_active_stroke = false
 	_is_complete = false
@@ -80,16 +108,29 @@ func trajectory_curve() -> Curve3D:
 		return null
 	return _trajectory
 
-# Start a glyph stroke at the specified start position.
-func start_stroke(global_pos : Vector3) -> void:
+# Start a glyph stroke at the specified start position if an active stroke is
+# not already in progress. Return true if a stroke is actually started.
+func start_stroke(global_pos : Vector3) -> bool:
 	assert(not _is_active_stroke)
-	if not _is_active_stroke:
-		_is_active_stroke = true
-		_is_complete = false
-		var stroke := _glyph_stroke_scene.instantiate()
+	if (_is_active_stroke or
+		(not _strokes_pool.is_empty() and (_next_strokes_pool_idx >= _strokes_pool.size()))):
+		return false
+
+	_is_active_stroke = true
+	_is_complete = false
+
+	var stroke : HecateGlyphStroke = null
+	if not _strokes_pool.is_empty():
+		stroke = _strokes_pool[_next_strokes_pool_idx]
+		_next_strokes_pool_idx += 1
+	else:
+		stroke = _glyph_stroke_scene.instantiate()
 		call_deferred("add_child", stroke)
-		_strokes.append(stroke)
-		add_to_stroke(global_pos)
+
+	stroke.visible = true
+	_strokes.append(stroke)
+	add_to_stroke(global_pos)
+	return true
 
 # End a glyph stroke. Detect if a known glyph has been completed.
 func end_stroke() -> void:
@@ -117,8 +158,4 @@ func add_to_stroke(global_pos : Vector3) -> void:
 	assert(_is_active_stroke)
 	if _is_active_stroke:
 		assert(not _strokes.is_empty())
-		# Due to the way the collision shape is used to determine 'global_pos',
-		# the z position can be non-zero, but we want to curve to sit at z == 0,
-		# so adjust here.
-		var lpos : Vector3 = to_local(global_pos)
-		_strokes[-1].add_point(Vector3(lpos.x, lpos.y, 0.0))
+		_strokes[-1].add_point(to_local(global_pos))

@@ -18,7 +18,7 @@
 # Demonstates HecateBezierCurve generating smooth curves by setting the
 # control points in Curve3D so that the 1st and 2nd derivative of the curve
 # are equal at each curve point selected by the user. To add points to the
-# curve move the $Marker3D to the desired position and press "Space". Two lines
+# curve move the $Marker3D to the desired position and press <Spacebar>. Two lines
 # are drawn: one using straight line segments, and the other using
 # HecateBezierCurve to create a smooth curve.
 #

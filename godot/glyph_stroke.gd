@@ -13,6 +13,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Hecate. If not, see <https://www.gnu.org/licenses/>.
 
+# Required because this class is used in some @tool scripts.
+# See https://github.com/godotengine/godot/issues/81250
+@tool
+
 # A stroke in a HecateGlyph. A stroke can be a single point, or a curve formed
 # by two or more points.
 class_name HecateGlyphStroke extends Node3D
@@ -85,10 +89,14 @@ func add_point(pt : Vector3) -> void:
 	# Just record the new point here... added to '_curve' in _process.
 	_pending_adds.append(pt)
 
-# Free this stroke and remove it from the scene tree. If 'fade' is true
-# then allow existing particles to complete their lifetime.
-func release(fade : bool = true):
+# Stop using this stroke as part of the parent glyph. If 'fade' is
+# true then allow existing particles to complete their lifetime. If 'remove_from_scene'
+# is true then the stroke is removed from the scene, otherwise it is just made
+# invisible.
+func release(fade : bool = true, remove_from_scene : bool = true):
 	if fade:
 		_particles.emitting = false
 		await _particles.finished
-	queue_free()
+	visible = false
+	if remove_from_scene:
+		queue_free()

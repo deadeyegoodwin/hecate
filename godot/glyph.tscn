@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://glyph.gd" id="1_7sipd"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_untw8"]
+size = Vector3(0, 0, 0)
 
 [node name="HecateGlyph" type="StaticBody3D"]
 collision_layer = 1024

@@ -101,7 +101,7 @@ func _glyph_new() -> HecateGlyph:
 	var tform : Transform3D = transform.inverse() * Transform3D(Basis.IDENTITY, Vector3(0.0, arena.size().y / 2.0, 1.0))
 	var size := Vector3(arena.size().x, arena.size().y, 0.01)
 	var glyph := _glyph_scene.instantiate()
-	glyph.initialize(tform, size)
+	glyph.initialize_for_collision(tform, size)
 	arena.call_deferred("add_child", glyph)
 	return glyph
 

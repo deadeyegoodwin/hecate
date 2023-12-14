@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://bibbabi2vwlkx"]
+
+[ext_resource type="Script" path="res://test/glyph_test.gd" id="1_jt8vn"]
+[ext_resource type="PackedScene" uid="uid://caqw58b1o572k" path="res://glyph.tscn" id="2_bcg4b"]
+[ext_resource type="PackedScene" uid="uid://b223gjscpl0sl" path="res://glyph_stroke.tscn" id="3_lbhpv"]
+
+[node name="HecateGlyphTest" type="Node"]
+script = ExtResource("1_jt8vn")
+
+[node name="Marker3D" type="Marker3D" parent="."]
+
+[node name="Glyph" parent="." instance=ExtResource("2_bcg4b")]
+
+[node name="Stroke0" parent="Glyph" instance=ExtResource("3_lbhpv")]
+
+[node name="Stroke1" parent="Glyph" instance=ExtResource("3_lbhpv")]
+
+[node name="Stroke2" parent="Glyph" instance=ExtResource("3_lbhpv")]
+
+[node name="Stroke3" parent="Glyph" instance=ExtResource("3_lbhpv")]
