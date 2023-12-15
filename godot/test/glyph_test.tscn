@@ -11,10 +11,10 @@ script = ExtResource("1_jt8vn")
 
 [node name="Glyph" parent="." instance=ExtResource("2_bcg4b")]
 
-[node name="Stroke0" parent="Glyph" instance=ExtResource("3_lbhpv")]
+[node name="Stroke0" parent="." instance=ExtResource("3_lbhpv")]
 
-[node name="Stroke1" parent="Glyph" instance=ExtResource("3_lbhpv")]
+[node name="Stroke1" parent="." instance=ExtResource("3_lbhpv")]
 
-[node name="Stroke2" parent="Glyph" instance=ExtResource("3_lbhpv")]
+[node name="Stroke2" parent="." instance=ExtResource("3_lbhpv")]
 
-[node name="Stroke3" parent="Glyph" instance=ExtResource("3_lbhpv")]
+[node name="Stroke3" parent="." instance=ExtResource("3_lbhpv")]

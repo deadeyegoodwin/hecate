@@ -21,7 +21,43 @@
 # by two or more points.
 class_name HecateGlyphStroke extends Node3D
 
+## Number of sides in the extruded polygon representing the glyph stroke.
+@export var mesh_sides : int = 16
+
+## Radius of the extruded polygon representing the glyph stroke.
+@export var mesh_radius : float = 0.015
+
+## Base color of the stroke mesh.
+@export var mesh_color : Color = Color.WHITE_SMOKE :
+	set(v):
+		mesh_color = v
+		if (_polygon != null) and (_polygon.material != null):
+			_polygon.material.set_shader_parameter("smoke_color", mesh_color)
+
+## Texture density on the stoke mesh.
+@export_range(0.0, 1.0) var mesh_density : float = 1.0 :
+	set(v):
+		mesh_density = v
+		if (_polygon != null) and (_polygon.material != null):
+			_polygon.material.set_shader_parameter("density", mesh_density)
+
+## Speed of length-wise motion of the texture on the stroke mesh.
+@export_range(0.0, 10.0) var mesh_length_speed : float = 0.2 :
+	set(v):
+		mesh_length_speed = v
+		if (_polygon != null) and (_polygon.material != null):
+			_polygon.material.set_shader_parameter("length_speed", mesh_length_speed)
+
+## Speed of rotation of the texture on the stroke mesh.
+@export_range(0.0, 10.0) var mesh_rotate_speed : float = 0.5 :
+	set(v):
+		mesh_rotate_speed = v
+		if (_polygon != null) and (_polygon.material != null):
+			_polygon.material.set_shader_parameter("rotate_speed", mesh_rotate_speed)
+
 @onready var _particles := $GPUParticles3D
+@onready var _polygon := $CSGPolygon3D
+@onready var _polygon_path := $CSGPolygon3D/Path3D
 
 # The HecateBezierCurve that makes a smooth curve for the stroke.
 var _curve_bake_interval : float = 0.005
@@ -37,7 +73,22 @@ var _pending_adds : Array[Vector3]
 var _emission_image := Image.create(2048, 1, false, Image.FORMAT_RGBF)
 
 func _ready() -> void:
-	_refresh_emission_points()
+	# Update the curve particles and polygon...
+	_refresh_curve()
+
+	# Set the CSGPolygon to a circular shape.
+	var angle_delta : float = (PI * 2) / mesh_sides
+	var vector : Vector2 = Vector2(mesh_radius, 0)
+	var varr : PackedVector2Array = []
+	for sidx in mesh_sides:
+		varr.append(vector)
+		vector = vector.rotated(angle_delta)
+	_polygon.polygon = varr
+
+	_polygon.material.set_shader_parameter("smoke_color", mesh_color)
+	_polygon.material.set_shader_parameter("density", clampf(mesh_density, 0.0, 1.0))
+	_polygon.material.set_shader_parameter("length_speed", clampf(mesh_length_speed, 0.0, 10.0))
+	_polygon.material.set_shader_parameter("rotate_speed", clampf(mesh_rotate_speed, 0.0, 10.0))
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta : float) -> void:
@@ -46,16 +97,21 @@ func _process(_delta : float) -> void:
 		for pt : Vector3 in _pending_adds:
 			_curve.append_point(pt)
 		_pending_adds.clear()
-		_refresh_emission_points()
+		_refresh_curve()
 
-# Based on '_curve' generate a new set of emission points to match.
-func _refresh_emission_points() -> void:
+# Based on '_curve' update the polygon path and generate a new set of emission
+# points for the particles.
+func _refresh_curve() -> void:
+	# Update polygon...
+	_polygon_path.curve = _curve.curve()
+
+	# Update particle emission points...
 	var curve3d := _curve.curve()
 	curve3d.bake_interval = _curve_bake_interval
 	var pts := curve3d.get_baked_points()
 	var cnt := pts.size()
 	if cnt > 0:
-		for idx in range(cnt):
+		for idx in range(min(cnt, _emission_image.get_size().x)):
 			var pt := pts[idx]
 			_emission_image.set_pixel(idx, 0, Color(pt.x, pt.y, pt.z))
 		var image_texture := ImageTexture.create_from_image(_emission_image)
@@ -101,5 +157,7 @@ func release(fade : bool = true, remove_from_scene : bool = true):
 		# to complete their lifetime.
 		await get_tree().create_timer(_particles.lifetime).timeout
 	visible = false
+	_particles.process_material.emission_point_count = 0
+	_particles.process_material.emission_point_texture = null
 	if remove_from_scene:
 		queue_free()

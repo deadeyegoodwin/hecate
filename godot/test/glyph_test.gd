@@ -31,7 +31,7 @@ class_name HecateGlyphTest extends Node
 # glyphs work in Hecate because there strokes are created dynamically, but for
 # testing it is better to have strokes be part of the scene tree.
 @onready var _stroke_pool : Array[HecateGlyphStroke] = [
-	$Glyph/Stroke0, $Glyph/Stroke1, $Glyph/Stroke2, $Glyph/Stroke3]
+	$Stroke0, $Stroke1, $Stroke2, $Stroke3]
 
 # Debounce key presses...
 var _key_debounce := false
