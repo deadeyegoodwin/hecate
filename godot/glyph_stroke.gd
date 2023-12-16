@@ -96,7 +96,10 @@ func add_point(pt : Vector3) -> void:
 func release(fade : bool = true, remove_from_scene : bool = true):
 	if fade:
 		_particles.emitting = false
-		await _particles.finished
+		# Should be able to await on "_particles.finished" signal but that doesn't
+		# seem to always work. Instead we simply sleep long enough for all the particles
+		# to complete their lifetime.
+		await get_tree().create_timer(_particles.lifetime).timeout
 	visible = false
 	if remove_from_scene:
 		queue_free()
