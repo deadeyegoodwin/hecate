@@ -76,6 +76,27 @@ class_name HecateGlyphStroke extends Node3D
 		if (_polygon != null) and (_polygon.material != null):
 			_polygon.material.set_shader_parameter("value_gradient", mesh_value_gradient)
 
+## Speed of length-wise motion of the surface on the stroke mesh.
+@export_range(0.0, 10.0) var mesh_surface_length_speed : float = 0.05 :
+	set(v):
+		mesh_surface_length_speed = v
+		if (_polygon != null) and (_polygon.material != null):
+			_polygon.material.set_shader_parameter("surface_length_speed", mesh_surface_length_speed)
+
+## Speed of rotation of the surface on the stroke mesh.
+@export_range(0.0, 10.0) var mesh_surface_rotate_speed : float = 0.01 :
+	set(v):
+		mesh_surface_rotate_speed = v
+		if (_polygon != null) and (_polygon.material != null):
+			_polygon.material.set_shader_parameter("surface_rotate_speed", mesh_surface_rotate_speed)
+
+## Magnitude to surface variation along each axis, as a ratio of the normal vector.
+@export var mesh_surface_gradient : Vector3 = Vector3.ZERO :
+	set(v):
+		mesh_surface_gradient = v
+		if (_polygon != null) and (_polygon.material != null):
+			_polygon.material.set_shader_parameter("surface_gradient", mesh_surface_gradient)
+
 @onready var _particles := $GPUParticles3D
 @onready var _polygon := $CSGPolygon3D
 @onready var _polygon_path := $CSGPolygon3D/Path3D
@@ -113,6 +134,9 @@ func _ready() -> void:
 	_polygon.material.set_shader_parameter("hue_gradient", clampf(mesh_hue_gradient, 0.0, 1.0))
 	_polygon.material.set_shader_parameter("saturation_gradient", clampf(mesh_saturation_gradient, 0.0, 1.0))
 	_polygon.material.set_shader_parameter("value_gradient", clampf(mesh_value_gradient, 0.0, 1.0))
+	_polygon.material.set_shader_parameter("surface_length_speed", clampf(mesh_surface_length_speed, 0.0, 10.0))
+	_polygon.material.set_shader_parameter("surface_rotate_speed", clampf(mesh_surface_rotate_speed, 0.0, 10.0))
+	_polygon.material.set_shader_parameter("surface_gradient", mesh_surface_gradient)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta : float) -> void:

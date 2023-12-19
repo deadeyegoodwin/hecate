@@ -43,6 +43,15 @@ const _glyph_stroke_scene = preload("res://glyph_stroke.tscn")
 ## Rate of color value change in the texture of the stoke mesh, based on density.
 @export_range(0.0, 1.0) var stroke_mesh_value_gradient : float = 0.1
 
+## Speed of length-wise motion of the surface on the stroke mesh.
+@export_range(0.0, 10.0) var stroke_mesh_surface_length_speed : float = 0.05
+
+## Speed of rotation of the surface on the stroke mesh.
+@export_range(0.0, 10.0) var stroke_mesh_surface_rotate_speed : float = 0.01
+
+## Magnitude to surface variation along each axis, as a ratio of the normal vector.
+@export var stroke_mesh_surface_gradient : Vector3 = Vector3(0.02, 0.02, 0.02)
+
 # The collision shape that defines where the glyph is in arena-space. This
 # shape is not visible (the glyph is visual represented by its composing
 # HecateGlyphStroke objects). This shape is used to map mouse position to
@@ -155,6 +164,9 @@ func start_stroke(global_pos : Vector3) -> bool:
 	stroke.mesh_hue_gradient = stroke_mesh_hue_gradient
 	stroke.mesh_saturation_gradient = stroke_mesh_saturation_gradient
 	stroke.mesh_value_gradient = stroke_mesh_value_gradient
+	stroke.mesh_surface_length_speed = stroke_mesh_surface_length_speed
+	stroke.mesh_surface_rotate_speed = stroke_mesh_surface_rotate_speed
+	stroke.mesh_surface_gradient = stroke_mesh_surface_gradient
 
 	stroke.visible = true
 	_strokes.append(stroke)
