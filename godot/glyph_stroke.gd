@@ -35,7 +35,7 @@ class_name HecateGlyphStroke extends Node3D
 			_polygon.material.set_shader_parameter("smoke_color", mesh_color)
 
 ## Texture density on the stoke mesh.
-@export_range(0.0, 1.0) var mesh_density : float = 1.0 :
+@export_range(0.01, 1.0) var mesh_density : float = 1.0 :
 	set(v):
 		mesh_density = v
 		if (_polygon != null) and (_polygon.material != null):
@@ -54,6 +54,27 @@ class_name HecateGlyphStroke extends Node3D
 		mesh_rotate_speed = v
 		if (_polygon != null) and (_polygon.material != null):
 			_polygon.material.set_shader_parameter("rotate_speed", mesh_rotate_speed)
+
+## Rate of hue change in the stoke mesh, based on density.
+@export_range(0.0, 1.0) var mesh_hue_gradient : float = 1.0 :
+	set(v):
+		mesh_hue_gradient = v
+		if (_polygon != null) and (_polygon.material != null):
+			_polygon.material.set_shader_parameter("hue_gradient", mesh_hue_gradient)
+
+## Rate of saturation change in the stoke mesh, based on density.
+@export_range(0.0, 1.0) var mesh_saturation_gradient : float = 1.0 :
+	set(v):
+		mesh_saturation_gradient = v
+		if (_polygon != null) and (_polygon.material != null):
+			_polygon.material.set_shader_parameter("saturation_gradient", mesh_saturation_gradient)
+
+## Rate of color value change in the stoke mesh, based on density.
+@export_range(0.0, 1.0) var mesh_value_gradient : float = 1.0 :
+	set(v):
+		mesh_value_gradient = v
+		if (_polygon != null) and (_polygon.material != null):
+			_polygon.material.set_shader_parameter("value_gradient", mesh_value_gradient)
 
 @onready var _particles := $GPUParticles3D
 @onready var _polygon := $CSGPolygon3D
@@ -86,9 +107,12 @@ func _ready() -> void:
 	_polygon.polygon = varr
 
 	_polygon.material.set_shader_parameter("smoke_color", mesh_color)
-	_polygon.material.set_shader_parameter("density", clampf(mesh_density, 0.0, 1.0))
+	_polygon.material.set_shader_parameter("density", clampf(mesh_density, 0.01, 1.0))
 	_polygon.material.set_shader_parameter("length_speed", clampf(mesh_length_speed, 0.0, 10.0))
 	_polygon.material.set_shader_parameter("rotate_speed", clampf(mesh_rotate_speed, 0.0, 10.0))
+	_polygon.material.set_shader_parameter("hue_gradient", clampf(mesh_hue_gradient, 0.0, 1.0))
+	_polygon.material.set_shader_parameter("saturation_gradient", clampf(mesh_saturation_gradient, 0.0, 1.0))
+	_polygon.material.set_shader_parameter("value_gradient", clampf(mesh_value_gradient, 0.0, 1.0))
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta : float) -> void:
