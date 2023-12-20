@@ -15,6 +15,11 @@
 
 class_name HecateTitleScreen extends Control
 
+@onready var _start_button := $ButtonBar/StartButton
+
+func _ready() -> void:
+	_start_button.grab_focus()
+
 # Start button pressed...
 func _on_start_button_pressed():
 	get_tree().change_scene_to_file("res://main.tscn")
