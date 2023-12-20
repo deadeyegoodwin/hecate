@@ -22,8 +22,8 @@ class_name HecateGlyph extends Node3D
 
 const _glyph_stroke_scene = preload("res://glyph_stroke.tscn")
 
-## The base color for mesh that represents glyph strokes.
-@export var stroke_mesh_color : Color = Color(Color.WHITE_SMOKE, 0.25)
+## The base color for mesh and particles that represents glyph strokes.
+@export var stroke_color : Color = Color(Color.WHITE_SMOKE, 0.25)
 
 ## Texture density on the stoke mesh.
 @export_range(0.01, 1.0) var stroke_mesh_density : float = 0.3
@@ -157,7 +157,7 @@ func start_stroke(global_pos : Vector3) -> bool:
 		stroke = _glyph_stroke_scene.instantiate()
 		call_deferred("add_child", stroke)
 
-	stroke.mesh_color = stroke_mesh_color
+	stroke.base_color = stroke_color
 	stroke.mesh_density = stroke_mesh_density
 	stroke.mesh_length_speed = stroke_mesh_length_speed
 	stroke.mesh_rotate_speed = stroke_mesh_rotate_speed

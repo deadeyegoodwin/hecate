@@ -1,90 +1,119 @@
-[gd_scene load_steps=16 format=3 uid="uid://b223gjscpl0sl"]
+[gd_scene load_steps=19 format=3 uid="uid://b223gjscpl0sl"]
 
 [ext_resource type="Script" path="res://glyph_stroke.gd" id="1_6q4ms"]
-[ext_resource type="Texture2D" uid="uid://de8x45fep8poe" path="res://third_party/smoke_aura/Smoke30Frames.png" id="1_876ti"]
 [ext_resource type="Shader" uid="uid://b16l6sugjwiws" path="res://glyph_stroke.tres" id="3_e73ko"]
 
 [sub_resource type="Curve" id="Curve_5h1cc"]
-_data = [Vector2(0, 0.0362258), 0.0, 0.0, 0, 0, Vector2(0.116331, 0.748104), 0.0, 0.0, 0, 0, Vector2(1, 0.0964617), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0.0362258), 0.0, 0.0, 0, 0, Vector2(0.195008, 0.518655), 0.0, 0.0, 0, 0, Vector2(1, 0.0964617), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="CurveTexture" id="CurveTexture_g1wek"]
 curve = SubResource("Curve_5h1cc")
 
-[sub_resource type="Gradient" id="Gradient_0fing"]
-offsets = PackedFloat32Array(0, 0.00238663, 1)
-colors = PackedColorArray(0, 0, 0, 1, 0.24821, 0.24821, 0.24821, 1, 1, 1, 1, 1)
+[sub_resource type="Gradient" id="Gradient_5eoka"]
+offsets = PackedFloat32Array(0.0697211, 0.394422)
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_5lidf"]
-gradient = SubResource("Gradient_0fing")
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_oql7m"]
+gradient = SubResource("Gradient_5eoka")
+
+[sub_resource type="Gradient" id="Gradient_0k7xy"]
+offsets = PackedFloat32Array(0.219124, 0.842629)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_880nx"]
+gradient = SubResource("Gradient_0k7xy")
+
+[sub_resource type="Curve" id="Curve_h4r1f"]
+min_value = -1.0
+_data = [Vector2(0, 0.0403899), 0.0, 0.0, 0, 0, Vector2(0.407547, 0.981894), 0.0, 0.0, 0, 0, Vector2(1, 0.031337), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_rfq6y"]
+curve = SubResource("Curve_h4r1f")
+
+[sub_resource type="Curve" id="Curve_i4ula"]
+min_value = 0.01
+max_value = 0.05
+_data = [Vector2(0, 0.05), 0.0, 0.0, 0, 0, Vector2(0.997642, 0.01), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_fypwr"]
+curve = SubResource("Curve_i4ula")
 
 [sub_resource type="Curve" id="Curve_8dpus"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.695749, 1), 0.0, 0.0, 0, 0, Vector2(0.948546, 0.299073), 0.0, 0.0, 0, 0]
+max_value = 2.0
+_data = [Vector2(0, 2), 0.0, 0.0, 0, 0, Vector2(0.693396, 1.75581), 0.0, 0.0, 0, 0, Vector2(0.948546, 0.299073), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="CurveTexture" id="CurveTexture_mrrih"]
 curve = SubResource("Curve_8dpus")
 
-[sub_resource type="Curve" id="Curve_bnv61"]
-_data = [Vector2(0.760349, 0.149632), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_x0orm"]
-curve = SubResource("Curve_bnv61")
-
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_whdn1"]
 resource_local_to_scene = true
 emission_shape = 4
 emission_point_count = 0
-direction = Vector3(0, 0, 0)
+direction = Vector3(1, 1, 1)
 spread = 180.0
+flatness = 1.0
+initial_velocity_min = 0.01
+initial_velocity_max = 0.02
 radial_velocity_min = 0.01
 radial_velocity_max = 0.01
 gravity = Vector3(0, 0, 0)
+linear_accel_min = 0.01
+linear_accel_max = 0.05
+linear_accel_curve = SubResource("CurveTexture_fypwr")
+damping_min = 0.001
+damping_max = 0.01
 attractor_interaction_enabled = false
+scale_max = 2.0
 scale_curve = SubResource("CurveTexture_mrrih")
-color = Color(0, 1, 1, 1)
-color_ramp = SubResource("GradientTexture1D_5lidf")
+color_ramp = SubResource("GradientTexture1D_880nx")
+color_initial_ramp = SubResource("GradientTexture1D_oql7m")
 alpha_curve = SubResource("CurveTexture_g1wek")
-anim_speed_min = 1.0
-anim_speed_max = 2.0
-turbulence_noise_strength = 0.5
-turbulence_noise_scale = 2.0
-turbulence_influence_over_life = SubResource("CurveTexture_x0orm")
+hue_variation_max = 0.05
+hue_variation_curve = SubResource("CurveTexture_rfq6y")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nq02w"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pqjej"]
 transparency = 1
-cull_mode = 2
 shading_mode = 0
 vertex_color_use_as_albedo = true
-albedo_texture = ExtResource("1_876ti")
 billboard_mode = 3
 billboard_keep_scale = true
-particles_anim_h_frames = 6
-particles_anim_v_frames = 5
-particles_anim_loop = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
 
-[sub_resource type="QuadMesh" id="QuadMesh_p6yar"]
-material = SubResource("StandardMaterial3D_nq02w")
-size = Vector2(0.05, 0.05)
+[sub_resource type="SphereMesh" id="SphereMesh_bhlk7"]
+material = SubResource("StandardMaterial3D_pqjej")
+radius = 0.001
+height = 0.002
+radial_segments = 4
+rings = 4
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vqm0t"]
 resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("3_e73ko")
-shader_parameter/smoke_color = Color(1, 1, 1, 1)
+shader_parameter/surface_gradient = Vector3(0, 0, 0)
+shader_parameter/surface_length_speed = 0.05
+shader_parameter/surface_rotate_speed = 0.01
 shader_parameter/length_speed = 0.2
 shader_parameter/rotate_speed = 0.5
 shader_parameter/density = 1.0
+shader_parameter/hue_gradient = 1.0
+shader_parameter/smoke_color = Color(1, 1, 1, 1)
+shader_parameter/saturation_gradient = 1.0
+shader_parameter/value_gradient = 1.0
 
 [node name="HecateGlyphStroke" type="Node3D"]
 script = ExtResource("1_6q4ms")
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="."]
 amount = 128
-lifetime = 2.0
+lifetime = 3.0
 process_material = SubResource("ParticleProcessMaterial_whdn1")
-draw_pass_1 = SubResource("QuadMesh_p6yar")
+draw_pass_1 = SubResource("SphereMesh_bhlk7")
 
 [node name="CSGPolygon3D" type="CSGPolygon3D" parent="."]
 mode = 2

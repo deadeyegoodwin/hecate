@@ -27,12 +27,14 @@ class_name HecateGlyphStroke extends Node3D
 ## Radius of the extruded polygon representing the glyph stroke.
 @export var mesh_radius : float = 0.015
 
-## Base color of the stroke mesh.
-@export var mesh_color : Color = Color.WHITE_SMOKE :
+## Base color of the stroke mesh and particles.
+@export var base_color : Color = Color.WHITE_SMOKE :
 	set(v):
-		mesh_color = v
+		base_color = v
 		if (_polygon != null) and (_polygon.material != null):
-			_polygon.material.set_shader_parameter("smoke_color", mesh_color)
+			_polygon.material.set_shader_parameter("smoke_color", base_color)
+		if (_particles != null) and (_particles.process_material != null):
+			_particles.process_material.color = base_color
 
 ## Texture density on the stoke mesh.
 @export_range(0.01, 1.0) var mesh_density : float = 1.0 :
@@ -127,7 +129,9 @@ func _ready() -> void:
 		vector = vector.rotated(angle_delta)
 	_polygon.polygon = varr
 
-	_polygon.material.set_shader_parameter("smoke_color", mesh_color)
+	_particles.process_material.color = base_color
+
+	_polygon.material.set_shader_parameter("smoke_color", base_color)
 	_polygon.material.set_shader_parameter("density", clampf(mesh_density, 0.01, 1.0))
 	_polygon.material.set_shader_parameter("length_speed", clampf(mesh_length_speed, 0.0, 10.0))
 	_polygon.material.set_shader_parameter("rotate_speed", clampf(mesh_rotate_speed, 0.0, 10.0))
