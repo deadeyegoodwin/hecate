@@ -203,10 +203,15 @@ func add_point(pt : Vector3) -> void:
 # invisible.
 func release(fade : bool = true, remove_from_scene : bool = true):
 	if fade:
-		_particles.emitting = false
+		# Use tween to fade the mesh and particles in parallel. Mesh fades quickly,
+		# duration is only 1/4 of particle lifetime.
+		var tween = create_tween()
+		tween.tween_property(self, "mesh_density", 0.01, _particles.lifetime / 4.0)
+
 		# Should be able to await on "_particles.finished" signal but that doesn't
 		# seem to always work. Instead we simply sleep long enough for all the particles
 		# to complete their lifetime.
+		_particles.emitting = false
 		await get_tree().create_timer(_particles.lifetime).timeout
 	visible = false
 	_particles.process_material.emission_point_count = 0
