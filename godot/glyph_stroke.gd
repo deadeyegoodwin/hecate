@@ -17,8 +17,7 @@
 # See https://github.com/godotengine/godot/issues/81250
 @tool
 
-# A stroke in a HecateGlyph. A stroke can be a single point, or a curve formed
-# by two or more points.
+# A stroke in a HecateGlyph.
 class_name HecateGlyphStroke extends Node3D
 
 ## Number of sides in the extruded polygon representing the glyph stroke.
@@ -107,6 +106,11 @@ class_name HecateGlyphStroke extends Node3D
 var _curve_bake_interval : float = 0.005
 var _curve := HecateBezierCurve.new()
 
+# Particle emission and CSGPolygon don't like have two adjacent Curve3D points
+# being close together. Define an epsilon that can be used to make sure two adjacent
+# points are not too close together.
+const _curve_point_epsilon : float = 0.005
+
 # Pending new points to the stroke.
 var _pending_adds : Array[Vector3]
 
@@ -151,14 +155,34 @@ func _process(_delta : float) -> void:
 	var need_refresh := false
 	# If there are pending additions to the stroke, add them to the curve.
 	if not _pending_adds.is_empty():
+		# If a first, single point is being added to the stroke, then add it twice,
+		# once as the starting point of the stroke, and the second as the "active"
+		# point on the stoke that can be updated with 'update_last_point()'.
+		if (_curve.point_count() == 0) and (_pending_adds.size() == 1):
+			_pending_adds.append(_pending_adds[0])
+		# As points are added to the curve, skip any that are within the epsilon of
+		# the previous point.
 		for pt : Vector3 in _pending_adds:
-			_curve.append_point(pt)
+			if _curve.point_count() == 0:
+				_curve.append_point(pt)
+			elif _curve.point_count() == 1:
+				if _curve.point_distance(_curve.point_count() - 1, pt) < _curve_point_epsilon:
+					_curve.append_point(pt + Vector3(_curve_point_epsilon, _curve_point_epsilon, 0))
+				else:
+					_curve.append_point(pt)
+			elif _curve.point_distance(_curve.point_count() - 2, pt) >= _curve_point_epsilon:
+				_curve.append_point(pt)
+		assert(_curve.point_count() >= 2, 'stroke requires at least 2 point, incorrect epsilon filtering?')
 		_pending_adds.clear()
 		need_refresh = true
-	# Update last point position if necessary...
+	# Update last point position if the change to the last point position is
+	# greater than epsilon and doesn't move the point to within epsilon of the
+	# previous point.
 	if _is_pending_update:
 		_is_pending_update = false
-		if _curve.point_count() > 0:
+		if ((_curve.point_count() >= 2) and # should always be true
+			(_curve.point_distance(_curve.point_count() - 1, _pending_update) >= _curve_point_epsilon) and
+			(_curve.point_distance(_curve.point_count() - 2, _pending_update) >= _curve_point_epsilon)):
 			_curve.update_last_point(_pending_update)
 			need_refresh = true
 	if need_refresh:
@@ -167,11 +191,12 @@ func _process(_delta : float) -> void:
 # Based on '_curve' update the polygon path and generate a new set of emission
 # points for the particles.
 func _refresh_curve() -> void:
+	var curve3d := _curve.curve()
+
 	# Update polygon...
-	_polygon_path.curve = _curve.curve()
+	_polygon_path.curve = curve3d
 
 	# Update particle emission points...
-	var curve3d := _curve.curve()
 	curve3d.bake_interval = _curve_bake_interval
 	var pts := curve3d.get_baked_points()
 	var cnt := pts.size()
@@ -183,35 +208,13 @@ func _refresh_curve() -> void:
 		_particles.process_material.emission_point_texture = image_texture
 	_particles.process_material.emission_point_count = cnt
 
-# Return true if stroke is a single point.
-func is_point() -> bool:
-	return _curve.curve().point_count == 1
-
-# Return true if stroke is a curve composed of 2 or more points.
-func is_curve() -> bool:
-	return _curve.curve().point_count >= 1
-
-# Return the first point of this stroke. Return Vector3.ZERO if stroke
-# has no points.
-func first_point() -> Vector3:
-	if _curve.curve().point_count == 0:
-		return Vector3.ZERO
-	return _curve.curve().get_point_position(0)
-
-# Return the Curve3D representation of this stroke. Return null if stroke
-# does not represent a curve (i.e. it represents a point).
+# Return the Curve3D representation of this stroke.
 func curve() -> Curve3D:
-	if not is_curve():
-		return null
 	return _curve.curve()
 
-# Add a new point to the end of the stroke. If this is the first point in the stroke,
-# then add it twice, once as the starting point of the stroke, and the second as
-# the "active" point on the stoke that can be updated with 'update_last_point()'.
+# Add a new point to the end of the stroke.
 func add_point(pt : Vector3) -> void:
 	# Just record the new point here... added to '_curve' in _process.
-	if _curve.curve().point_count == 0:
-		_pending_adds.append(pt)
 	_pending_adds.append(pt)
 
 # Update the position of the last added point, if any.
@@ -224,6 +227,9 @@ func update_last_point(pt : Vector3) -> void:
 # is true then the stroke is removed from the scene, otherwise it is just made
 # invisible.
 func release(fade : bool = true, remove_from_scene : bool = true):
+	_pending_adds.clear()
+	_is_pending_update = false
+
 	if fade:
 		# Use tween to fade the mesh and particles in parallel. Mesh fades quickly,
 		# duration is only 1/4 of particle lifetime.

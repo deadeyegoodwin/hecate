@@ -48,9 +48,7 @@ var _glyph : HecateGlyph = null
 # The owner of this cast, and all spells generated from it.
 var _owner_kind : HecateCharacter.OwnerKind = HecateCharacter.OwnerKind.NONE
 
-# When in TARGET state the following are used to record the target position
-# in viewport-space and model-space.
-var _target_mouse_position : Vector2 = Vector2.ZERO
+# When in GLYPH state, records the target position.
 var _target_position : Vector3 = Vector3.ZERO
 
 # The trajectory specified by the glyph and used for the projectile.
@@ -72,7 +70,6 @@ func idle() -> bool:
 		_glyph_focus = false
 		_glyph_glow.visible = false
 		_invoke_energy.emitting = false
-		_target_mouse_position = Vector2.ZERO
 		_target_position = Vector3.ZERO
 		_trajectory = null
 		_state = State.IDLE
@@ -88,7 +85,6 @@ func glyph() -> bool:
 		_glyph_focus = true
 		_glyph_glow.visible = true
 		_invoke_energy.emitting = false
-		_target_mouse_position = Vector2.ZERO
 		_target_position = Vector3.ZERO
 		_trajectory = null
 		_state = State.GLYPH
@@ -165,24 +161,8 @@ func _physics_process(_delta : float) -> void:
 				elif Input.is_action_just_pressed("glyph_stroke_end"):
 					if _glyph.is_active_stroke():
 						_glyph.end_stroke()
+						# FIXME
+						_target_position = result.position + Vector3(-.01, .01, -8)
 				else:
 					if _glyph.is_active_stroke():
 						_glyph.update_stroke(result.position)
-
-	# If there is a 'target_mouse_position', then translate it into
-	# 'target_position' in world space by casting a ray and determining where
-	# it hits in the arena.
-	if _target_mouse_position != Vector2.ZERO:
-		var space_state = get_world_3d().direct_space_state
-		var origin = _camera.project_ray_origin(_target_mouse_position)
-		var end = origin + _camera.project_ray_normal(_target_mouse_position) * _arena.size().length()
-		var query = PhysicsRayQueryParameters3D.create(origin, end)
-		query.collide_with_areas = false
-		query.collision_mask = (
-			(1 << 0) | # layer "walls"
-			(1 << 16)) # layer "opponent"
-		var result := space_state.intersect_ray(query)
-		_target_mouse_position = Vector2.ZERO
-		assert(result.has("position"))
-		if result.has("position"):
-			_target_position = result.position
