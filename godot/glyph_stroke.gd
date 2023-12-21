@@ -110,6 +110,10 @@ var _curve := HecateBezierCurve.new()
 # Pending new points to the stroke.
 var _pending_adds : Array[Vector3]
 
+# Pending update to the last point in the stroke.
+var _is_pending_update := false
+var _pending_update := Vector3.ZERO
+
 # The points that compose a stroke curve must be represented in an Image
 # that is then used as the "emission points" for the particles composing
 # the visual representation of the stroke. Create the underlying image
@@ -144,11 +148,20 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta : float) -> void:
+	var need_refresh := false
 	# If there are pending additions to the stroke, add them to the curve.
 	if not _pending_adds.is_empty():
 		for pt : Vector3 in _pending_adds:
 			_curve.append_point(pt)
 		_pending_adds.clear()
+		need_refresh = true
+	# Update last point position if necessary...
+	if _is_pending_update:
+		_is_pending_update = false
+		if _curve.point_count() > 0:
+			_curve.update_last_point(_pending_update)
+			need_refresh = true
+	if need_refresh:
 		_refresh_curve()
 
 # Based on '_curve' update the polygon path and generate a new set of emission
@@ -192,10 +205,19 @@ func curve() -> Curve3D:
 		return null
 	return _curve.curve()
 
-# Add a new point to the end of the stroke.
+# Add a new point to the end of the stroke. If this is the first point in the stroke,
+# then add it twice, once as the starting point of the stroke, and the second as
+# the "active" point on the stoke that can be updated with 'update_last_point()'.
 func add_point(pt : Vector3) -> void:
 	# Just record the new point here... added to '_curve' in _process.
+	if _curve.curve().point_count == 0:
+		_pending_adds.append(pt)
 	_pending_adds.append(pt)
+
+# Update the position of the last added point, if any.
+func update_last_point(pt : Vector3) -> void:
+	_pending_update = pt
+	_is_pending_update = true
 
 # Stop using this stroke as part of the parent glyph. If 'fade' is
 # true then allow existing particles to complete their lifetime. If 'remove_from_scene'

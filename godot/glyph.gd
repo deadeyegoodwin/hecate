@@ -123,7 +123,7 @@ func is_complete() -> bool:
 func is_active_stroke() -> bool:
 	return _is_active_stroke
 
-# Return the target point described by this glyph of Vector3.ZERO if no
+# Return the target point described by this glyph or Vector3.ZERO if no
 # target is described.
 func target_point() -> Vector3:
 	if not _is_complete:
@@ -139,7 +139,8 @@ func trajectory_curve() -> Curve3D:
 	return _trajectory
 
 # Start a glyph stroke at the specified start position if an active stroke is
-# not already in progress. Return true if a stroke is actually started.
+# not already in progress. Return true if a stroke is started, return false
+# if a stroke couldn't be started because there is already one active.
 func start_stroke(global_pos : Vector3) -> bool:
 	assert(not _is_active_stroke)
 	if (_is_active_stroke or
@@ -200,3 +201,10 @@ func add_to_stroke(global_pos : Vector3) -> void:
 	if _is_active_stroke:
 		assert(not _strokes.is_empty())
 		_strokes[-1].add_point(to_local(global_pos))
+
+# Update the last point in the currently active stroke.
+func update_stroke(global_pos : Vector3) -> void:
+	assert(_is_active_stroke)
+	if _is_active_stroke:
+		assert(not _strokes.is_empty())
+		_strokes[-1].update_last_point(to_local(global_pos))

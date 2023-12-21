@@ -42,10 +42,8 @@ var _state : State = State.IDLE
 # Is this cast responding to glyph modification events?
 var _glyph_focus : bool = false
 
-# When in GLYPH state, the HecateGlyth used to select a spell, and
-# a mouse position selected to start / extend a glyph.
+# When in GLYPH state, the HecateGlyth used to select a spell.
 var _glyph : HecateGlyph = null
-var _glyph_mouse_position : Vector2 = Vector2.ZERO
 
 # The owner of this cast, and all spells generated from it.
 var _owner_kind : HecateCharacter.OwnerKind = HecateCharacter.OwnerKind.NONE
@@ -74,7 +72,6 @@ func idle() -> bool:
 		_glyph_focus = false
 		_glyph_glow.visible = false
 		_invoke_energy.emitting = false
-		_glyph_mouse_position = Vector2.ZERO
 		_target_mouse_position = Vector2.ZERO
 		_target_position = Vector3.ZERO
 		_trajectory = null
@@ -91,7 +88,6 @@ func glyph() -> bool:
 		_glyph_focus = true
 		_glyph_glow.visible = true
 		_invoke_energy.emitting = false
-		_glyph_mouse_position = Vector2.ZERO
 		_target_mouse_position = Vector2.ZERO
 		_target_position = Vector3.ZERO
 		_trajectory = null
@@ -147,13 +143,12 @@ func cast() -> bool:
 
 # Called at a fixed interval (default 60Hz)
 func _physics_process(_delta : float) -> void:
-	# If there is a 'glyph_mouse_position', then use it to start / extend
-	# the glyph stroke.
-	if _glyph_mouse_position != Vector2.ZERO:
-		assert(_state == State.GLYPH)
+	# In glyph state, update the glyph...
+	if _glyph_focus and (_state == State.GLYPH):
+		var mouse_position := get_viewport().get_mouse_position()
 		var space_state = get_world_3d().direct_space_state
-		var origin = _camera.project_ray_origin(_glyph_mouse_position)
-		var end = origin + _camera.project_ray_normal(_glyph_mouse_position) * _arena.size().length()
+		var origin = _camera.project_ray_origin(mouse_position)
+		var end = origin + _camera.project_ray_normal(mouse_position) * _arena.size().length()
 		var query = PhysicsRayQueryParameters3D.create(origin, end)
 		query.collide_with_areas = false
 		query.collision_mask = (1 << 10) # layer "player glyph"
@@ -161,11 +156,18 @@ func _physics_process(_delta : float) -> void:
 		if result.size() > 0:
 			assert(result.has("position"))
 			if result.has("position"):
-				if _glyph.is_active_stroke():
-					_glyph.add_to_stroke(result.position)
+				if (Input.is_action_just_pressed("glyph_stroke_start") or
+					Input.is_action_just_pressed("glyph_stroke_update")):
+					if _glyph.is_active_stroke():
+						_glyph.add_to_stroke(result.position)
+					else:
+						_glyph.start_stroke(result.position)
+				elif Input.is_action_just_pressed("glyph_stroke_end"):
+					if _glyph.is_active_stroke():
+						_glyph.end_stroke()
 				else:
-					_glyph.start_stroke(result.position)
-		_glyph_mouse_position = Vector2.ZERO
+					if _glyph.is_active_stroke():
+						_glyph.update_stroke(result.position)
 
 	# If there is a 'target_mouse_position', then translate it into
 	# 'target_position' in world space by casting a ray and determining where
@@ -184,18 +186,3 @@ func _physics_process(_delta : float) -> void:
 		assert(result.has("position"))
 		if result.has("position"):
 			_target_position = result.position
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta : float) -> void:
-	# Process glyph events...
-	if _glyph_focus and (_state == State.GLYPH):
-		if (Input.is_action_just_pressed("glyph_stroke_start") or
-			Input.is_action_just_pressed("glyph_stroke_update")):
-			_glyph_mouse_position = get_viewport().get_mouse_position()
-			# For now, all glyphs describe target position as the last stroke,
-			# so we can just update it here every time a stroke is started.
-			_target_mouse_position = _glyph_mouse_position
-		elif Input.is_action_just_pressed("glyph_stroke_end"):
-			if _glyph.is_active_stroke():
-				_glyph_mouse_position = Vector2.ZERO
-				_glyph.end_stroke()

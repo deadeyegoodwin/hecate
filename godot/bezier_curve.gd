@@ -50,6 +50,11 @@ var _curve : Curve3D = Curve3D.new()
 # True if new points have been added since the curve has been smoothed.
 var _needs_smoothing : bool = false
 
+# Curve3D and related (like particle emission and CSGPolygon) don't like have two
+# adjacent Curve3D point being the exact same value, so a "nudge" value is needed
+# to adjust when necessary.
+var _curve_nudge := Vector3(0.002, 0.002, 0.002)
+
 # Remove all points from the curve.
 func reset() -> void:
 	_curve.clear_points()
@@ -58,8 +63,22 @@ func reset() -> void:
 # Append a point to the list of points required to be on the curve (that is,
 # append a point to S).
 func append_point(pt : Vector3) -> void:
+	if (_curve.point_count > 0) and _curve.get_point_position(_curve.point_count - 1).is_equal_approx(pt):
+		pt += _curve_nudge
 	_curve.add_point(pt)
 	_needs_smoothing = true
+
+# Update the position of the last added point, if any.
+func update_last_point(pt : Vector3) -> void:
+	if _curve.point_count > 0:
+		if (_curve.point_count > 1) and _curve.get_point_position(_curve.point_count - 2).is_equal_approx(pt):
+			pt += _curve_nudge
+		_curve.set_point_position(_curve.point_count - 1, pt)
+		_needs_smoothing = true
+
+# Return the number of points added to the curve by 'append_point()'.
+func point_count() -> int:
+	return _curve.point_count
 
 # Return the Curve3D representing the smooth curve.
 func curve() -> Curve3D:

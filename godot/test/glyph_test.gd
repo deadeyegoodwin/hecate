@@ -55,4 +55,6 @@ func _process(_delta : float) -> void:
 			_glyph.end_stroke()
 			_key_debounce = true
 	else:
+		if not _key_debounce and _glyph.is_active_stroke():
+			_glyph.update_stroke(_marker.position)
 		_key_debounce = false
