@@ -76,6 +76,10 @@ var _is_active_stroke : bool = false
 # Has a complete glyph been described?
 var _is_complete : bool = false
 
+# Does this glyph define a target position, and if so what is that global position.
+var _has_target : bool = false
+var _target : Vector3
+
 # The Curve3D of the trajectory described by this glyph, or null if the glyph
 # does not describe a trajectory.
 var _trajectory : Curve3D = null
@@ -111,6 +115,7 @@ func reset() -> void:
 	_strokes.clear()
 	_is_active_stroke = false
 	_is_complete = false
+	_has_target = false
 
 # Return true if a complete glyph has been described.
 func is_complete() -> bool:
@@ -119,6 +124,12 @@ func is_complete() -> bool:
 # Return true if there is a glyph stroke that has been started and not ended.
 func is_active_stroke() -> bool:
 	return _is_active_stroke
+
+# Return a pair [ has_target, target ], where 'has_target' is true if this
+# glyph defines a target point. If 'has_target' is true, then 'target' gives
+# the target point in global space.
+func target_point() -> Array:
+	return [ _is_complete and _has_target, _target ]
 
 # Return the Curve3D that represents the trajectory described by
 # this glyph. Return null if glyph is not complete or if it does not
@@ -169,10 +180,14 @@ func end_stroke() -> void:
 	assert(_is_active_stroke)
 	assert(not _strokes.is_empty())
 
-	# If glyph is a single curve then take it as the trajectory.
+	# If glyph is a single curve then take it as the trajectory, and the last point
+	# of the curve is the target.
 	if _strokes.size() == 1:
 		_trajectory = _strokes[0].curve()
+		_target = to_global(_trajectory.get_point_position(_trajectory.point_count - 1))
+		_has_target = true
 		_is_complete = true
+
 	_is_active_stroke = false
 
 # Add a point to the currently active stroke.

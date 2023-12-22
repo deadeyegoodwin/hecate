@@ -161,8 +161,22 @@ func _physics_process(_delta : float) -> void:
 				elif Input.is_action_just_pressed("glyph_stroke_end"):
 					if _glyph.is_active_stroke():
 						_glyph.end_stroke()
-						# FIXME
-						_target_position = result.position + Vector3(-.01, .01, -8)
+						# If ending the stroke added a target to the glyph, then raycast through that
+						# point in the glyph to find the target position in the arena.
+						var tres := _glyph.target_point()
+						if tres[0]:
+							var tpos = _camera.unproject_position(tres[1])
+							var torigin = _camera.project_ray_origin(tpos)
+							var tend = torigin + _camera.project_ray_normal(tpos) * _arena.size().length()
+							var tquery = PhysicsRayQueryParameters3D.create(torigin, tend)
+							tquery.collide_with_areas = false
+							tquery.collision_mask = (
+								(1 << 0) | # layer "walls"
+								(1 << 16)) # layer "opponent"
+							var tresult := space_state.intersect_ray(tquery)
+							assert(tresult.has("position"))
+							if tresult.has("position"):
+								_target_position = tresult.position
 				else:
 					if _glyph.is_active_stroke():
 						_glyph.update_stroke(result.position)
