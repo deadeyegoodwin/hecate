@@ -22,18 +22,24 @@ class_name HecateFire extends Node3D
 var _initial_energy : float
 var _initial_indirect_energy : float
 
-# Noise texture and underlying image used for light flickering
-@export var _noise : NoiseTexture2D
+## Noise texture and underlying image used for light flickering
+@export var noise : NoiseTexture2D
+
+## Magnitude of noise flicker. A value of 1.0 indicates that the light can flicker
+## from completely off to completely on. A value of 0.0 indicates no flicker. A value
+## of 0.25 indicates that light can flicker from 75% to 100% intensity.
+@export_range(0.0, 1.0) var noise_intensity : float = .75
+
 var _noise_image : Image
 var _offset : int
 
 func _ready() -> void:
 	_initial_energy = _light.light_energy
 	_initial_indirect_energy = _light.light_indirect_energy
-	_noise_image = _noise.get_image()
+	_noise_image = noise.get_image()
 	if _noise_image == null:
-		await _noise.changed
-		_noise_image = _noise.get_image()
+		await noise.changed
+		_noise_image = noise.get_image()
 		assert(_noise_image != null)
 	_offset = randi_range(0, _noise_image.get_width() - 1)
 
@@ -41,6 +47,7 @@ func _ready() -> void:
 func _process(_delta : float) -> void:
 	if _noise_image != null:
 		var d := _noise_image.get_pixel(_offset, 0)
-		_light.light_energy = _initial_energy * d.r
-		_light.light_indirect_energy = _initial_indirect_energy * d.r
+		var intensity : float = (1 - d.r * noise_intensity)
+		_light.light_energy = _initial_energy * intensity
+		_light.light_indirect_energy = _initial_indirect_energy * intensity
 		_offset = (_offset + 1) % _noise_image.get_width()

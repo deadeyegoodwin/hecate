@@ -4,18 +4,16 @@
 [ext_resource type="Gradient" path="res://third_party/fire_sprite_sheet/fire.tres" id="1_uacyu"]
 [ext_resource type="Texture2D" uid="uid://cdrbpwbv2uhd0" path="res://third_party/fire_sprite_sheet/fire1_64.png" id="2_igxvj"]
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_6y8y7"]
-noise_type = 0
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ioe33"]
 seed = 42
 frequency = 0.0503
-cellular_jitter = 3.0
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ijd7n"]
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_75euh"]
 width = 128
 height = 1
 generate_mipmaps = false
 seamless = true
-noise = SubResource("FastNoiseLite_6y8y7")
+noise = SubResource("FastNoiseLite_ioe33")
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_qdulc"]
 gradient = ExtResource("1_uacyu")
@@ -63,15 +61,16 @@ material = SubResource("StandardMaterial3D_tjm8j")
 
 [node name="HecateFire" type="Node3D"]
 script = ExtResource("1_dtp3b")
-_noise = SubResource("NoiseTexture2D_ijd7n")
+noise = SubResource("NoiseTexture2D_75euh")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
-light_color = Color(1, 0.12549, 0.0862745, 1)
-light_energy = 4.0
-light_indirect_energy = 3.0
-light_volumetric_fog_energy = 0.0
+light_color = Color(0.819608, 0, 0, 1)
+light_energy = 2.0
+light_indirect_energy = 2.0
+light_volumetric_fog_energy = 0.1
 shadow_enabled = true
-omni_range = 10.0
+omni_range = 6.0
+omni_attenuation = 0.5
 
 [node name="Flames" type="GPUParticles3D" parent="."]
 amount = 16

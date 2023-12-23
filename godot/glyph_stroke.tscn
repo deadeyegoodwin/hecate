@@ -1,7 +1,7 @@
 [gd_scene load_steps=19 format=3 uid="uid://b223gjscpl0sl"]
 
 [ext_resource type="Script" path="res://glyph_stroke.gd" id="1_6q4ms"]
-[ext_resource type="Shader" uid="uid://b16l6sugjwiws" path="res://glyph_stroke.tres" id="3_e73ko"]
+[ext_resource type="Shader" uid="uid://b16l6sugjwiws" path="res://shaders/smoke.tres" id="2_2cqax"]
 
 [sub_resource type="Curve" id="Curve_5h1cc"]
 _data = [Vector2(0, 0.0362258), 0.0, 0.0, 0, 0, Vector2(0.195008, 0.518655), 0.0, 0.0, 0, 0, Vector2(1, 0.0964617), 0.0, 0.0, 0, 0]
@@ -94,7 +94,7 @@ rings = 4
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vqm0t"]
 resource_local_to_scene = true
 render_priority = 0
-shader = ExtResource("3_e73ko")
+shader = ExtResource("2_2cqax")
 shader_parameter/surface_gradient = Vector3(0, 0, 0)
 shader_parameter/surface_length_speed = 0.05
 shader_parameter/surface_rotate_speed = 0.01

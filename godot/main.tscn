@@ -29,8 +29,8 @@ glow_strength = 1.5
 fog_light_color = Color(0.517647, 0.552941, 0.607843, 1)
 fog_light_energy = 0.0
 volumetric_fog_enabled = true
-volumetric_fog_density = 0.12
-volumetric_fog_albedo = Color(0.517647, 0.552941, 0.607843, 1)
+volumetric_fog_density = 0.1
+volumetric_fog_albedo = Color(0.780392, 0.780392, 0.780392, 1)
 
 [node name="Main" type="Node"]
 script = ExtResource("1_omplj")
@@ -40,9 +40,9 @@ environment = SubResource("Environment_4w1w2")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.906308, 4.09542e-09, -0.422618, 0.422618, -1.84732e-08, 0.906308, -4.09542e-09, -1, -1.84732e-08, -2.686, 5.922, 0)
-light_energy = 0.6
-light_indirect_energy = 0.6
-light_volumetric_fog_energy = 0.6
+light_energy = 0.5
+light_indirect_energy = 0.5
+light_volumetric_fog_energy = 0.5
 shadow_enabled = true
 sky_mode = 1
 

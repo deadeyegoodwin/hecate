@@ -25,8 +25,11 @@ const _glyph_stroke_scene = preload("res://glyph_stroke.tscn")
 ## The base color for mesh and particles that represents glyph strokes.
 @export var stroke_color : Color = Color(Color.WHITE_SMOKE, 0.25)
 
+## Radius of the stroke mesh.
+@export var stroke_mesh_radius : float = 0.01
+
 ## Texture density on the stoke mesh.
-@export_range(0.01, 1.0) var stroke_mesh_density : float = 0.3
+@export_range(0.01, 1.0) var stroke_mesh_density : float = 0.35
 
 ## Speed of length-wise motion of the texture on the stroke mesh.
 @export_range(0.0, 10.0) var stroke_mesh_length_speed : float = 0.05
@@ -160,6 +163,7 @@ func start_stroke(global_pos : Vector3) -> bool:
 		call_deferred("add_child", stroke)
 
 	stroke.base_color = stroke_color
+	stroke.mesh_radius = stroke_mesh_radius
 	stroke.mesh_density = stroke_mesh_density
 	stroke.mesh_length_speed = stroke_mesh_length_speed
 	stroke.mesh_rotate_speed = stroke_mesh_rotate_speed
