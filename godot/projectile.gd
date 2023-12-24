@@ -16,9 +16,88 @@
 # A projectile.
 class_name HecateProjectile extends CharacterBody3D
 
+## Radius of the sphere representing the polygon.
+@export var mesh_radius : float = 0.015 :
+	set(v):
+		mesh_radius = v
+		if (_mesh != null) and (_mesh.mesh != null):
+			_mesh.mesh.radius = mesh_radius
+			_mesh.mesh.height = mesh_radius * 2
+
+## Base color of the projectile mesh and particles.
+@export var base_color : Color = Color.WHITE_SMOKE :
+	set(v):
+		base_color = v
+		if (_mesh != null) and (_mesh.mesh.material != null):
+			_mesh.mesh.material.set_shader_parameter("smoke_color", base_color)
+
+## Texture density on the projectile mesh.
+@export_range(0.01, 1.0) var mesh_density : float = 1.0 :
+	set(v):
+		mesh_density = v
+		if (_mesh != null) and (_mesh.mesh.material != null):
+			_mesh.mesh.material.set_shader_parameter("density", mesh_density)
+
+## Speed of length-wise motion of the texture on the projectile mesh.
+@export_range(0.0, 10.0) var mesh_length_speed : float = 0.4 :
+	set(v):
+		mesh_length_speed = v
+		if (_mesh != null) and (_mesh.mesh.material != null):
+			_mesh.mesh.material.set_shader_parameter("length_speed", mesh_length_speed)
+
+## Speed of rotation of the texture on the projectile mesh.
+@export_range(0.0, 10.0) var mesh_rotate_speed : float = 0.5 :
+	set(v):
+		mesh_rotate_speed = v
+		if (_mesh != null) and (_mesh.mesh.material != null):
+			_mesh.mesh.material.set_shader_parameter("rotate_speed", mesh_rotate_speed)
+
+## Rate of hue change in the projectile mesh, based on density.
+@export_range(0.0, 1.0) var mesh_hue_gradient : float = 1.0 :
+	set(v):
+		mesh_hue_gradient = v
+		if (_mesh != null) and (_mesh.mesh.material != null):
+			_mesh.mesh.material.set_shader_parameter("hue_gradient", mesh_hue_gradient)
+
+## Rate of saturation change in the projectile mesh, based on density.
+@export_range(0.0, 1.0) var mesh_saturation_gradient : float = 1.0 :
+	set(v):
+		mesh_saturation_gradient = v
+		if (_mesh != null) and (_mesh.mesh.material != null):
+			_mesh.mesh.material.set_shader_parameter("saturation_gradient", mesh_saturation_gradient)
+
+## Rate of color value change in the stoke mesh, based on density.
+@export_range(0.0, 1.0) var mesh_value_gradient : float = 1.0 :
+	set(v):
+		mesh_value_gradient = v
+		if (_mesh != null) and (_mesh.mesh.material != null):
+			_mesh.mesh.material.set_shader_parameter("value_gradient", mesh_value_gradient)
+
+## Speed of length-wise motion of the surface on the projectile mesh.
+@export_range(0.0, 10.0) var mesh_surface_length_speed : float = 0.1 :
+	set(v):
+		mesh_surface_length_speed = v
+		if (_mesh != null) and (_mesh.mesh.material != null):
+			_mesh.mesh.material.set_shader_parameter("surface_length_speed", mesh_surface_length_speed)
+
+## Speed of rotation of the surface on the projectile mesh.
+@export_range(0.0, 10.0) var mesh_surface_rotate_speed : float = 0.2 :
+	set(v):
+		mesh_surface_rotate_speed = v
+		if (_mesh != null) and (_mesh.mesh.material != null):
+			_mesh.mesh.material.set_shader_parameter("surface_rotate_speed", mesh_surface_rotate_speed)
+
+## Magnitude to surface variation along each axis, as a ratio of the normal vector.
+@export var mesh_surface_gradient : Vector3 = Vector3.ZERO :
+	set(v):
+		mesh_surface_gradient = v
+		if (_mesh != null) and (_mesh.mesh.material != null):
+			_mesh.mesh.material.set_shader_parameter("surface_gradient", mesh_surface_gradient)
+
 ## The amount of damage done by the projectile.
 @export var damage : float = 10.0
 
+@onready var _mesh := $Mesh
 @onready var _path := $Path3D
 @onready var _pathfollow := $Path3D/PathFollow3D
 
@@ -72,6 +151,19 @@ func _ready() -> void:
 	elif _owner == HecateCharacter.OwnerKind.OPPONENT:
 		set_collision_layer_value(18, true)  # layer "opponent projectile"
 		set_collision_mask_value(9, true)    # layer "player"
+
+	_mesh.mesh.radius = mesh_radius
+	_mesh.mesh.height = mesh_radius * 2
+	_mesh.mesh.material.set_shader_parameter("smoke_color", base_color)
+	_mesh.mesh.material.set_shader_parameter("density", clampf(mesh_density, 0.01, 1.0))
+	_mesh.mesh.material.set_shader_parameter("length_speed", clampf(mesh_length_speed, 0.0, 10.0))
+	_mesh.mesh.material.set_shader_parameter("rotate_speed", clampf(mesh_rotate_speed, 0.0, 10.0))
+	_mesh.mesh.material.set_shader_parameter("hue_gradient", clampf(mesh_hue_gradient, 0.0, 1.0))
+	_mesh.mesh.material.set_shader_parameter("saturation_gradient", clampf(mesh_saturation_gradient, 0.0, 1.0))
+	_mesh.mesh.material.set_shader_parameter("value_gradient", clampf(mesh_value_gradient, 0.0, 1.0))
+	_mesh.mesh.material.set_shader_parameter("surface_length_speed", clampf(mesh_surface_length_speed, 0.0, 10.0))
+	_mesh.mesh.material.set_shader_parameter("surface_rotate_speed", clampf(mesh_surface_rotate_speed, 0.0, 10.0))
+	_mesh.mesh.material.set_shader_parameter("surface_gradient", mesh_surface_gradient)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta : float) -> void:

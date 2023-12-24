@@ -87,11 +87,26 @@ func _ready() -> void:
 
 	# The left hand and right hand can each perform a cast. Each cast requires
 	# a glyph which is initialized relative to the wizard.
+	var projectile_factory := HecateProjectileFactory.new()
+	var radius : float = 0.05
+	projectile_factory.configure_ball_projectile(
+		radius,  # radius
+		Color(0.0, 0.0, 1.0, 1.0),
+		0.6,  # density
+		0.2,  # surface_texture_speed0
+		0.25, # surface_texture_speed1
+		0.3,  # hue_gradient
+		0.4,  # saturation_gradient
+		0.9,  # value_gradient
+		0.75, # surface_contour_speed0
+		0.1,  # surface_contour_speed1
+		Vector3(0.06, 0.06, 0.06)) # surface_contour_gradient
+
 	_left_cast = _cast_scene.instantiate()
-	_left_cast.initialize(arena, _camera, _glyph_new(), owner_kind)
+	_left_cast.initialize(arena, _camera, _glyph_new(), owner_kind, projectile_factory)
 	_left_hand_attachment.call_deferred("add_child", _left_cast)
 	_right_cast = _cast_scene.instantiate()
-	_right_cast.initialize(arena, _camera, _glyph_new(), owner_kind)
+	_right_cast.initialize(arena, _camera, _glyph_new(), owner_kind, projectile_factory)
 	_right_hand_attachment.call_deferred("add_child", _right_cast)
 
 # Return a new glyph appropriate for this wizard and add the glyph to arena-space.

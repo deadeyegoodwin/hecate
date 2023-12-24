@@ -16,8 +16,6 @@
 # Manage spell casting.
 class_name HecateCast extends Node3D
 
-const _projectile_scene = preload("res://projectile.tscn")
-
 # The light that activates when in glyph state to indicate that glyph
 # strokes can be created.
 @onready var _glyph_glow := $GlyphGlow
@@ -34,6 +32,9 @@ var _arena : HecateArena = null
 
 # The camera used to translate mouse position to model position
 var _camera : Camera3D = null
+
+# The factory to use to create projectiles for this cast.
+var _projectile_factory : HecateProjectileFactory
 
 # The current state.
 enum State { IDLE, GLYPH, INVOKE, CAST }
@@ -56,11 +57,13 @@ var _trajectory : HecateTrajectory = null
 
 # Initialize the cast.
 func initialize(arena : HecateArena, camera: Camera3D, hglyph : HecateGlyph,
-				owner_kind : HecateCharacter.OwnerKind) -> void:
+				owner_kind : HecateCharacter.OwnerKind,
+				projectile_factory : HecateProjectileFactory) -> void:
 	_arena = arena
 	_camera = camera
 	_glyph = hglyph
 	_owner_kind = owner_kind
+	_projectile_factory = projectile_factory
 
 # Idle this cast, canceling any in-progress glyph or invoke. Return false if
 # unable to idle at the current time.
@@ -127,7 +130,7 @@ func cast() -> bool:
 
 	assert(_target_position != Vector3.ZERO)
 	assert(_trajectory != null)
-	var projectile := _projectile_scene.instantiate()
+	var projectile := _projectile_factory.create_projectile(HecateProjectileFactory.Kind.BALL)
 	projectile.initialize(_owner_kind, _trajectory.curve(global_position, _target_position))
 	projectile.launch(_projectile_velocity, _projectile_acceleration)
 	_arena.call_deferred("add_child", projectile)
