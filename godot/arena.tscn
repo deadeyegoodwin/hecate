@@ -170,6 +170,7 @@ skeleton = NodePath("../..")
 
 [node name="FireLeftFront" parent="." instance=ExtResource("7_y4i0h")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8, 4, 3)
+enable_sound = true
 
 [node name="FireLeft" parent="." instance=ExtResource("7_y4i0h")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8, 4, 0)

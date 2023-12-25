@@ -1,19 +1,20 @@
-[gd_scene load_steps=12 format=3 uid="uid://ci5brthr3wrk"]
+[gd_scene load_steps=13 format=3 uid="uid://ci5brthr3wrk"]
 
 [ext_resource type="Script" path="res://fire.gd" id="1_dtp3b"]
 [ext_resource type="Gradient" path="res://third_party/fire_sprite_sheet/fire.tres" id="1_uacyu"]
 [ext_resource type="Texture2D" uid="uid://cdrbpwbv2uhd0" path="res://third_party/fire_sprite_sheet/fire1_64.png" id="2_igxvj"]
+[ext_resource type="AudioStream" uid="uid://dqabn3w35g75c" path="res://third_party/fire_crackle_and_flames/fire_crackle_and_flames.ogg" id="4_e6vm5"]
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_ioe33"]
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_aut6q"]
 seed = 42
 frequency = 0.0503
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_75euh"]
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_f6deo"]
 width = 128
 height = 1
 generate_mipmaps = false
 seamless = true
-noise = SubResource("FastNoiseLite_ioe33")
+noise = SubResource("FastNoiseLite_aut6q")
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_qdulc"]
 gradient = ExtResource("1_uacyu")
@@ -61,7 +62,7 @@ material = SubResource("StandardMaterial3D_tjm8j")
 
 [node name="HecateFire" type="Node3D"]
 script = ExtResource("1_dtp3b")
-noise = SubResource("NoiseTexture2D_75euh")
+flicker_noise = SubResource("NoiseTexture2D_f6deo")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 light_color = Color(0.819608, 0, 0, 1)
@@ -79,3 +80,7 @@ randomness = 1.0
 draw_order = 3
 process_material = SubResource("ParticleProcessMaterial_aw0rp")
 draw_pass_1 = SubResource("QuadMesh_5us5b")
+
+[node name="FlameSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_e6vm5")
+volume_db = 20.0
