@@ -28,10 +28,10 @@ class_name HecateCharacter extends Node3D
 ## The position / orientation of the right-hand cast.
 @export var right_cast_marker : Marker3D
 
-## The animation timestamp to release the cast for left-hand cast.
-@export var left_cast_animation_timestamp : float
-## The animation timestamp to release the cast for right-hand cast.
-@export var right_cast_animation_timestamp : float
+## The animation timestamp to launch the spell for left-hand cast.
+@export var left_cast_launch_timestamp : float
+## The animation timestamp to launch the spell for right-hand cast.
+@export var right_cast_launch_timestamp : float
 
 ## The node that is notified when an object collides with one of this
 ## character's hitboxes, by calling collision_handler.handle_character_collision().

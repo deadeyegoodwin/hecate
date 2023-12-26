@@ -100,12 +100,12 @@ class_name HecateProjectile extends CharacterBody3D
 @onready var _mesh := $Mesh
 @onready var _path := $Path3D
 @onready var _pathfollow := $Path3D/PathFollow3D
+@onready var _launch_sound := $LaunchSound
 
 # What entity owns/launched this projectile.
 var _owner : HecateCharacter.OwnerKind = HecateCharacter.OwnerKind.NONE
 
-# Initial position, velocity, acceleration and surge of the projectile.
-var _initial_position := Vector3.ZERO
+# Velocity, acceleration and surge of the projectile.
 var _velocity : float = 0.0
 var _acceleration : float = 0.0
 var _surge : float = 0.0  # surge is rate of acceleration change
@@ -113,34 +113,16 @@ var _surge : float = 0.0  # surge is rate of acceleration change
 # Has the projectile been launched. If true then projectile moves along _curve.
 var _launched : bool = false
 
-# The curve describing the path of the projectile.
-var _curve : Curve3D = null
 # The transform that maps from curve position to projectile position.
 var _curve_transform : Transform3D
 # The total time that the projectile has been progressing along the curve.
 var _curve_delta : float = 0.0
 
-# Initialize the projectile that will follow a curve.
-func initialize(powner : HecateCharacter.OwnerKind, curve : Curve3D,
-				 curve_transform : Transform3D = Transform3D.IDENTITY) -> void:
+# Initialize the projectile.
+func initialize(powner : HecateCharacter.OwnerKind) -> void:
 	_owner = powner
-	_curve = curve
-	_curve_transform = curve_transform
-	position = (_curve_transform * Transform3D(Basis.IDENTITY, _curve.get_point_position(0))).origin
-	_initial_position = position
-
-# Launch the projectile.
-func launch(vel : float, acc : float = 0.0, surge : float = 0.0) -> void:
-	assert(_launched == false)
-	_launched = true
-	_velocity = vel
-	_acceleration = acc
-	_surge = surge
 
 func _ready() -> void:
-	_path.curve = _curve
-	_pathfollow.progress = 0
-
 	# Set the layer and mask of the projectile based on the owner.
 	set_collision_layer(0)
 	set_collision_mask(0)
@@ -165,6 +147,23 @@ func _ready() -> void:
 	_mesh.mesh.material.set_shader_parameter("surface_rotate_speed", clampf(mesh_surface_rotate_speed, 0.0, 10.0))
 	_mesh.mesh.material.set_shader_parameter("surface_gradient", mesh_surface_gradient)
 
+# Launch the projectile to follow the path of a specified curve.
+func launch(curve : Curve3D, curve_transform : Transform3D = Transform3D.IDENTITY,
+			vel : float = 1.0, acc : float = 0.0, surge : float = 0.0) -> void:
+	assert(_launched == false)
+	if not _launched:
+		_launched = true
+		_path.curve = curve
+		_pathfollow.progress = 0
+		_curve_transform = curve_transform
+		_velocity = vel
+		_acceleration = acc
+		_surge = surge
+		position = (_curve_transform * Transform3D(Basis.IDENTITY, curve.get_point_position(0))).origin
+		# Launch sound...
+		if not _launch_sound.is_playing():
+			_launch_sound.play()
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta : float) -> void:
 	# If the projectile has been launched, calculate how far the projectile
@@ -180,7 +179,6 @@ func _process(delta : float) -> void:
 		# position to update the position of the projectile.
 		assert(progress >= _pathfollow.progress)
 		_pathfollow.progress = progress
-
 		var new_position : Vector3 = (
 			_curve_transform * Transform3D(Basis.IDENTITY, _pathfollow.position)).origin
 

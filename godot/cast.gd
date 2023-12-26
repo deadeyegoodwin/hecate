@@ -36,8 +36,8 @@ var _camera : Camera3D = null
 # The factory to use to create projectiles for this cast.
 var _projectile_factory : HecateProjectileFactory
 
-# The current state.
-enum State { IDLE, GLYPH, INVOKE, CAST }
+# The current state of the cast.
+enum State { IDLE, GLYPH, INVOKE, LAUNCH }
 var _state : State = State.IDLE
 
 # Is this cast responding to glyph modification events?
@@ -50,10 +50,13 @@ var _glyph : HecateGlyph = null
 var _owner_kind : HecateCharacter.OwnerKind = HecateCharacter.OwnerKind.NONE
 
 # When in GLYPH state, records the target position.
-var _target_position : Vector3 = Vector3.ZERO
+var _target_position : Vector3
 
-# The trajectory specified by the glyph and used for the projectile.
+# The trajectory that the spell follows.
 var _trajectory : HecateTrajectory = null
+
+# The projectile invoked by the glyph.
+var _projectile : HecateProjectile = null
 
 # Initialize the cast.
 func initialize(arena : HecateArena, camera: Camera3D, hglyph : HecateGlyph,
@@ -74,11 +77,10 @@ func idle() -> bool:
 		_glyph_glow.visible = false
 		_invoke_energy.emitting = false
 		_target_position = Vector3.ZERO
-		_trajectory = null
 		_state = State.IDLE
 	return true
 
-# Set to glyph state. Return false if unable to enter glyph state.
+# Set to GLYPH state. Return false if unable to enter glyph state.
 func glyph() -> bool:
 	if _state == State.GLYPH:
 		return true
@@ -89,7 +91,6 @@ func glyph() -> bool:
 		_glyph_glow.visible = true
 		_invoke_energy.emitting = false
 		_target_position = Vector3.ZERO
-		_trajectory = null
 		_state = State.GLYPH
 		return true
 	return false
@@ -98,20 +99,24 @@ func glyph() -> bool:
 func is_glyph_complete() -> bool:
 	return (_state == State.GLYPH) and _glyph.is_complete()
 
-# Set to invoke state. Return false if unable to enter invoke state.
+# Set to INVOKE state. Return false if unable to enter invoke state.
 func invoke() -> bool:
 	if _state == State.INVOKE:
 		return true
 
 	assert(_glyph.is_complete() and (_glyph.trajectory_curve() != null))
-	assert(_target_position != Vector3.ZERO)
-	assert(_trajectory == null)
 	_trajectory = HecateTrajectory.new(_glyph.trajectory_curve())
 	_glyph_focus = false
 	_glyph_glow.visible = false
 	_invoke_energy.amount_ratio = 0.25
 	_invoke_energy.emitting = true
 	_glyph.reset()
+
+	assert(_projectile == null)
+	_projectile = _projectile_factory.create_projectile(HecateProjectileFactory.Kind.BALL)
+	_projectile.initialize(_owner_kind)
+	call_deferred("add_child", _projectile)
+
 	_state = State.INVOKE
 	return true
 
@@ -123,21 +128,23 @@ func is_invoke_complete() -> bool:
 func invoke_finalize() -> void:
 	_invoke_energy.amount_ratio = 1.0
 
-# Set to cast state. Return false if unable to enter cast state.
-func cast() -> bool:
-	if _state == State.CAST:
+# Set to LAUNCH state. Return false if unable to enter launch state.
+func launch() -> bool:
+	if _state == State.LAUNCH:
 		return true
 
-	assert(_target_position != Vector3.ZERO)
 	assert(_trajectory != null)
-	var projectile := _projectile_factory.create_projectile(HecateProjectileFactory.Kind.BALL)
-	projectile.initialize(_owner_kind, _trajectory.curve(global_position, _target_position))
-	projectile.launch(_projectile_velocity, _projectile_acceleration)
-	_arena.call_deferred("add_child", projectile)
-	_target_position = Vector3.ZERO
-	_trajectory = null
+
+	var launch_fn := func() :
+		_projectile.reparent(_arena)
+		_projectile.launch(
+			_trajectory.curve(global_position, _target_position), # curve
+			Transform3D.IDENTITY, # curve_transform
+			_projectile_velocity, _projectile_acceleration)
+	launch_fn.call_deferred()
+
 	_invoke_energy.emitting = false
-	_state = State.CAST
+	_state = State.LAUNCH
 	return true
 
 # Called at a fixed interval (default 60Hz)

@@ -1,11 +1,5 @@
 [gd_resource type="AnimationNodeStateMachine" load_steps=41 format=3 uid="uid://gx4b66lqqh8g"]
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_jkxri"]
-animation = &"idle_cast_glyph/cast_left"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_l3p1p"]
-animation = &"idle_cast_glyph/cast_right"
-
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_n2oi5"]
 animation = &"death/death_front_left"
 
@@ -29,6 +23,12 @@ animation = &"idle_cast_glyph/idle_left"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_bus5o"]
 animation = &"idle_cast_glyph/idle_right_to_stand"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_jkxri"]
+animation = &"idle_cast_glyph/cast_left"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_l3p1p"]
+animation = &"idle_cast_glyph/cast_right"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_qy1fi"]
 animation = &"idle_cast_glyph/idle_left_to_stand"
@@ -139,10 +139,6 @@ xfade_time = 0.3
 
 [resource]
 states/Start/position = Vector2(81, 96)
-states/cast_left/node = SubResource("AnimationNodeAnimation_jkxri")
-states/cast_left/position = Vector2(914, 203)
-states/cast_right/node = SubResource("AnimationNodeAnimation_l3p1p")
-states/cast_right/position = Vector2(101, 203)
 states/death_front_left/node = SubResource("AnimationNodeAnimation_n2oi5")
 states/death_front_left/position = Vector2(271, 115)
 states/death_front_right/node = SubResource("AnimationNodeAnimation_aydx2")
@@ -159,8 +155,12 @@ states/idle_right/node = SubResource("AnimationNodeAnimation_02232")
 states/idle_right/position = Vector2(235, 203)
 states/idle_right_to_stand/node = SubResource("AnimationNodeAnimation_bus5o")
 states/idle_right_to_stand/position = Vector2(591, 259)
+states/launch_left/node = SubResource("AnimationNodeAnimation_jkxri")
+states/launch_left/position = Vector2(914, 203)
+states/launch_right/node = SubResource("AnimationNodeAnimation_l3p1p")
+states/launch_right/position = Vector2(101, 203)
 states/stand_to_idle_left/node = SubResource("AnimationNodeAnimation_qy1fi")
 states/stand_to_idle_left/position = Vector2(393, 259)
 states/stand_to_idle_right/node = SubResource("AnimationNodeAnimation_e1jp2")
 states/stand_to_idle_right/position = Vector2(591, 203)
-transitions = ["idle_right", "idle_left_to_stand", SubResource("AnimationNodeStateMachineTransition_herib"), "idle_left_to_stand", "stand_to_idle_right", SubResource("AnimationNodeStateMachineTransition_x0sxa"), "stand_to_idle_right", "idle_left", SubResource("AnimationNodeStateMachineTransition_v4c5d"), "idle_left", "idle_right_to_stand", SubResource("AnimationNodeStateMachineTransition_wni53"), "idle_right_to_stand", "stand_to_idle_left", SubResource("AnimationNodeStateMachineTransition_dym7n"), "stand_to_idle_left", "idle_right", SubResource("AnimationNodeStateMachineTransition_f08y6"), "idle_left_to_stand", "glyph_right", SubResource("AnimationNodeStateMachineTransition_2py0c"), "idle_left_to_stand", "idle_right", SubResource("AnimationNodeStateMachineTransition_1788q"), "glyph_right", "stand_to_idle_left", SubResource("AnimationNodeStateMachineTransition_tj3b1"), "idle_right_to_stand", "glyph_left", SubResource("AnimationNodeStateMachineTransition_sxdf4"), "glyph_left", "stand_to_idle_right", SubResource("AnimationNodeStateMachineTransition_qy8kt"), "glyph_right", "glyph_left", SubResource("AnimationNodeStateMachineTransition_tbp5e"), "glyph_left", "glyph_right", SubResource("AnimationNodeStateMachineTransition_7pwr3"), "idle_right", "cast_right", SubResource("AnimationNodeStateMachineTransition_3w4rt"), "idle_left", "cast_left", SubResource("AnimationNodeStateMachineTransition_6rv6j"), "cast_right", "idle_right", SubResource("AnimationNodeStateMachineTransition_6jhga"), "cast_left", "idle_left", SubResource("AnimationNodeStateMachineTransition_e3qmv"), "Start", "idle_right", SubResource("AnimationNodeStateMachineTransition_mkr72"), "idle_left", "death_front_right", SubResource("AnimationNodeStateMachineTransition_qb3lp"), "cast_left", "death_front_right", SubResource("AnimationNodeStateMachineTransition_oqotf"), "glyph_left", "death_front_right", SubResource("AnimationNodeStateMachineTransition_3hkkp"), "idle_right_to_stand", "death_front_right", SubResource("AnimationNodeStateMachineTransition_ss1ms"), "stand_to_idle_right", "death_front_right", SubResource("AnimationNodeStateMachineTransition_c8gh2"), "cast_right", "death_front_left", SubResource("AnimationNodeStateMachineTransition_1rb3t"), "idle_right", "death_front_left", SubResource("AnimationNodeStateMachineTransition_ij71l"), "glyph_right", "death_front_left", SubResource("AnimationNodeStateMachineTransition_vpm2p"), "idle_left_to_stand", "death_front_left", SubResource("AnimationNodeStateMachineTransition_n5h5u"), "stand_to_idle_left", "death_front_left", SubResource("AnimationNodeStateMachineTransition_q4ccc")]
+transitions = ["idle_right", "idle_left_to_stand", SubResource("AnimationNodeStateMachineTransition_herib"), "idle_left_to_stand", "stand_to_idle_right", SubResource("AnimationNodeStateMachineTransition_x0sxa"), "stand_to_idle_right", "idle_left", SubResource("AnimationNodeStateMachineTransition_v4c5d"), "idle_left", "idle_right_to_stand", SubResource("AnimationNodeStateMachineTransition_wni53"), "idle_right_to_stand", "stand_to_idle_left", SubResource("AnimationNodeStateMachineTransition_dym7n"), "stand_to_idle_left", "idle_right", SubResource("AnimationNodeStateMachineTransition_f08y6"), "idle_left_to_stand", "glyph_right", SubResource("AnimationNodeStateMachineTransition_2py0c"), "idle_left_to_stand", "idle_right", SubResource("AnimationNodeStateMachineTransition_1788q"), "glyph_right", "stand_to_idle_left", SubResource("AnimationNodeStateMachineTransition_tj3b1"), "idle_right_to_stand", "glyph_left", SubResource("AnimationNodeStateMachineTransition_sxdf4"), "glyph_left", "stand_to_idle_right", SubResource("AnimationNodeStateMachineTransition_qy8kt"), "glyph_right", "glyph_left", SubResource("AnimationNodeStateMachineTransition_tbp5e"), "glyph_left", "glyph_right", SubResource("AnimationNodeStateMachineTransition_7pwr3"), "idle_right", "launch_right", SubResource("AnimationNodeStateMachineTransition_3w4rt"), "idle_left", "launch_left", SubResource("AnimationNodeStateMachineTransition_6rv6j"), "launch_right", "idle_right", SubResource("AnimationNodeStateMachineTransition_6jhga"), "launch_left", "idle_left", SubResource("AnimationNodeStateMachineTransition_e3qmv"), "Start", "idle_right", SubResource("AnimationNodeStateMachineTransition_mkr72"), "idle_left", "death_front_right", SubResource("AnimationNodeStateMachineTransition_qb3lp"), "launch_left", "death_front_right", SubResource("AnimationNodeStateMachineTransition_oqotf"), "glyph_left", "death_front_right", SubResource("AnimationNodeStateMachineTransition_3hkkp"), "idle_right_to_stand", "death_front_right", SubResource("AnimationNodeStateMachineTransition_ss1ms"), "stand_to_idle_right", "death_front_right", SubResource("AnimationNodeStateMachineTransition_c8gh2"), "launch_right", "death_front_left", SubResource("AnimationNodeStateMachineTransition_1rb3t"), "idle_right", "death_front_left", SubResource("AnimationNodeStateMachineTransition_ij71l"), "glyph_right", "death_front_left", SubResource("AnimationNodeStateMachineTransition_vpm2p"), "idle_left_to_stand", "death_front_left", SubResource("AnimationNodeStateMachineTransition_n5h5u"), "stand_to_idle_left", "death_front_left", SubResource("AnimationNodeStateMachineTransition_q4ccc")]

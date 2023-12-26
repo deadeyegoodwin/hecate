@@ -22,7 +22,7 @@ class_name HecateWizardAnimation extends Node
 enum State { IDLE_LEFT, IDLE_RIGHT,
 			 GLYPH_LEFT, GLYPH_RIGHT,
 			 INVOKE_LEFT, INVOKE_RIGHT,
-			 CAST_LEFT, CAST_RIGHT,
+			 LAUNCH_LEFT, LAUNCH_RIGHT,
 			 DEATH_FRONT_LEFT, DEATH_FRONT_RIGHT }
 
 # Current animation state, and the target animation state that has been
@@ -57,14 +57,14 @@ func is_death_state() -> bool:
 # Return true if current state is a left-hand state.
 func is_left_current_state() -> bool:
 	match _current_state:
-		State.IDLE_LEFT, State.GLYPH_LEFT, State.INVOKE_LEFT, State.CAST_LEFT:
+		State.IDLE_LEFT, State.GLYPH_LEFT, State.INVOKE_LEFT, State.LAUNCH_LEFT:
 			return true
 	return false
 
 # Return true if current state is a right-hand state.
 func is_right_current_state() -> bool:
 	match _current_state:
-		State.IDLE_RIGHT, State.GLYPH_RIGHT, State.INVOKE_RIGHT, State.CAST_RIGHT:
+		State.IDLE_RIGHT, State.GLYPH_RIGHT, State.INVOKE_RIGHT, State.LAUNCH_RIGHT:
 			return true
 	return false
 
@@ -102,7 +102,7 @@ func set_death() -> bool:
 		# death state.
 		var target := State.DEATH_FRONT_RIGHT
 		match _playback.get_current_node():
-			"idle_right", "glyph_right", "cast_right", "idle_left_to_stand", "stand_to_idle_left":
+			"idle_right", "glyph_right", "launch_right", "idle_left_to_stand", "stand_to_idle_left":
 				target = State.DEATH_FRONT_LEFT
 		_target_state = target
 		_travel(target)
@@ -137,10 +137,10 @@ func _state_to_name(s : State) -> String:
 			return "glyph_left"
 		State.GLYPH_RIGHT, State.INVOKE_RIGHT:
 			return "glyph_right"
-		State.CAST_LEFT:
-			return "cast_left"
-		State.CAST_RIGHT:
-			return "cast_right"
+		State.LAUNCH_LEFT:
+			return "launch_left"
+		State.LAUNCH_RIGHT:
+			return "launch_right"
 		State.DEATH_FRONT_LEFT:
 			return "death_front_left"
 		State.DEATH_FRONT_RIGHT:

@@ -34,7 +34,7 @@ func curve(begin : Vector3, end : Vector3) -> Curve3D:
 		_curve_template.get_point_position(0))
 	var trajectory_dir : Vector3 = end - begin
 
- 	# Create the transform for 'start' to "look at" 'end' along z.
+	# Create the transform for 'begin' to "look at" 'end' along z.
 	var begin_end_z := trajectory_dir.normalized()
 	var begin_end_x := Vector3.UP.cross(begin_end_z).normalized()
 	var begin_end_y := begin_end_z.cross(begin_end_x).normalized()
@@ -49,7 +49,7 @@ func curve(begin : Vector3, end : Vector3) -> Curve3D:
 	curve_transform.orthonormalized()
 
 	# For each point in 'curve_template', apply the transforms to convert the point
-	# to the corresponding point relative to 'start'/'end'.
+	# to the corresponding point relative to 'begin'/'end'.
 	var tscale := Transform3D.IDENTITY.scaled_local(
 		Vector3(trajectory_dir.length() / curve_dir.length(),
 				trajectory_dir.length() / curve_dir.length(),

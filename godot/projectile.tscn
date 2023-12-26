@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://d31jksi4nxkgx"]
+[gd_scene load_steps=7 format=3 uid="uid://d31jksi4nxkgx"]
 
 [ext_resource type="Script" path="res://projectile.gd" id="1_r18cd"]
 [ext_resource type="Shader" uid="uid://b16l6sugjwiws" path="res://shaders/smoke.tres" id="2_kq7g4"]
+[ext_resource type="AudioStream" uid="uid://diwqpxw7hl6g" path="res://third_party/fire_spell_01/fire_spell_01.ogg" id="3_aopv0"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_3rbak"]
 radius = 0.1
@@ -41,3 +42,6 @@ mesh = SubResource("SphereMesh_gk41j")
 rotation_mode = 0
 loop = false
 tilt_enabled = false
+
+[node name="LaunchSound" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("3_aopv0")
