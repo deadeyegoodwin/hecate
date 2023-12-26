@@ -83,4 +83,4 @@ draw_pass_1 = SubResource("QuadMesh_5us5b")
 
 [node name="FlameSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_e6vm5")
-volume_db = 20.0
+volume_db = 14.0

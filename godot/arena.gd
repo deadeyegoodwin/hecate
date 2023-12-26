@@ -20,6 +20,9 @@ class_name HecateArena extends Node3D
 @export var camera_manager : HecateCameraManager
 @onready var _camera : HecateOrbitCamera = $OrbitCamera
 
+# The droning sound effect.
+@onready var _drone_sound := $DroneSound
+
 # The player and opponent.
 @onready var _player := $Player
 @onready var _opponent := $Opponent
@@ -46,3 +49,7 @@ func _ready() -> void:
 	_camera.append_focus(Vector3(0, 2.0, 0), 5.0, PI / 2.0)
 	_camera.append_focus(_player.transform.origin + Vector3(0, 1.0, 0), 3.0, PI / 4.0)
 	_camera.append_focus(_opponent.transform.origin + Vector3(0, 1.0, 0), 3.0, PI * 0.75)
+
+	# Start sound if enabled...
+	if not _drone_sound.is_playing():
+		_drone_sound.play()

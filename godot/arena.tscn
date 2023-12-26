@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://bcn178fcq10q5"]
+[gd_scene load_steps=26 format=3 uid="uid://bcn178fcq10q5"]
 
 [ext_resource type="Script" path="res://arena.gd" id="1_s61gr"]
 [ext_resource type="PackedScene" uid="uid://bfwnykh66qhel" path="res://camera_orbit.tscn" id="2_everd"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://cioo6m8q5qsmh" path="res://third_party/rock_030/Rock030_1K-PNG_Displacement.png" id="4_l4m8s"]
 [ext_resource type="Texture2D" uid="uid://4foemgkpep5a" path="res://third_party/rock_030/Rock030_1K-PNG_NormalGL.png" id="5_76s3w"]
 [ext_resource type="Script" path="res://wizard_controller_ai.gd" id="5_xd311"]
+[ext_resource type="AudioStream" uid="uid://wuy6wbor7rc8" path="res://third_party/drone_11/drone_11.ogg" id="6_02fiu"]
 [ext_resource type="Texture2D" uid="uid://bc04tkl52vvn6" path="res://third_party/rock_030/Rock030_1K-PNG_Roughness.png" id="6_cm2uk"]
 [ext_resource type="PackedScene" uid="uid://ci5brthr3wrk" path="res://fire.tscn" id="7_y4i0h"]
 
@@ -98,6 +99,9 @@ owner_kind = 2
 
 [node name="AI Controller" type="Node" parent="Opponent"]
 script = ExtResource("5_xd311")
+
+[node name="DroneSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_02fiu")
 
 [node name="Floor" type="StaticBody3D" parent="."]
 collision_mask = 0
