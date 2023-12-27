@@ -222,6 +222,7 @@ default_value_enabled = true
 input_name = "normal"
 
 [sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_empk8"]
+operator = 1
 
 [sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_nuq18"]
 default_input_values = [0, Vector3(0, 0, 0), 1, Vector3(0.02, 0.02, 0.02)]
@@ -339,7 +340,7 @@ void vertex() {
 
 
 // VectorOp:4
-	vec3 n_out4p0 = n_out2p0 + n_out5p0;
+	vec3 n_out4p0 = n_out2p0 - n_out5p0;
 
 
 // Output:0
@@ -548,7 +549,6 @@ void fragment() {
 
 }
 "
-graph_offset = Vector2(-923.439, -27.2772)
 modes/depth_draw = 2
 modes/cull = 2
 flags/unshaded = true

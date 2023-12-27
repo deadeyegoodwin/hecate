@@ -24,7 +24,11 @@ class_name HecateGlyphStroke extends Node3D
 @export var mesh_sides : int = 16
 
 ## Radius of the extruded polygon representing the glyph stroke.
-@export var mesh_radius : float = 0.015
+@export var mesh_radius : float = 0.015 :
+	set(v):
+		mesh_radius = v
+		if _polygon != null:
+			_init_polygon()
 
 ## Base color of the stroke mesh and particles.
 @export var base_color : Color = Color.WHITE_SMOKE :
@@ -127,15 +131,7 @@ var _emission_image := Image.create(2048, 1, false, Image.FORMAT_RGBF)
 func _ready() -> void:
 	# Update the curve particles and polygon...
 	_refresh_curve()
-
-	# Set the CSGPolygon to a circular shape.
-	var angle_delta : float = (PI * 2) / mesh_sides
-	var vector : Vector2 = Vector2(mesh_radius, 0)
-	var varr : PackedVector2Array = []
-	for sidx in mesh_sides:
-		varr.append(vector)
-		vector = vector.rotated(angle_delta)
-	_polygon.polygon = varr
+	_init_polygon()
 
 	_particles.process_material.color = base_color
 
@@ -149,6 +145,16 @@ func _ready() -> void:
 	_polygon.material.set_shader_parameter("surface_length_speed", clampf(mesh_surface_length_speed, 0.0, 10.0))
 	_polygon.material.set_shader_parameter("surface_rotate_speed", clampf(mesh_surface_rotate_speed, 0.0, 10.0))
 	_polygon.material.set_shader_parameter("surface_gradient", mesh_surface_gradient)
+
+# Set the CSGPolygon to a circular shape.
+func _init_polygon() -> void:
+	var angle_delta : float = (PI * 2) / mesh_sides
+	var vector : Vector2 = Vector2(mesh_radius, 0)
+	var varr : PackedVector2Array = []
+	for sidx in mesh_sides:
+		varr.append(vector)
+		vector = vector.rotated(angle_delta)
+	_polygon.polygon = varr
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta : float) -> void:

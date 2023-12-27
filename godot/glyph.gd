@@ -26,10 +26,10 @@ const _glyph_stroke_scene = preload("res://glyph_stroke.tscn")
 @export var stroke_color : Color = Color(Color.WHITE_SMOKE, 0.25)
 
 ## Radius of the stroke mesh.
-@export var stroke_mesh_radius : float = 0.01
+@export var stroke_mesh_radius : float = 0.02
 
 ## Texture density on the stoke mesh.
-@export_range(0.01, 1.0) var stroke_mesh_density : float = 0.35
+@export_range(0.01, 1.0) var stroke_mesh_density : float = 0.4
 
 ## Speed of length-wise motion of the texture on the stroke mesh.
 @export_range(0.0, 10.0) var stroke_mesh_length_speed : float = 0.05
@@ -53,7 +53,7 @@ const _glyph_stroke_scene = preload("res://glyph_stroke.tscn")
 @export_range(0.0, 10.0) var stroke_mesh_surface_rotate_speed : float = 0.01
 
 ## Magnitude to surface variation along each axis, as a ratio of the normal vector.
-@export var stroke_mesh_surface_gradient : Vector3 = Vector3(0.02, 0.02, 0.02)
+@export var stroke_mesh_surface_gradient : Vector3 = Vector3(0.05, 0.05, 0.05)
 
 # The collision shape that defines where the glyph is in arena-space. This
 # shape is not visible (the glyph is visual represented by its composing
@@ -154,27 +154,31 @@ func start_stroke(global_pos : Vector3) -> bool:
 	_is_active_stroke = true
 	_is_complete = false
 
+	var new_stroke_fn = func(s : HecateGlyphStroke, is_new : bool):
+		if is_new:
+			self.add_child(s)
+		s.base_color = stroke_color
+		s.mesh_radius = stroke_mesh_radius
+		s.mesh_density = stroke_mesh_density
+		s.mesh_length_speed = stroke_mesh_length_speed
+		s.mesh_rotate_speed = stroke_mesh_rotate_speed
+		s.mesh_hue_gradient = stroke_mesh_hue_gradient
+		s.mesh_saturation_gradient = stroke_mesh_saturation_gradient
+		s.mesh_value_gradient = stroke_mesh_value_gradient
+		s.mesh_surface_length_speed = stroke_mesh_surface_length_speed
+		s.mesh_surface_rotate_speed = stroke_mesh_surface_rotate_speed
+		s.mesh_surface_gradient = stroke_mesh_surface_gradient
+		s.visible = true
+
 	var stroke : HecateGlyphStroke = null
 	if not _strokes_pool.is_empty():
 		stroke = _strokes_pool[_next_strokes_pool_idx]
 		_next_strokes_pool_idx += 1
+		new_stroke_fn.call_deferred(stroke, false)
 	else:
 		stroke = _glyph_stroke_scene.instantiate()
-		call_deferred("add_child", stroke)
+		new_stroke_fn.call_deferred(stroke, true)
 
-	stroke.base_color = stroke_color
-	stroke.mesh_radius = stroke_mesh_radius
-	stroke.mesh_density = stroke_mesh_density
-	stroke.mesh_length_speed = stroke_mesh_length_speed
-	stroke.mesh_rotate_speed = stroke_mesh_rotate_speed
-	stroke.mesh_hue_gradient = stroke_mesh_hue_gradient
-	stroke.mesh_saturation_gradient = stroke_mesh_saturation_gradient
-	stroke.mesh_value_gradient = stroke_mesh_value_gradient
-	stroke.mesh_surface_length_speed = stroke_mesh_surface_length_speed
-	stroke.mesh_surface_rotate_speed = stroke_mesh_surface_rotate_speed
-	stroke.mesh_surface_gradient = stroke_mesh_surface_gradient
-
-	stroke.visible = true
 	_strokes.append(stroke)
 	add_to_stroke(global_pos)
 	return true

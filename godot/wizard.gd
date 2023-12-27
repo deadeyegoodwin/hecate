@@ -87,7 +87,7 @@ func _ready() -> void:
 	# The left hand and right hand can each perform a cast. Each cast requires
 	# a glyph which is initialized relative to the wizard.
 	var projectile_factory := HecateProjectileFactory.new()
-	var radius : float = 0.05
+	var radius : float = 0.08
 	projectile_factory.configure_ball_projectile(
 		radius,  # radius
 		Color(0.0, 0.0, 1.0, 1.0),
