@@ -44,6 +44,7 @@ func configure_ball_projectile(
 				   'surface_contour_speed0' : surface_contour_speed0,
 				   'surface_contour_speed1' : surface_contour_speed1,
 				   'surface_contour_gradient' : surface_contour_gradient }
+	config['prelaunch_sound_delta'] = 0.4
 	_configs[Kind.BALL] = config
 	return true
 
@@ -63,5 +64,5 @@ func create_projectile(kind : Kind) -> HecateProjectile:
 		projectile.mesh_surface_length_speed = cdict['surface_contour_speed0']
 		projectile.mesh_surface_rotate_speed = cdict['surface_contour_speed1']
 		projectile.mesh_surface_gradient = cdict['surface_contour_gradient']
-
+		projectile.prelaunch_sound_delta = cdict['prelaunch_sound_delta']
 	return projectile

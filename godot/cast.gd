@@ -128,6 +128,13 @@ func is_invoke_complete() -> bool:
 func invoke_finalize() -> void:
 	_invoke_energy.amount_ratio = 1.0
 
+# Called to notify the cast that the launch is going to occur in 'duration' seconds.
+func prelaunch(duration : float) -> bool:
+	assert(_state == State.INVOKE)
+	assert(_projectile != null)
+	# Allow projectile to perform and pre-laumch actions...
+	return _projectile.prelaunch(duration)
+
 # Set to LAUNCH state. Return false if unable to enter launch state.
 func launch() -> bool:
 	if _state == State.LAUNCH:

@@ -465,8 +465,8 @@ script = ExtResource("2_iiyw7")
 eye_marker = NodePath("Armature/GeneralSkeleton/HeadBone/EyeMarker")
 left_cast_marker = NodePath("Armature/GeneralSkeleton/LeftHandBone/LeftCastMarker")
 right_cast_marker = NodePath("Armature/GeneralSkeleton/RightHandBone/RightCastMarker")
-left_cast_launch_timestamp = 1.0
-right_cast_launch_timestamp = 1.0
+left_cast_launch_timestamp = 0.9
+right_cast_launch_timestamp = 0.9
 
 [node name="HeadBone" type="BoneAttachment3D" parent="Armature/GeneralSkeleton" index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.7466e-06, 1.84751, -0.0537126)

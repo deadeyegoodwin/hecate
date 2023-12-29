@@ -138,10 +138,14 @@ func _process(_delta : float) -> void:
 			HecateWizardAnimation.State.LAUNCH_LEFT:
 				# In launch animation state, update cast to launch state
 				# once animation reaches the point where the launch should occur.
-				# Set next animation state to idle.
-				if _animation.is_current_beyond_timestamp(_left_hand_launch_timestamp):
+				# Otherwise, notify cast of pre-launch time remaining.
+				if _animation.is_current_after_timestamp(_left_hand_launch_timestamp)[0]:
 					var r := _animation.set_target(HecateWizardAnimation.State.IDLE_LEFT); assert(r)
 					r = _left_cast.launch(); assert(r)
+				else:
+					var pr := _animation.is_current_before_timestamp(_left_hand_launch_timestamp)
+					if pr[0]:
+						var r := _left_cast.prelaunch(pr[1]); assert(r)
 			HecateWizardAnimation.State.IDLE_RIGHT:
 				# In idle animation state, make sure cast in idle state.
 				var r := _right_cast.idle(); assert(r)
@@ -154,10 +158,14 @@ func _process(_delta : float) -> void:
 			HecateWizardAnimation.State.LAUNCH_RIGHT:
 				# In launch animation state, update cast to launch state
 				# once animation reaches the point where the launch should occur.
-				# Set next animation state to idle.
-				if _animation.is_current_beyond_timestamp(_right_hand_launch_timestamp):
+				# Otherwise, notify cast of pre-launch time remaining.
+				if _animation.is_current_after_timestamp(_right_hand_launch_timestamp)[0]:
 					var r := _animation.set_target(HecateWizardAnimation.State.IDLE_RIGHT); assert(r)
 					r = _right_cast.launch(); assert(r)
+				else:
+					var pr := _animation.is_current_before_timestamp(_right_hand_launch_timestamp)
+					if pr[0]:
+						var r := _right_cast.prelaunch(pr[1]); assert(r)
 			HecateWizardAnimation.State.DEATH_FRONT_LEFT, HecateWizardAnimation.State.DEATH_FRONT_RIGHT:
 				# Reached death state, set all casts to idle.
 				var r := _left_cast.idle(); assert(r)

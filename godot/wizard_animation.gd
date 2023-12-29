@@ -90,10 +90,29 @@ func is_current_at_end() -> bool:
 			(is_equal_approx(_playback.get_current_length(), _playback.get_current_play_position()) or
 			 (_playback.get_current_play_position() > _playback.get_current_length())))
 
-# Return true if the animation for the current state is at or beyond 'timestamp'.
-func is_current_beyond_timestamp(timestamp : float) -> bool:
-	return(_playback.is_playing() and (_playback.get_current_node() == _state_to_name(_current_state)) and
-			(timestamp < _playback.get_current_play_position()))
+# Return [ p, duration ], where 'p' is true if the animation for the current state
+# is at or beyond 'timestamp'. If 'p' is true, 'duration' gives how long, in seconds,
+# after the timestamp.
+func is_current_after_timestamp(timestamp : float) -> Array:
+	var p := (_playback.is_playing() and
+				(_playback.get_current_node() == _state_to_name(_current_state)) and
+				(timestamp <= _playback.get_current_play_position()))
+	var duration : float = 0.0
+	if p:
+		duration = _playback.get_current_play_position() - timestamp
+	return [ p, duration ]
+
+# Return [ p, duration ], where 'p' is true if the animation for the current state
+# is at or before 'timestamp'. If 'p' is true, 'duration' gives how long, in seconds,
+# before the timestamp.
+func is_current_before_timestamp(timestamp : float) -> Array:
+	var p := (_playback.is_playing() and
+				(_playback.get_current_node() == _state_to_name(_current_state)) and
+				(timestamp >= _playback.get_current_play_position()))
+	var duration : float = 0.0
+	if p:
+		duration = timestamp - _playback.get_current_play_position()
+	return [ p, duration ]
 
 # Set animation into the appropriate death state. Return false if unable to set to death.
 func set_death() -> bool:

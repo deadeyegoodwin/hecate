@@ -94,6 +94,9 @@ class_name HecateProjectile extends CharacterBody3D
 		if (_mesh != null) and (_mesh.mesh.material != null):
 			_mesh.mesh.material.set_shader_parameter("surface_gradient", mesh_surface_gradient)
 
+## The time, in seconds, that the launch sound should start before the actual launch.
+@export var prelaunch_sound_delta : float = 0.0
+
 ## The amount of damage done by the projectile.
 @export var damage : float = 10.0
 
@@ -147,6 +150,13 @@ func _ready() -> void:
 	_mesh.mesh.material.set_shader_parameter("surface_rotate_speed", clampf(mesh_surface_rotate_speed, 0.0, 10.0))
 	_mesh.mesh.material.set_shader_parameter("surface_gradient", mesh_surface_gradient)
 
+# Called to notify the projectile that the launch is going to occur in 'duration' seconds.
+func prelaunch(duration : float) -> bool:
+	# To coordinate with launch, sound must be started earlier...
+	if (not _launch_sound.is_playing()) and (duration <= prelaunch_sound_delta):
+		_launch_sound.play()
+	return true
+
 # Launch the projectile to follow the path of a specified curve.
 func launch(curve : Curve3D, curve_transform : Transform3D = Transform3D.IDENTITY,
 			vel : float = 1.0, acc : float = 0.0, surge : float = 0.0) -> void:
@@ -160,9 +170,6 @@ func launch(curve : Curve3D, curve_transform : Transform3D = Transform3D.IDENTIT
 		_acceleration = acc
 		_surge = surge
 		position = (_curve_transform * Transform3D(Basis.IDENTITY, curve.get_point_position(0))).origin
-		# Launch sound...
-		if not _launch_sound.is_playing():
-			_launch_sound.play()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta : float) -> void:

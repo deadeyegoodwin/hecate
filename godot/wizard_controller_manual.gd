@@ -27,9 +27,8 @@ func step(animation : HecateWizardAnimation, left_cast : HecateCast, right_cast 
 		if animation.is_right_current_state():
 			if right_cast.idle():
 				var r := animation.set_target(HecateWizardAnimation.State.GLYPH_LEFT); assert(r)
-		# Otherwise, if animation state is does not already have a pending target,
-		# then advance to the animation state associated with the next cast state.
-		elif not animation.is_pending_target_state():
+		# Otherwise advance to the animation state associated with the next cast state.
+		else:
 			match animation.current_state():
 				HecateWizardAnimation.State.IDLE_LEFT:
 					var r := animation.set_target(HecateWizardAnimation.State.GLYPH_LEFT); assert(r)
@@ -49,9 +48,8 @@ func step(animation : HecateWizardAnimation, left_cast : HecateCast, right_cast 
 		if animation.is_left_current_state():
 			if left_cast.idle():
 				var r := animation.set_target(HecateWizardAnimation.State.GLYPH_RIGHT); assert(r)
-		# Otherwise, if animation state is does not already have a pending target,
-		# then advance to the animation state associated with the next cast state.
-		elif not animation.is_pending_target_state():
+		# Otherwise advance to the animation state associated with the next cast state.
+		else:
 			match animation.current_state():
 				HecateWizardAnimation.State.IDLE_RIGHT:
 					var r := animation.set_target(HecateWizardAnimation.State.GLYPH_RIGHT); assert(r)
