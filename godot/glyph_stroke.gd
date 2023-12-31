@@ -15,7 +15,7 @@
 
 # Required because this class is used in some @tool scripts.
 # See https://github.com/godotengine/godot/issues/81250
-@tool
+#@tool
 
 # A stroke in a HecateGlyph.
 class_name HecateGlyphStroke extends Node3D

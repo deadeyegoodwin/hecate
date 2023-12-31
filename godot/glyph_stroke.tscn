@@ -24,8 +24,8 @@ colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
 gradient = SubResource("Gradient_0k7xy")
 
 [sub_resource type="Curve" id="Curve_h4r1f"]
-min_value = -1.0
-_data = [Vector2(0, 0.0403899), 0.0, 0.0, 0, 0, Vector2(0.407547, 0.981894), 0.0, 0.0, 0, 0, Vector2(1, 0.031337), 0.0, 0.0, 0, 0]
+max_value = 0.1
+_data = [Vector2(0, 0), 0.0, 0.184133, 0, 1, Vector2(0.509537, 0.0938226), 0.0, 0.0, 0, 0, Vector2(1, 0.00527982), -0.180529, 0.0, 1, 0]
 point_count = 3
 
 [sub_resource type="CurveTexture" id="CurveTexture_rfq6y"]
@@ -71,7 +71,6 @@ scale_curve = SubResource("CurveTexture_mrrih")
 color_ramp = SubResource("GradientTexture1D_880nx")
 color_initial_ramp = SubResource("GradientTexture1D_oql7m")
 alpha_curve = SubResource("CurveTexture_g1wek")
-hue_variation_max = 0.05
 hue_variation_curve = SubResource("CurveTexture_rfq6y")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pqjej"]

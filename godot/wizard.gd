@@ -35,6 +35,9 @@ var _camera : HecateAttachedCamera = null
 ## The owner of this wizard.
 @export var owner_kind : HecateCharacter.OwnerKind
 
+## Magic color of this wizard.
+@export var magic_color : Color = Color.WHITE_SMOKE
+
 ## The current health of the wizard.
 @export var health : float = 20.0
 
@@ -90,21 +93,23 @@ func _ready() -> void:
 	var radius : float = 0.08
 	projectile_factory.configure_ball_projectile(
 		radius,  # radius
-		Color(0.0, 0.0, 1.0, 1.0),
+		magic_color,
 		0.6,  # density
 		0.2,  # surface_texture_speed0
 		0.25, # surface_texture_speed1
-		0.3,  # hue_gradient
-		0.4,  # saturation_gradient
-		0.9,  # value_gradient
+		0.05,  # hue_gradient
+		0.1,  # saturation_gradient
+		0.1,  # value_gradient
 		0.75, # surface_contour_speed0
 		0.1,  # surface_contour_speed1
 		Vector3(0.06, 0.06, 0.06)) # surface_contour_gradient
 
 	_left_cast = _cast_scene.instantiate()
+	_left_cast.base_color = magic_color
 	_left_cast.initialize(arena, _camera, _glyph_new(), owner_kind, projectile_factory)
 	_left_hand_attachment.call_deferred("add_child", _left_cast)
 	_right_cast = _cast_scene.instantiate()
+	_right_cast.base_color = magic_color
 	_right_cast.initialize(arena, _camera, _glyph_new(), owner_kind, projectile_factory)
 	_right_hand_attachment.call_deferred("add_child", _right_cast)
 
@@ -115,7 +120,7 @@ func _glyph_new() -> HecateGlyph:
 	var tform : Transform3D = transform.inverse() * Transform3D(Basis.IDENTITY, Vector3(0.0, arena.size().y / 2.0, 1.0))
 	var size := Vector3(arena.size().x, arena.size().y, 0.01)
 	var glyph := _glyph_scene.instantiate()
-	glyph.stroke_color = Color(0.0, 1.0, 1.0, 0.25)
+	glyph.stroke_color = magic_color
 	glyph.initialize_for_collision(tform, size)
 	arena.call_deferred("add_child", glyph)
 	return glyph

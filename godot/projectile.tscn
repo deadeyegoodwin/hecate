@@ -8,6 +8,7 @@
 radius = 0.1
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_nddu4"]
+resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("2_kq7g4")
 shader_parameter/surface_gradient = Vector3(0, 0, 0)

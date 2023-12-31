@@ -16,6 +16,15 @@
 # Manage spell casting.
 class_name HecateCast extends Node3D
 
+## Base color of the cast visuals.
+@export var base_color : Color = Color.WHITE_SMOKE :
+	set(v):
+		base_color = v
+		if _glyph_glow != null:
+			_glyph_glow.light_color = base_color
+		if (_invoke_energy != null) and (_invoke_energy.process_material != null):
+			_invoke_energy.process_material.color = base_color
+
 # The light that activates when in glyph state to indicate that glyph
 # strokes can be created.
 @onready var _glyph_glow := $GlyphGlow
@@ -153,6 +162,10 @@ func launch() -> bool:
 	_invoke_energy.emitting = false
 	_state = State.LAUNCH
 	return true
+
+func _ready() -> void:
+	_glyph_glow.light_color = base_color
+	_invoke_energy.process_material.color = base_color
 
 # Called at a fixed interval (default 60Hz)
 func _physics_process(_delta : float) -> void:

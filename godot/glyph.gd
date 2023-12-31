@@ -15,7 +15,7 @@
 
 # Required because this class is used in some @tool scripts.
 # See https://github.com/godotengine/godot/issues/81250
-@tool
+#@tool
 
 # A glyph composed of HecateGlyphStrokes.
 class_name HecateGlyph extends Node3D
@@ -38,10 +38,10 @@ const _glyph_stroke_scene = preload("res://glyph_stroke.tscn")
 @export_range(0.0, 10.0) var stroke_mesh_rotate_speed : float = 0.02
 
 ## Rate of hue change in the texture of the stoke mesh, based on density.
-@export_range(0.0, 1.0) var stroke_mesh_hue_gradient : float = 0.1
+@export_range(0.0, 1.0) var stroke_mesh_hue_gradient : float = 0.01
 
 ## Rate of saturation change in the texture of the stoke mesh, based on density.
-@export_range(0.0, 1.0) var stroke_mesh_saturation_gradient : float = 0.5
+@export_range(0.0, 1.0) var stroke_mesh_saturation_gradient : float = 0.1
 
 ## Rate of color value change in the texture of the stoke mesh, based on density.
 @export_range(0.0, 1.0) var stroke_mesh_value_gradient : float = 0.1
