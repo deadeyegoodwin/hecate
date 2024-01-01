@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1vpuyojeii74"]
+
+[ext_resource type="Script" path="res://surface_explosion.gd" id="1_u2gt6"]
+[ext_resource type="AudioStream" uid="uid://3tf5njvwjimw" path="res://third_party/explosion_01/explosion_01.ogg" id="2_bslag"]
+
+[node name="HecateSurfaceExplosion" type="Node3D"]
+script = ExtResource("1_u2gt6")
+
+[node name="ExplosionSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_bslag")

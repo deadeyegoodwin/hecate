@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://deedslquby8o6"]
+
+[ext_resource type="Script" path="res://test/surface_explosion_test.gd" id="1_1k06g"]
+[ext_resource type="PackedScene" uid="uid://b1vpuyojeii74" path="res://surface_explosion.tscn" id="2_b77la"]
+
+[node name="HecateSurfaceExplosionTest" type="Node3D"]
+script = ExtResource("1_1k06g")
+
+[node name="Explosion" parent="." instance=ExtResource("2_b77la")]

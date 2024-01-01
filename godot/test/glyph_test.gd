@@ -13,8 +13,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Hecate. If not, see <https://www.gnu.org/licenses/>.
 
-# Make sure @tool is uncommented in glyph.gd and glyph_stroke.gd.
-@tool
+# To run this test, uncomment the following line and make sure @tool is
+# uncommented in glyph.gd and glyph_stroke.gd. Running the test will likely
+# make changes to the scene files that should not be persisted in the repository.
+#@tool
 
 # Demonstates HecateGlyph and HecateGlyphStroke. To start a new glyph stroke or
 # to add points to the current stroke, move the $Marker3D to the desired position

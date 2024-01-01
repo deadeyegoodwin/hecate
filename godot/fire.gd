@@ -16,7 +16,7 @@
 # Torch-like fire.
 class_name HecateFire extends Node3D
 
-## Noise texture and underlying image used for light flickering
+## Noise texture used for light flickering
 @export var flicker_noise : NoiseTexture2D
 
 ## Magnitude of noise flicker. A value of 1.0 indicates that the light can flicker
