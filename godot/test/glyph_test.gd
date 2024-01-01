@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Hecate. If not, see <https://www.gnu.org/licenses/>.
 
+# Make sure @tool is uncommented in glyph.gd and glyph_stroke.gd.
 @tool
 
 # Demonstates HecateGlyph and HecateGlyphStroke. To start a new glyph stroke or
