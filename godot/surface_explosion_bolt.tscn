@@ -38,10 +38,10 @@ orientation = 2
 [node name="SurfaceExplosionBolt" type="Node3D"]
 script = ExtResource("3_u53ho")
 
-[node name="Bolt0" type="MeshInstance3D" parent="."]
+[node name="BoltSingle" type="MeshInstance3D" parent="."]
 visible = false
 mesh = SubResource("PlaneMesh_kwuxf")
 
-[node name="Bolt1" type="MeshInstance3D" parent="."]
+[node name="BoltMulti" type="MeshInstance3D" parent="."]
 visible = false
 mesh = SubResource("PlaneMesh_ukdl4")

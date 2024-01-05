@@ -34,9 +34,10 @@ func fire(num_bolts : int) -> void:
 			for bidx in num_bolts:
 				var bolt := _bolt_scene.instantiate()
 				bolt.visibility_offset = randf()
-				bolt.visibility_speed = randf_range(0.25, .75)
-				bolt.visibility_threshold = randf_range(0.6, 0.9)
+				bolt.visibility_speed = randf_range(0.75, 1.0)
+				bolt.visibility_threshold = randf_range(0.5, 0.7)
 				bolt.jitter = randf_range(0.01, 0.05)
+				bolt.kind = HecateSurfaceExplosionBolt.BoltKind.SINGLE
 				self.add_child(bolt)
 				_firing_bolts.append(bolt)
 		fire_fn.call_deferred()
@@ -52,5 +53,7 @@ func _process(_delta : float) -> void:
 			# to translate the bolt half its width.
 			bolt.transform = Transform3D.IDENTITY.rotated_local(Vector3.BACK, angle)
 			bolt.transform = bolt.transform.translated_local(Vector3(0.0, bolt.size().y / 2.0, 0.0))
-			bolt.fire(speed, duration)
+			bolt.fire(speed, duration,
+						true if (randi() % 2) == 0 else false, # flip
+						true if (randi() % 2) == 0 else false) # rot
 		_firing_bolts.clear()
