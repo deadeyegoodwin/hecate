@@ -80,7 +80,10 @@ var _total_elapsed : float
 var _last_update_elapsed : float
 
 # "Fire" the bolt at a given speed and duration, in seconds.
-func fire(speed : float, duration : float, flip : bool = false, rot : bool = false) -> void:
+func fire(speed : float, duration : float, delay : float = 0.0,
+			flip : bool = false, rot : bool = false) -> void:
+	if delay > 0.0:
+		await get_tree().create_timer(delay).timeout
 	_speed = speed
 	_duration = duration
 	_total_elapsed = 0.0

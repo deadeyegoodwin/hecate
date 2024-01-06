@@ -22,38 +22,51 @@ class_name HecateSurfaceExplosion extends Node3D
 
 const _bolt_scene = preload("res://surface_explosion_bolt.tscn")
 
-# New bolts that have just been trigger by call to "fire()". The explosion can be
-# triggered every frame, do not need to wait for bolts to complete.
-var _firing_bolts : Array[HecateSurfaceExplosionBolt]
+# New bolts that have just been trigger by call to "fire()", the delay for
+# the bolt, and the max duration for the bolt. as [ bolt, delay, max-duration ].
+# The explosion can be triggered every frame, do not need to wait for bolts to
+# complete.
+var _firing_bolts : Array
 
-# "Fire" the explosion with indicated number of bolts.
-func fire(num_bolts : int) -> void:
+# "Fire" the explosion with indicated number of bolts and bolt bursts over the
+# duration of the explosion.
+func fire(duration : float, num_bursts : int, num_bolts_per_burst : int,
+			 max_bolt_duration : float) -> void:
 	assert(_firing_bolts.is_empty())
 	if _firing_bolts.is_empty():
-		var fire_fn = func():
+		var fire_fn = func(num_bolts : int, delay : float) -> void:
 			for bidx in num_bolts:
 				var bolt := _bolt_scene.instantiate()
 				bolt.visibility_offset = randf()
 				bolt.visibility_speed = randf_range(0.75, 1.0)
 				bolt.visibility_threshold = randf_range(0.5, 0.7)
-				bolt.jitter = randf_range(0.01, 0.05)
+				bolt.jitter = randf_range(0.0, 0.2)
 				bolt.kind = HecateSurfaceExplosionBolt.BoltKind.SINGLE
 				self.add_child(bolt)
-				_firing_bolts.append(bolt)
-		fire_fn.call_deferred()
+				_firing_bolts.append([bolt, delay, max_bolt_duration])
+		# Time the start of the bursts evenly, so that the last burst completes
+		# at 'duration'.
+		var delay_delta : float = max(0.0,
+			(duration - max_bolt_duration) / max(1, num_bursts - 1))
+		var burst_delay : float = 0.0
+		for burst in num_bursts:
+			fire_fn.call_deferred(num_bolts_per_burst, burst_delay)
+			burst_delay += delay_delta
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta : float) -> void:
 	if not _firing_bolts.is_empty():
-		for bolt in _firing_bolts:
-			var duration : float = randf_range(0.1, 0.6)  # seconds
+		for arr in _firing_bolts:
+			var bolt : HecateSurfaceExplosionBolt = arr[0]
+			var delay : float = arr[1]
+			var duration : float = randf_range(0.5, 1.0) * arr[2]  # seconds
 			var speed : float = randf_range(0.5, 3.0)
 			var angle : float = randf_range(0, 2 * PI)
 			# Want the edge of the PlaneMesh holding the bolt to be at the center,
 			# to translate the bolt half its width.
 			bolt.transform = Transform3D.IDENTITY.rotated_local(Vector3.BACK, angle)
 			bolt.transform = bolt.transform.translated_local(Vector3(0.0, bolt.size().y / 2.0, 0.0))
-			bolt.fire(speed, duration,
+			bolt.fire(speed, duration, delay,
 						true if (randi() % 2) == 0 else false, # flip
 						true if (randi() % 2) == 0 else false) # rot
 		_firing_bolts.clear()
