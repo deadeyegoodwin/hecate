@@ -183,6 +183,8 @@ input_name = "uv"
 
 [sub_resource type="VisualShaderNodeVectorDecompose" id="VisualShaderNodeVectorDecompose_i1tym"]
 output_port_for_preview = 3
+default_input_values = [0, Vector2(0, 0)]
+op_type = 0
 
 [sub_resource type="VisualShaderNodeFloatOp" id="VisualShaderNodeFloatOp_kixoo"]
 default_input_values = [0, 0.5, 1, 0.0]
@@ -213,6 +215,7 @@ default_input_values = [0, 0.0, 1, 1.0]
 operator = 4
 
 [sub_resource type="VisualShaderNodeVectorCompose" id="VisualShaderNodeVectorCompose_knh5o"]
+op_type = 0
 
 [sub_resource type="VisualShaderNodeVec3Parameter" id="VisualShaderNodeVec3Parameter_hhj3n"]
 parameter_name = "surface_gradient"
@@ -231,16 +234,17 @@ operator = 2
 [sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_o4mjy"]
 operator = 2
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_l8ybs"]
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ew3th"]
 noise_type = 0
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_7145i"]
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_voq77"]
+generate_mipmaps = false
 seamless = true
-noise = SubResource("FastNoiseLite_l8ybs")
+noise = SubResource("FastNoiseLite_ew3th")
 
 [sub_resource type="VisualShaderNodeTexture" id="VisualShaderNodeTexture_0uq1s"]
 output_port_for_preview = 0
-texture = SubResource("NoiseTexture2D_7145i")
+texture = SubResource("NoiseTexture2D_voq77")
 
 [resource]
 code = "shader_type spatial;
@@ -279,9 +283,8 @@ void vertex() {
 
 
 // VectorDecompose:14
-	float n_out14p0 = vec3(n_out13p0, 0.0).x;
-	float n_out14p1 = vec3(n_out13p0, 0.0).y;
-	float n_out14p2 = vec3(n_out13p0, 0.0).z;
+	float n_out14p0 = n_out13p0.x;
+	float n_out14p1 = n_out13p0.y;
 
 
 // Input:10
@@ -323,12 +326,11 @@ void vertex() {
 
 
 // VectorCompose:21
-	float n_in21p2 = 0.00000;
-	vec3 n_out21p0 = vec3(n_out16p0, n_out20p0, n_in21p2);
+	vec2 n_out21p0 = vec2(n_out16p0, n_out20p0);
 
 
 // Texture2D:9
-	vec4 n_out9p0 = texture(tex_vtx_9, vec2(n_out21p0.xy));
+	vec4 n_out9p0 = texture(tex_vtx_9, n_out21p0);
 
 
 // VectorOp:7
@@ -549,6 +551,7 @@ void fragment() {
 
 }
 "
+graph_offset = Vector2(-696.618, -89.7604)
 modes/depth_draw = 2
 modes/cull = 2
 flags/unshaded = true
