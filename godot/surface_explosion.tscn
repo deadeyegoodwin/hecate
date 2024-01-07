@@ -8,3 +8,4 @@ script = ExtResource("1_u2gt6")
 
 [node name="ExplosionSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_bslag")
+volume_db = -5.0

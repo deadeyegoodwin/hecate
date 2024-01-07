@@ -207,13 +207,15 @@ func _process(delta : float) -> void:
 			# Create the explosion and attach it to the projectile's parent at
 			# the location of the collision.
 			var explosion := _explosion_scene.instantiate()
+			explosion.bolt_size = Vector2(mesh_radius * 5.0, mesh_radius * 5.0)
+			explosion.color = base_color
 			if is_equal_approx(abs(collision.get_normal().dot(Vector3.UP)), 1.0):
 				explosion.position = collision.get_position()
 				explosion.rotate_object_local(Vector3(1, 0, 0), PI / 2.0)
 			else:
 				explosion.look_at_from_position(
 					collision.get_position(), collision.get_position() + collision.get_normal())
-			explosion.fire(3.0, 5, 10, 0.6)
+			explosion.fire(1.5, 5, 20, 0.5)
 			get_parent().call_deferred("add_child", explosion)
 			# Done with the projectile...
 			queue_free()

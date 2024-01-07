@@ -39,6 +39,22 @@ static var _visibility_noise : NoiseTexture2D
 			BoltKind.MULTI:
 				_bolt = $BoltMulti
 
+## Size of mesh containing the bolt.
+@export var mesh_size := Vector2(1.0, 1.0) :
+	set(v):
+		mesh_size = v
+		if _bolt != null:
+			_bolt.mesh.size = mesh_size
+
+## Color of the bolt.
+@export var color := Color.WHITE_SMOKE :
+	set(v):
+		color = v
+		if (_bolt != null) and (_bolt.mesh != null) and (_bolt.mesh.material != null):
+			_bolt.mesh.material.set_shader_parameter("hue", color.h)
+			_bolt.mesh.material.set_shader_parameter("saturation", color.s)
+			_bolt.mesh.material.set_shader_parameter("value", color.v)
+
 ## Rate at which 'visibility_noise' is sampled. A value of 1.0 indicates that
 ## the entire 'visibility_noise' texture will be used over the duration of the
 ## bolt's firing, a value of 0.75 indicates that 75% of 'visibility_noise' will
@@ -93,11 +109,6 @@ func fire(speed : float, duration : float, delay : float = 0.0,
 	if rot:
 		_bolt.transform = _bolt.transform.rotated_local(Vector3.RIGHT, PI)
 
-# Return the size of the bolt (or more specifically, the size of the mesh containing
-# the bolt.
-func size() -> Vector2:
-	return _bolt.mesh.size
-
 static func _static_init() -> void:
 	var noise := FastNoiseLite.new()
 	noise.noise_type = FastNoiseLite.TYPE_CELLULAR
@@ -123,7 +134,13 @@ static func random_kind() -> BoltKind:
 	return BoltKind.MULTI
 
 func _ready() -> void:
+	_bolt.mesh.material.set_shader_parameter("hue", color.h)
+	_bolt.mesh.material.set_shader_parameter("saturation", color.s)
+	_bolt.mesh.material.set_shader_parameter("value", color.v)
+	_bolt.mesh.size = mesh_size
+
 	_jitter_angle = PI * jitter
+
 	# '_visibility_noise_image' is set in static initializer, but perhaps
 	# it could still be awaiting noise completion, so we double check here...
 	assert(_visibility_noise_image != null)

@@ -22,6 +22,13 @@ class_name HecateSurfaceExplosion extends Node3D
 
 const _bolt_scene = preload("res://surface_explosion_bolt.tscn")
 
+## The size of the bolts produces by the explosion.
+@export var bolt_size := Vector2(1.0, 1.0)
+
+## The color of the explosion.
+@export var color := Color.WHITE_SMOKE
+
+# Explosion sound
 @onready var _sound := $ExplosionSound
 
 # New bolts that have just been trigger by call to "fire()", the delay for
@@ -41,9 +48,11 @@ func fire(duration : float, num_bursts : int, num_bolts_per_burst : int,
 				var bolt := _bolt_scene.instantiate()
 				bolt.visibility_offset = randf()
 				bolt.visibility_speed = randf_range(0.75, 1.0)
-				bolt.visibility_threshold = randf_range(0.5, 0.7)
+				bolt.visibility_threshold = randf_range(0.2, 0.4)
 				bolt.jitter = randf_range(0.0, 0.2)
 				bolt.kind = HecateSurfaceExplosionBolt.BoltKind.SINGLE
+				bolt.mesh_size = bolt_size
+				bolt.color = color
 				self.add_child(bolt)
 				_firing_bolts.append([bolt, delay, max_bolt_duration])
 		# Time the start of the bursts evenly, so that the last burst completes
@@ -66,12 +75,12 @@ func _process(_delta : float) -> void:
 			var bolt : HecateSurfaceExplosionBolt = arr[0]
 			var delay : float = arr[1]
 			var duration : float = randf_range(0.5, 1.0) * arr[2]  # seconds
-			var speed : float = randf_range(0.5, 3.0)
+			var speed : float = randf_range(bolt_size.x, bolt_size.x * 2.0)
 			var angle : float = randf_range(0, 2 * PI)
 			# Want the edge of the PlaneMesh holding the bolt to be at the center,
 			# to translate the bolt half its width.
 			bolt.transform = Transform3D.IDENTITY.rotated_local(Vector3.BACK, angle)
-			bolt.transform = bolt.transform.translated_local(Vector3(0.0, bolt.size().y / 2.0, 0.0))
+			bolt.transform = bolt.transform.translated_local(Vector3(0.0, bolt.mesh_size.y / 2.0, 0.0))
 			bolt.fire(speed, duration, delay,
 						true if (randi() % 2) == 0 else false, # flip
 						true if (randi() % 2) == 0 else false) # rot
