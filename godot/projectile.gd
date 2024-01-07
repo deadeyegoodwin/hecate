@@ -215,8 +215,13 @@ func _process(delta : float) -> void:
 			else:
 				explosion.look_at_from_position(
 					collision.get_position(), collision.get_position() + collision.get_normal())
-			explosion.fire(1.5, 5, 20, 0.5)
+			const duration : float = 1.5  # explosion duration, seconds
+			const bolt_bursts : int = 5   # number of bolt bursts over duration
+			const bolts_per_burst : int = 20
+			const max_bolt_duration : float = 0.5  # seconds
+			explosion.fire(duration, bolt_bursts, bolts_per_burst, max_bolt_duration)
 			get_parent().call_deferred("add_child", explosion)
+			explosion.call_deferred("delayed_free", duration + 1.0)
 			# Done with the projectile...
 			queue_free()
 

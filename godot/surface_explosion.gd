@@ -64,6 +64,11 @@ func fire(duration : float, num_bursts : int, num_bolts_per_burst : int,
 			fire_fn.call_deferred(num_bolts_per_burst, burst_delay)
 			burst_delay += delay_delta
 
+# Free this explosion after the specified delay.
+func delayed_free(delay : float) -> void:
+	await get_tree().create_timer(delay).timeout
+	queue_free()
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta : float) -> void:
 	if not _firing_bolts.is_empty():
