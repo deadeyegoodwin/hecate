@@ -22,6 +22,8 @@ class_name HecateSurfaceExplosion extends Node3D
 
 const _bolt_scene = preload("res://surface_explosion_bolt.tscn")
 
+@onready var _sound := $ExplosionSound
+
 # New bolts that have just been trigger by call to "fire()", the delay for
 # the bolt, and the max duration for the bolt. as [ bolt, delay, max-duration ].
 # The explosion can be triggered every frame, do not need to wait for bolts to
@@ -56,6 +58,10 @@ func fire(duration : float, num_bursts : int, num_bolts_per_burst : int,
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta : float) -> void:
 	if not _firing_bolts.is_empty():
+		# Explosion sound...
+		if not _sound.is_playing():
+			_sound.play()
+
 		for arr in _firing_bolts:
 			var bolt : HecateSurfaceExplosionBolt = arr[0]
 			var delay : float = arr[1]
