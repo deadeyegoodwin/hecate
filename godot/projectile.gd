@@ -16,6 +16,8 @@
 # A projectile.
 class_name HecateProjectile extends CharacterBody3D
 
+const _explosion_scene = preload("res://surface_explosion.tscn")
+
 ## Radius of the sphere representing the polygon.
 @export var mesh_radius : float = 0.015 :
 	set(v):
@@ -202,6 +204,18 @@ func _process(delta : float) -> void:
 				collider.handle_collision(self)
 
 			# Perform any collision actions required for this projectile itself.
+			# Create the explosion and attach it to the projectile's parent at
+			# the location of the collision.
+			var explosion := _explosion_scene.instantiate()
+			if is_equal_approx(abs(collision.get_normal().dot(Vector3.UP)), 1.0):
+				explosion.position = collision.get_position()
+				explosion.rotate_object_local(Vector3(1, 0, 0), PI / 2.0)
+			else:
+				explosion.look_at_from_position(
+					collision.get_position(), collision.get_position() + collision.get_normal())
+			explosion.fire(3.0, 5, 10, 0.6)
+			get_parent().call_deferred("add_child", explosion)
+			# Done with the projectile...
 			queue_free()
 
 		# FIXME If the projectile reaches the end of the path without colliding
