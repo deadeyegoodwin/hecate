@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://b1vpuyojeii74"]
+[gd_scene load_steps=4 format=3 uid="uid://b1vpuyojeii74"]
 
 [ext_resource type="Script" path="res://surface_explosion.gd" id="1_u2gt6"]
 [ext_resource type="AudioStream" uid="uid://3tf5njvwjimw" path="res://third_party/explosion_01/explosion_01.ogg" id="2_bslag"]
+[ext_resource type="AudioStream" uid="uid://nou1h73fakos" path="res://third_party/electric_zap/electric_zap.ogg" id="3_dfi81"]
 
 [node name="HecateSurfaceExplosion" type="Node3D"]
 script = ExtResource("1_u2gt6")
@@ -9,3 +10,7 @@ script = ExtResource("1_u2gt6")
 [node name="ExplosionSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_bslag")
 volume_db = -5.0
+
+[node name="BoltSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_dfi81")
+volume_db = -8.0

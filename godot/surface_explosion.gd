@@ -28,8 +28,9 @@ const _bolt_scene = preload("res://surface_explosion_bolt.tscn")
 ## The color of the explosion.
 @export var color := Color.WHITE_SMOKE
 
-# Explosion sound
-@onready var _sound := $ExplosionSound
+# Explosion and bolt sounds
+@onready var _explosion_sound := $ExplosionSound
+@onready var _bolt_sound := $BoltSound
 
 # New bolts that have just been trigger by call to "fire()", the delay for
 # the bolt, and the max duration for the bolt. as [ bolt, delay, max-duration ].
@@ -71,10 +72,23 @@ func delayed_free(delay : float) -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta : float) -> void:
+	# Bolt sound plays only when there are active bolts.
+	var active_bolt : bool = false
+	for c in get_children():
+		if c is HecateSurfaceExplosionBolt:
+			active_bolt = true
+			break
+	if active_bolt != _bolt_sound.is_playing():
+		if active_bolt:
+			_bolt_sound.play(randf_range(0.0, _bolt_sound.stream.get_length()))
+		else:
+			_bolt_sound.stop()
+
 	if not _firing_bolts.is_empty():
-		# Explosion sound...
-		if not _sound.is_playing():
-			_sound.play()
+		# Explosion sound starts playing when fire() is invoked, unless it is
+		# already playing...
+		if not _explosion_sound.is_playing():
+			_explosion_sound.play()
 
 		for arr in _firing_bolts:
 			var bolt : HecateSurfaceExplosionBolt = arr[0]
