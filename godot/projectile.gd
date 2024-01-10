@@ -203,19 +203,20 @@ func _process(delta : float) -> void:
 			if collider.has_method("handle_collision"):
 				collider.handle_collision(self)
 
-			# Perform any collision actions required for this projectile itself.
-			# Create the explosion and attach it to the projectile's parent at
-			# the location of the collision.
+			# Create the explosion and attach it to the collider at the location
+			# of the collision.
 			var explosion := _explosion_scene.instantiate()
 			explosion.bolt_size = Vector2(mesh_radius * 5.0, mesh_radius * 5.0)
 			explosion.core_size = Vector2(mesh_radius * 8.0, mesh_radius * 8.0)
 			explosion.color = base_color
 			if is_equal_approx(abs(collision.get_normal().dot(Vector3.UP)), 1.0):
-				explosion.position = collision.get_position()
 				explosion.rotate_object_local(Vector3(1, 0, 0), PI / 2.0)
 			else:
 				explosion.look_at_from_position(
 					collision.get_position(), collision.get_position() + collision.get_normal())
+			explosion.position = collider.to_local(collision.get_position())
+			collider.call_deferred("add_child", explosion)
+
 			const duration : float = 1.5  # explosion duration, seconds
 			const core_iters : int = 2
 			const core_duration : float = 1.0
@@ -225,9 +226,9 @@ func _process(delta : float) -> void:
 			explosion.fire(duration,
 							core_iters, core_duration,
 							bolt_bursts, bolts_per_burst, max_bolt_duration)
-			get_parent().call_deferred("add_child", explosion)
 			explosion.call_deferred("delayed_free", duration + 1.0)
-			# Done with the projectile...
+
+			# Done with the projectile so free it.
 			queue_free()
 
 		# FIXME If the projectile reaches the end of the path without colliding
