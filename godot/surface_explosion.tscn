@@ -11,6 +11,6 @@ script = ExtResource("1_u2gt6")
 stream = ExtResource("2_bslag")
 volume_db = -5.0
 
-[node name="BoltSound" type="AudioStreamPlayer" parent="."]
+[node name="SubExplosionSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_dfi81")
 volume_db = -8.0

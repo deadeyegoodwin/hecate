@@ -17,62 +17,62 @@
 # See https://github.com/godotengine/godot/issues/81250
 #@tool
 
-# A bolt of an explosion on a flat surface (e.g. wall).
-class_name HecateSurfaceExplosionBolt extends Node3D
+# A part of an explosion on a flat surface (e.g. wall).
+class_name HecateSurfaceSubExplosion extends Node3D
 
-# The kinds of bolts available.
-enum BoltKind { SINGLE, MULTI }
+# The kinds of sub-explosions available.
+enum Kind { BOLT_SINGLE, BOLT_MULTI }
 
-## 1D texture that determines visibility of the bolt over the firing duration.
+## 1D texture that determines visibility for some kinds over the firing duration.
 ## Controlled by 'visibility_speed' and 'visibility_offset' the texture is sampled
 ## based on firing duration and an 'r' channel value > 'visibility_threshold'
-## indicates that the bolt is visible.
+## indicates that the sub-explosion is visible.
 static var _visibility_noise : NoiseTexture2D
 
-## The kind of bolt.
-@export var kind : BoltKind = BoltKind.SINGLE :
+## The kind of sub-explosion.
+@export var kind : Kind = Kind.BOLT_SINGLE :
 	set(v):
 		kind = v
 		match kind:
-			BoltKind.SINGLE:
-				_bolt = $BoltSingle
-			BoltKind.MULTI:
-				_bolt = $BoltMulti
+			Kind.BOLT_SINGLE:
+				_sub = $BoltSingle
+			Kind.BOLT_MULTI:
+				_sub = $BoltMulti
 
-## Size of mesh containing the bolt.
+## Size of mesh containing the sub-explosion.
 @export var mesh_size := Vector2(1.0, 1.0) :
 	set(v):
 		mesh_size = v
-		if _bolt != null:
-			_bolt.mesh.size = mesh_size
+		if _sub != null:
+			_sub.mesh.size = mesh_size
 
-## Color of the bolt.
+## Color of the sub-explosion.
 @export var color := Color.WHITE_SMOKE :
 	set(v):
 		color = v
-		if (_bolt != null) and (_bolt.mesh != null) and (_bolt.mesh.material != null):
-			_bolt.mesh.material.set_shader_parameter("hue", color.h)
-			_bolt.mesh.material.set_shader_parameter("saturation", color.s)
-			_bolt.mesh.material.set_shader_parameter("value", color.v)
+		if (_sub != null) and (_sub.mesh != null) and (_sub.mesh.material != null):
+			_sub.mesh.material.set_shader_parameter("hue", color.h)
+			_sub.mesh.material.set_shader_parameter("saturation", color.s)
+			_sub.mesh.material.set_shader_parameter("value", color.v)
 
 ## Rate at which 'visibility_noise' is sampled. A value of 1.0 indicates that
 ## the entire 'visibility_noise' texture will be used over the duration of the
-## bolt's firing, a value of 0.75 indicates that 75% of 'visibility_noise' will
-## be used, etc.
+## sub-explisions's firing, a value of 0.75 indicates that 75% of
+## 'visibility_noise' will be used, etc.
 @export_range(0.0, 1.0) var visibility_speed : float = 1.0
 
 ## Offset into 'visibility_noise' texture.
 @export_range(0.0, 1.0) var visibility_offset : float = 0.0
 
 ## Threshold value of 'visibility_noise' texture 'r' channel. A value greater
-## than 'visibility_threshold' indicates that bolt is visible.
+## than 'visibility_threshold' indicates sub-explosion is visible.
 @export_range(0.0, 1.0) var visibility_threshold : float = 0.5
 
-## Amount of variation in path of bolt over duration of firing.
+## Amount of variation in path of sub-explosion over duration of firing.
 @export_range(0.0, 1.0) var jitter : float = 0.0
 
-# The mesh representing the particular bolt kind.
-var _bolt : MeshInstance3D = null
+# The mesh representing the particular sub-explosion kind.
+var _sub : MeshInstance3D = null
 
 # Image derived from visiblity_noise.
 static var _visibility_noise_image : Image
@@ -81,21 +81,21 @@ static var _visibility_noise_width : int = 0
 # 'jitter' converted to radians.
 var _jitter_angle : float = 0.0
 
-# Starting speed for the bolt, in meters / sec. The bolt travels in the local
-# positive Y direction.
+# Starting speed for the sub-explosion, in meters / sec. The sub-explosion
+# travels in the local positive Y direction.
 var _speed : float
 
-# Duration, in seconds, for the bolt. '_duration' == 0 indicates that the
-# bolt is not active.
+# Duration, in seconds, for the sub-explosion. '_duration' == 0 indicates that
+# the sub-explosion is not active.
 var _duration : float = 0.0
 
-# The total time that has elapsed since the start of the bolt firing.
+# The total time that has elapsed since the start of the sub-explosion firing.
 var _total_elapsed : float
 
-# The elapsed time when the bolt transform was last updated.
+# The elapsed time since the sub-explosion transform was last updated.
 var _last_update_elapsed : float
 
-# "Fire" the bolt at a given speed and duration, in seconds.
+# "Fire" the sub-explosion at a given speed and duration, in seconds.
 func fire(speed : float, duration : float, delay : float = 0.0,
 			flip : bool = false, rot : bool = false) -> void:
 	if delay > 0.0:
@@ -105,9 +105,9 @@ func fire(speed : float, duration : float, delay : float = 0.0,
 	_total_elapsed = 0.0
 	_last_update_elapsed = 0.0
 	if flip:
-		_bolt.transform = _bolt.transform.rotated_local(Vector3.UP, PI)
+		_sub.transform = _sub.transform.rotated_local(Vector3.UP, PI)
 	if rot:
-		_bolt.transform = _bolt.transform.rotated_local(Vector3.RIGHT, PI)
+		_sub.transform = _sub.transform.rotated_local(Vector3.RIGHT, PI)
 
 static func _static_init() -> void:
 	var noise := FastNoiseLite.new()
@@ -127,17 +127,11 @@ static func _static_init() -> void:
 	assert(_visibility_noise_image != null)
 	_visibility_noise_width = _visibility_noise_image.get_width()
 
-# Return a randomly chosen BoltKind.
-static func random_kind() -> BoltKind:
-	if (randi() % 2) == 0:
-		return BoltKind.SINGLE
-	return BoltKind.MULTI
-
 func _ready() -> void:
-	_bolt.mesh.material.set_shader_parameter("hue", color.h)
-	_bolt.mesh.material.set_shader_parameter("saturation", color.s)
-	_bolt.mesh.material.set_shader_parameter("value", color.v)
-	_bolt.mesh.size = mesh_size
+	_sub.mesh.material.set_shader_parameter("hue", color.h)
+	_sub.mesh.material.set_shader_parameter("saturation", color.s)
+	_sub.mesh.material.set_shader_parameter("value", color.v)
+	_sub.mesh.size = mesh_size
 
 	_jitter_angle = PI * jitter
 
@@ -147,12 +141,12 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta : float) -> void:
-	if _bolt == null: return
+	if _sub == null: return
 	if _duration == 0.0:
-		_bolt.visible = false
+		_sub.visible = false
 	elif _total_elapsed >= _duration:
 		_duration = 0.0
-		_bolt.visible = false
+		_sub.visible = false
 		queue_free()
 	else:
 		var progress : float = min(1.0, _total_elapsed / _duration)
@@ -160,11 +154,11 @@ func _process(delta : float) -> void:
 			float(_visibility_noise_width) * (visibility_offset + (progress * visibility_speed)))
 		var vpixel := _visibility_noise_image.get_pixel(vidx % _visibility_noise_width, 0)
 		var new_visibility : bool = (vpixel.r >= visibility_threshold)
-		if _bolt.visible != new_visibility:
-			if not _bolt.visible:
+		if _sub.visible != new_visibility:
+			if not _sub.visible:
 				transform = transform.rotated_local(Vector3.BACK, randf_range(-_jitter_angle, _jitter_angle))
 				transform = transform.translated_local(
 					Vector3(0.0, _speed * (_total_elapsed - _last_update_elapsed), 0.0))
 				_last_update_elapsed = _total_elapsed
-			_bolt.visible = new_visibility
+			_sub.visible = new_visibility
 	_total_elapsed += delta

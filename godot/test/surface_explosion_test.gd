@@ -14,7 +14,7 @@
 # along with Hecate. If not, see <https://www.gnu.org/licenses/>.
 
 # To run thie test, uncomment the following line and make sure @tool is
-# uncommented in surface_explosion.gd and surface_explosion_bolt.gd.
+# uncommented in surface_explosion.gd and surface_sub_explosion.gd.
 # Running the test will likely make changes to the scene files that should
 # not be persisted in the repository.
 #@tool

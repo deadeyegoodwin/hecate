@@ -20,42 +20,42 @@
 # An explosion on a flat surface (e.g. wall).
 class_name HecateSurfaceExplosion extends Node3D
 
-const _bolt_scene = preload("res://surface_explosion_bolt.tscn")
+const _sub_explosion_scene = preload("res://surface_sub_explosion.tscn")
 
-## The size of the bolts produces by the explosion.
+## The size of the sub-explosion bolts produced by the explosion.
 @export var bolt_size := Vector2(1.0, 1.0)
 
 ## The color of the explosion.
 @export var color := Color.WHITE_SMOKE
 
-# Explosion and bolt sounds
+# Explosion and sub-explosion sounds
 @onready var _explosion_sound := $ExplosionSound
-@onready var _bolt_sound := $BoltSound
+@onready var _sub_explosion_sound := $SubExplosionSound
 
-# New bolts that have just been trigger by call to "fire()", the delay for
-# the bolt, and the max duration for the bolt. as [ bolt, delay, max-duration ].
-# The explosion can be triggered every frame, do not need to wait for bolts to
+# New sub-explosions that have just been trigger by call to "fire()", the delay for
+# the sub-explosion, and the max duration for the sub-explosion. as [ sub-explosion, delay, max-duration ].
+# The explosion can be triggered every frame, do not need to wait for sub-explosions to
 # complete.
-var _firing_bolts : Array
+var _firing_sub_explosions : Array
 
 # "Fire" the explosion with indicated number of bolts and bolt bursts over the
 # duration of the explosion.
 func fire(duration : float, num_bursts : int, num_bolts_per_burst : int,
 			 max_bolt_duration : float) -> void:
-	assert(_firing_bolts.is_empty())
-	if _firing_bolts.is_empty():
+	assert(_firing_sub_explosions.is_empty())
+	if _firing_sub_explosions.is_empty():
 		var fire_fn = func(num_bolts : int, delay : float) -> void:
 			for bidx in num_bolts:
-				var bolt := _bolt_scene.instantiate()
+				var bolt := _sub_explosion_scene.instantiate()
 				bolt.visibility_offset = randf()
 				bolt.visibility_speed = randf_range(0.75, 1.0)
 				bolt.visibility_threshold = randf_range(0.2, 0.4)
 				bolt.jitter = randf_range(0.0, 0.2)
-				bolt.kind = HecateSurfaceExplosionBolt.BoltKind.SINGLE
+				bolt.kind = HecateSurfaceSubExplosion.Kind.BOLT_SINGLE
 				bolt.mesh_size = bolt_size
 				bolt.color = color
 				self.add_child(bolt)
-				_firing_bolts.append([bolt, delay, max_bolt_duration])
+				_firing_sub_explosions.append([bolt, delay, max_bolt_duration])
 		# Time the start of the bursts evenly, so that the last burst completes
 		# at 'duration'.
 		var delay_delta : float = max(0.0,
@@ -72,26 +72,26 @@ func delayed_free(delay : float) -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta : float) -> void:
-	# Bolt sound plays only when there are active bolts.
-	var active_bolt : bool = false
+	# Sub-explosion sound plays only when there are active sub-explosions.
+	var active_sub_explosion : bool = false
 	for c in get_children():
-		if c is HecateSurfaceExplosionBolt:
-			active_bolt = true
+		if c is HecateSurfaceSubExplosion:
+			active_sub_explosion = true
 			break
-	if active_bolt != _bolt_sound.is_playing():
-		if active_bolt:
-			_bolt_sound.play(randf_range(0.0, _bolt_sound.stream.get_length()))
+	if active_sub_explosion != _sub_explosion_sound.is_playing():
+		if active_sub_explosion:
+			_sub_explosion_sound.play(randf_range(0.0, _sub_explosion_sound.stream.get_length()))
 		else:
-			_bolt_sound.stop()
+			_sub_explosion_sound.stop()
 
-	if not _firing_bolts.is_empty():
+	if not _firing_sub_explosions.is_empty():
 		# Explosion sound starts playing when fire() is invoked, unless it is
 		# already playing...
 		if not _explosion_sound.is_playing():
 			_explosion_sound.play()
 
-		for arr in _firing_bolts:
-			var bolt : HecateSurfaceExplosionBolt = arr[0]
+		for arr in _firing_sub_explosions:
+			var bolt : HecateSurfaceSubExplosion = arr[0]
 			var delay : float = arr[1]
 			var duration : float = randf_range(0.5, 1.0) * arr[2]  # seconds
 			var speed : float = randf_range(bolt_size.x, bolt_size.x * 2.0)
@@ -103,4 +103,4 @@ func _process(_delta : float) -> void:
 			bolt.fire(speed, duration, delay,
 						true if (randi() % 2) == 0 else false, # flip
 						true if (randi() % 2) == 0 else false) # rot
-		_firing_bolts.clear()
+		_firing_sub_explosions.clear()
