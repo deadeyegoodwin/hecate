@@ -21,11 +21,12 @@
 class_name HecateSurfaceSubExplosion extends Node3D
 
 # The kinds of sub-explosions available.
-enum Kind { BOLT_SINGLE, BOLT_MULTI }
+enum Kind { BOLT_SINGLE, BOLT_MULTI,
+			CORE0, CORE1, CORE2, CORE3 }
 
 ## 1D texture that determines visibility for some kinds over the firing duration.
 ## Controlled by 'visibility_speed' and 'visibility_offset' the texture is sampled
-## based on firing duration and an 'r' channel value > 'visibility_threshold'
+## based on firing duration and an 'r' channel value >= 'visibility_threshold'
 ## indicates that the sub-explosion is visible.
 static var _visibility_noise : NoiseTexture2D
 
@@ -38,6 +39,14 @@ static var _visibility_noise : NoiseTexture2D
 				_sub = $BoltSingle
 			Kind.BOLT_MULTI:
 				_sub = $BoltMulti
+			Kind.CORE0:
+				_sub = $Core0
+			Kind.CORE1:
+				_sub = $Core1
+			Kind.CORE2:
+				_sub = $Core2
+			Kind.CORE3:
+				_sub = $Core3
 
 ## Size of mesh containing the sub-explosion.
 @export var mesh_size := Vector2(1.0, 1.0) :
@@ -64,8 +73,8 @@ static var _visibility_noise : NoiseTexture2D
 ## Offset into 'visibility_noise' texture.
 @export_range(0.0, 1.0) var visibility_offset : float = 0.0
 
-## Threshold value of 'visibility_noise' texture 'r' channel. A value greater
-## than 'visibility_threshold' indicates sub-explosion is visible.
+## Threshold value of 'visibility_noise' texture 'r' channel. A value
+## greater-equal 'visibility_threshold' indicates sub-explosion is visible.
 @export_range(0.0, 1.0) var visibility_threshold : float = 0.5
 
 ## Amount of variation in path of sub-explosion over duration of firing.

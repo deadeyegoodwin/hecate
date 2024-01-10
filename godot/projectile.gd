@@ -208,6 +208,7 @@ func _process(delta : float) -> void:
 			# the location of the collision.
 			var explosion := _explosion_scene.instantiate()
 			explosion.bolt_size = Vector2(mesh_radius * 5.0, mesh_radius * 5.0)
+			explosion.core_size = Vector2(mesh_radius * 8.0, mesh_radius * 8.0)
 			explosion.color = base_color
 			if is_equal_approx(abs(collision.get_normal().dot(Vector3.UP)), 1.0):
 				explosion.position = collision.get_position()
@@ -216,10 +217,14 @@ func _process(delta : float) -> void:
 				explosion.look_at_from_position(
 					collision.get_position(), collision.get_position() + collision.get_normal())
 			const duration : float = 1.5  # explosion duration, seconds
+			const core_iters : int = 2
+			const core_duration : float = 1.0
 			const bolt_bursts : int = 5   # number of bolt bursts over duration
-			const bolts_per_burst : int = 20
+			const bolts_per_burst : int = 10
 			const max_bolt_duration : float = 0.5  # seconds
-			explosion.fire(duration, bolt_bursts, bolts_per_burst, max_bolt_duration)
+			explosion.fire(duration,
+							core_iters, core_duration,
+							bolt_bursts, bolts_per_burst, max_bolt_duration)
 			get_parent().call_deferred("add_child", explosion)
 			explosion.call_deferred("delayed_free", duration + 1.0)
 			# Done with the projectile...

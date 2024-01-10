@@ -30,7 +30,7 @@ func _process(_delta : float) -> void:
 	# Space-bar starts a new explosion.
 	if Input.is_key_pressed(KEY_SPACE):
 		if not _key_debounce:
-			$Explosion.fire(3.0, 5, 10, 0.6)
+			$Explosion.fire(1.5, 2, 1.0, 5, 10, 0.5)
 			_key_debounce = true
 	else:
 		_key_debounce = false
